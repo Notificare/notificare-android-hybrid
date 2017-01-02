@@ -1,0 +1,59 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.0"
+    defaultConfig {
+        applicationId "re.notifica.hybrid"
+        minSdkVersion 16
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+        def BOOLEAN = "boolean"
+        def TRUE = "true"
+        def FALSE = "false"
+        def ENABLE_BILLING = "ENABLE_BILLING"
+        def ENABLE_BEACONS = "ENABLE_BEACONS"
+        def ENABLE_TEST_CALLS = "ENABLE_TEST_CALLS"
+        production {
+            buildConfigField BOOLEAN, ENABLE_BEACONS, TRUE
+            buildConfigField BOOLEAN, ENABLE_BILLING, FALSE
+            buildConfigField BOOLEAN, ENABLE_TEST_CALLS, FALSE
+        }
+    }
+
+}
+
+repositories {
+    jcenter()
+    maven {
+        url "https://github.com/Notificare/notificare-mvn-repo/raw/master/releases"
+    }
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 're.notifica:notificare-push-lib-android:1.9.0'
+    compile 'org.altbeacon:android-beacon-library:2.9.1'
+    compile 'com.android.support:appcompat-v7:25.0.1'
+    compile 'com.google.firebase:firebase-messaging:10.0.0'
+    testCompile 'junit:junit:4.12'
+}
+
+
+apply plugin: 'com.google.gms.google-services'
