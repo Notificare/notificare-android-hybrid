@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
                 if (Notificare.shared().checkRequestLocationPermissionResult(permissions, grantResults)) {
                     Log.i(TAG, "permission granted");
                     Notificare.shared().enableLocationUpdates();
+                    AppBaseApplication.setLocationEnabled(true);
                     if (BuildConfig.ENABLE_BEACONS) {
                         Notificare.shared().enableBeacons(60000);
                     }

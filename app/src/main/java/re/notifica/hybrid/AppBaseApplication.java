@@ -17,8 +17,8 @@ public class AppBaseApplication extends Application {
     private static final String TAG = AppBaseApplication.class.getSimpleName();
     private static final String PREFS_NAME = "hybrid_preferences";
     private static final String PREF_KEY_ONBOARDING_STATUS = "onboarding_status";
-    private static final String PREF_KEY_INITIAL_TOPICS_SELECTION_STATUS = "initial_topics_selection_status";
     private static final String PREF_KEY_NOTIFICATIONS_ENABLED = "notifications_enabled";
+    private static final String PREF_KEY_LOCATION_ENABLED = "location_enabled";
     private static final String PREF_KEY_DND_ENABLED = "dnd_enabled";
     private static final String PREF_KEY_DND_RANGE = "dnd_range";
 
@@ -66,21 +66,7 @@ public class AppBaseApplication extends Application {
     public static void setOnboardingStatus(boolean status) {
         SharedPreferences sharedPreferences = getAppContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-
         editor.putBoolean(PREF_KEY_ONBOARDING_STATUS, status);
-        editor.apply();
-    }
-
-    public static boolean getInitialTopicsSelectionStatus() {
-        SharedPreferences sharedPreferences = getAppContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        return sharedPreferences.getBoolean(PREF_KEY_INITIAL_TOPICS_SELECTION_STATUS, false);
-    }
-
-    public static void setInitialTopicsSelectionStatus(boolean status) {
-        SharedPreferences sharedPreferences = getAppContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-
-        editor.putBoolean(PREF_KEY_INITIAL_TOPICS_SELECTION_STATUS, status);
         editor.apply();
     }
 
@@ -94,6 +80,19 @@ public class AppBaseApplication extends Application {
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.putBoolean(PREF_KEY_NOTIFICATIONS_ENABLED, enabled);
+        editor.apply();
+    }
+
+    public static boolean getLocationEnabled() {
+        SharedPreferences sharedPreferences = getAppContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        return sharedPreferences.getBoolean(PREF_KEY_LOCATION_ENABLED, false);
+    }
+
+    public static void setLocationEnabled(boolean enabled) {
+        SharedPreferences sharedPreferences = getAppContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putBoolean(PREF_KEY_LOCATION_ENABLED, enabled);
         editor.apply();
     }
 

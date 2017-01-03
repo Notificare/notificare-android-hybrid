@@ -100,6 +100,7 @@ public class SettingsActivity extends ActionBarBaseActivity {
         List<Object> items = new ArrayList<>();
         items.add(new Section(getString(R.string.settings_section_title_general)));
         items.add(new Setting(SettingsAdapter.TYPE_NOTIFICATIONS));
+        items.add(new Setting(SettingsAdapter.TYPE_LOCATION));
 
         if (AppBaseApplication.getNotificationsEnabled()) {
             items.add(mSettingDnd);
@@ -111,7 +112,6 @@ public class SettingsActivity extends ActionBarBaseActivity {
         }
 
         items.add(new Section(getString(R.string.settings_section_title_others)));
-        items.add(new Setting(SettingsAdapter.TYPE_TOPICS));
         items.add(new Setting(SettingsAdapter.TYPE_FEEDBACK));
         items.add(new Setting(SettingsAdapter.TYPE_APP_VERSION));
 
@@ -164,7 +164,7 @@ public class SettingsActivity extends ActionBarBaseActivity {
     class SettingsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         protected static final int TYPE_SECTION = 1;
         protected static final int TYPE_NOTIFICATIONS = 2;
-        protected static final int TYPE_TOPICS = 3;
+        protected static final int TYPE_LOCATION = 3;
         protected static final int TYPE_FEEDBACK = 4;
         protected static final int TYPE_APP_VERSION = 5;
         protected static final int TYPE_DND = 6;
@@ -224,9 +224,9 @@ public class SettingsActivity extends ActionBarBaseActivity {
             } else if (viewType == TYPE_NOTIFICATIONS) {
                 View view = mLayoutInflater.inflate(R.layout.row_material_three_lines_switch, parent, false);
                 return new NotificationsViewHolder(view);
-            } else if (viewType == TYPE_TOPICS) {
-                View view = mLayoutInflater.inflate(R.layout.row_material_two_lines, parent, false);
-                return new TopicsViewHolder(view);
+            } else if (viewType == TYPE_LOCATION) {
+                View view = mLayoutInflater.inflate(R.layout.row_material_three_lines_switch, parent, false);
+                return new NotificationsViewHolder(view);
             } else if (viewType == TYPE_FEEDBACK || viewType == TYPE_APP_VERSION) {
                 View view = mLayoutInflater.inflate(R.layout.row_material_two_lines, parent, false);
                 return new SettingViewHolder(view);
@@ -268,6 +268,22 @@ public class SettingsActivity extends ActionBarBaseActivity {
                             }
 
                             AppBaseApplication.resetDnd();
+                        }
+                    }
+                });
+            } else if (viewType == TYPE_LOCATION) {
+                ((NotificationsViewHolder) holder).label.setText(R.string.settings_general_location_label);
+                ((NotificationsViewHolder) holder).description.setText(R.string.settings_general_location_description);
+                ((NotificationsViewHolder) holder).switchEditor.setChecked(AppBaseApplication.getLocationEnabled());
+                ((NotificationsViewHolder) holder).switchEditor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) {
+                            AppBaseApplication.setLocationEnabled(true);
+                            Notificare.shared().enableLocationUpdates();
+                        } else {
+                            AppBaseApplication.setLocationEnabled(false);
+                            Notificare.shared().disableLocationUpdates();
                         }
                     }
                 });
