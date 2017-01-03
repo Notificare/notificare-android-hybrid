@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Hybrid</string>
+    <string name="button_location_permission_rationale_ok">got it</string>
+    <string name="alert_location_permission_rationale">We will need to make use of your location to present relevant information about offers around you.</string>
 </resources>

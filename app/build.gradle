@@ -10,6 +10,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders = [ notificareAppId: "586a543c28414d0a0c06c7f0" ]
     }
     buildTypes {
         release {
@@ -48,10 +49,10 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 're.notifica:notificare-push-lib-android:1.9.0'
+    compile 're.notifica:notificare-push-lib-android:1.9.1'
     compile 'org.altbeacon:android-beacon-library:2.9.1'
     compile 'com.android.support:appcompat-v7:25.0.1'
-    compile 'com.google.firebase:firebase-messaging:10.0.0'
+    compile 'com.google.firebase:firebase-messaging:9.8.0'
     testCompile 'junit:junit:4.12'
 }
 
