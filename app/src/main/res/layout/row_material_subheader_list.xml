@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<re.notifica.support.widget.ExtraTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:ellipsize="marquee"
+    android:gravity="center_vertical"
+    android:lines="1"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:text="Lorem ipsum dolor sit amet"
+    android:textColor="@color/colorPrimary"
+    android:textSize="14sp"
+    app:extraTypeface="Main-Bold" />

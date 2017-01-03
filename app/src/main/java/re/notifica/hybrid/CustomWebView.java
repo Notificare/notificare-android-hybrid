@@ -93,7 +93,7 @@ public class CustomWebView extends WebViewClient {
 
                 } else if (uri.getPath().equals("/settings")) {
 
-                    activity.startActivity(new Intent(activity, UserPreferencesActivity.class));
+                    activity.startActivity(new Intent(activity, SettingsActivity.class));
 
                 }
                 return true;

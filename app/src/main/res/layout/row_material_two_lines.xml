@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="20dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="16dp">
+
+    <re.notifica.support.widget.ExtraTextView
+        android:id="@+id/label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:lines="1"
+        android:text="Lorem ipsum dolor sit amet"
+        android:textColor="@color/colorAccent"
+        android:textSize="16sp"
+        app:extraTypeface="Main-Regular" />
+
+    <re.notifica.support.widget.ExtraTextView
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/label"
+        android:ellipsize="end"
+        android:lines="1"
+        android:text="Lorem ipsum dolor sit amet"
+        android:textSize="14sp"
+        app:extraTypeface="Main-Regular" />
+
+</RelativeLayout>
