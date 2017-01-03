@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.MailTo;
 import android.net.Uri;
 import android.os.Build;
+import android.util.Base64;
 import android.util.Log;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -15,6 +16,8 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
 
 import re.notifica.ui.UserPreferencesActivity;
@@ -43,6 +46,7 @@ public class CustomWebView extends WebViewClient {
         if (dialog != null) {
             dialog.dismiss();
         }
+        injectScriptFile(view, "customScripts.js");
     }
 
     @SuppressWarnings("deprecation")
@@ -104,6 +108,28 @@ public class CustomWebView extends WebViewClient {
         }
 
         return false;
+    }
+
+    private void injectScriptFile(WebView view, String scriptFile) {
+        InputStream input;
+        try {
+            input = mActivityRef.get().getAssets().open(scriptFile);
+            byte[] buffer = new byte[input.available()];
+            input.read(buffer);
+            input.close();
+
+            String encoded = Base64.encodeToString(buffer, Base64.NO_WRAP);
+            view.loadUrl("javascript:(function() {" +
+                    "var parent = document.getElementsByTagName('head').item(0);" +
+                    "var script = document.createElement('script');" +
+                    "script.type = 'text/javascript';" +
+                    // Tell the browser to BASE64-decode the string into your script !!!
+                    "script.innerHTML = window.atob('" + encoded + "');" +
+                    "parent.appendChild(script)" +
+                    "})()");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private Intent newEmailIntent(Context context, String address, String subject, String body, String cc) {

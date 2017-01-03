@@ -1,6 +1,7 @@
 package re.notifica.hybrid;
 import android.app.Application;
 import re.notifica.Notificare;
+import re.notifica.support.NotificareSupport;
 
 
 public class AppBaseApplication extends Application {
@@ -26,6 +27,15 @@ public class AppBaseApplication extends Application {
         // If the placeholder is provided, it will be replaced by the pass' description, if any.
         //Notificare.shared().setRelevanceText("Notificare demo: %s");
         //Notificare.shared().setRelevanceIcon(R.drawable.notificare_passbook_style);
+
+        NotificareSupport.shared().launch(this);
+
+        // Internet connection configs
+        NotificareSupport.shared().setInternetConnectionActivityTheme(R.style.AppTheme);
+        NotificareSupport.shared().setInternetConnectionActivityLayout(R.layout.activity_no_internet);
+
+        // Run internet connection manager
+        NotificareSupport.shared().getInternetConnectionManager().registerNetworkStateReceiver();
     }
 
 }

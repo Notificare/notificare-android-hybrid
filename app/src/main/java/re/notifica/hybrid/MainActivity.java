@@ -44,39 +44,11 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
         webView.loadUrl(config.getProperty("url"));
         webView.setWebViewClient(new CustomWebView(this) {
 
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                injectScriptFile(view, "customScripts.js");
-            }
-
         });
 
         Notificare.shared().addNotificareReadyListener(this);
-    }
 
-    private void injectScriptFile(WebView view, String scriptFile) {
-        InputStream input;
-        try {
-            input = getAssets().open(scriptFile);
-            byte[] buffer = new byte[input.available()];
-            input.read(buffer);
-            input.close();
-
-            // String-ify the script byte-array using BASE64 encoding !!!
-            String encoded = Base64.encodeToString(buffer, Base64.NO_WRAP);
-            view.loadUrl("javascript:(function() {" +
-                    "var parent = document.getElementsByTagName('head').item(0);" +
-                    "var script = document.createElement('script');" +
-                    "script.type = 'text/javascript';" +
-                    // Tell the browser to BASE64-decode the string into your script !!!
-                    "script.innerHTML = window.atob('" + encoded + "');" +
-                    "parent.appendChild(script)" +
-                    "})()");
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        getSupportActionBar().hide();
     }
 
     @Override
