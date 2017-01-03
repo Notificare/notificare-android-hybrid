@@ -29,6 +29,11 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".InboxActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:label="@string/title_inbox"
+            android:screenOrientation="portrait"></activity>
+        <activity
             android:name="re.notifica.ui.NotificationActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:hardwareAccelerated="true"
@@ -53,6 +58,17 @@
                     android:host="push.notifica.re"
                     android:pathPrefix="/pass/forapplication/${notificareAppId}"
                     android:scheme="https" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="re.notifica.ui.UserPreferencesActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:label="@string/title_settings"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="re.notifica.intent.action.OpenUserPreferences" />
+
+                <category android:name="re.notifica.hybrid" />
             </intent-filter>
         </activity>
 

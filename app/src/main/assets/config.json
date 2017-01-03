@@ -1,0 +1,16 @@
+{
+  "config": {
+    "useLocationServices" : true,
+    "useNavigationDrawer": false
+  },
+  "url": "https://code.pt",
+  "urlScheme": "codept",
+  "host": "code.pt",
+  "email": "info@code.pt",
+  "api": "https://push.notifica.re/status",
+  "nativeViews": ["codept://code.pt/inbox", "codept://code.pt/settings"],
+  "social": {
+    "facebook": "",
+    "twitter": ""
+  }
+}

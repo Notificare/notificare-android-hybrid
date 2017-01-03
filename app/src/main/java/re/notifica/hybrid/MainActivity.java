@@ -1,14 +1,22 @@
 package re.notifica.hybrid;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
+import android.webkit.ValueCallback;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import re.notifica.Notificare;
@@ -34,13 +42,41 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webView.loadUrl(config.getProperty("url"));
-        webView.setWebViewClient(new WebViewClient() {
+        webView.setWebViewClient(new CustomWebView(this) {
+
+            @Override
             public void onPageFinished(WebView view, String url) {
-                view.loadUrl("javascript:window.scrollTo(0.0, 100.0);");
+                super.onPageFinished(view, url);
+                injectScriptFile(view, "customScripts.js");
             }
+
         });
 
         Notificare.shared().addNotificareReadyListener(this);
+    }
+
+    private void injectScriptFile(WebView view, String scriptFile) {
+        InputStream input;
+        try {
+            input = getAssets().open(scriptFile);
+            byte[] buffer = new byte[input.available()];
+            input.read(buffer);
+            input.close();
+
+            // String-ify the script byte-array using BASE64 encoding !!!
+            String encoded = Base64.encodeToString(buffer, Base64.NO_WRAP);
+            view.loadUrl("javascript:(function() {" +
+                    "var parent = document.getElementsByTagName('head').item(0);" +
+                    "var script = document.createElement('script');" +
+                    "script.type = 'text/javascript';" +
+                    // Tell the browser to BASE64-decode the string into your script !!!
+                    "script.innerHTML = window.atob('" + encoded + "');" +
+                    "parent.appendChild(script)" +
+                    "})()");
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     @Override
