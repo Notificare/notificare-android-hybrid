@@ -1,6 +1,7 @@
 package re.notifica.hybrid;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,14 +27,37 @@ public class OnboardingFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate( R.layout.fragment_onboarding, container, false);
+
         Typeface regularFont = Typeface.createFromAsset(getContext().getAssets(), "fonts/Lato-Regular.ttf");
+
         String title = getArguments().getString("title");
         String file = getArguments().getString("file");
+        String buttonLabel = getArguments().getString("buttonLabel");
+        final String buttonAction = getArguments().getString("buttonAction");
+        final int pos = getArguments().getInt("pos");
+
         TextView titleText = (TextView) rootView.findViewById(R.id.assetText);
         titleText.setTypeface(regularFont);
-        new DownloadImageTask((ImageView) rootView.findViewById(R.id.assetImage))
-                .execute(file);
         titleText.setText(title);
+
+        Button button = (Button) rootView.findViewById(R.id.assetButton);
+        button.setTypeface(regularFont);
+        button.setText(buttonLabel);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                ((OnboardingActivity) getActivity()).goToFragment(pos + 1);
+
+                if (buttonAction.equals("goToApp")) {
+                    ((OnboardingActivity) getActivity()).tryRequestLocationPermission();
+                }
+
+            }
+        });
+
+        new DownloadImageTask((ImageView) rootView.findViewById(R.id.assetImage)).execute(file);
 
         return rootView;
     }
