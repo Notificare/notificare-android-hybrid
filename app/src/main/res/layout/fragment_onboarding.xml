@@ -3,20 +3,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <ImageView
-        android:id="@+id/assetImage"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:scaleType="fitCenter"
-        android:src="@drawable/logo" />
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
 
-    <!--<TextView style="?android:textAppearanceMedium"-->
-        <!--android:id="@+id/assetText"-->
-        <!--android:padding="16dp"-->
-        <!--android:lineSpacingMultiplier="1.2"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:textAlignment="center"-->
-        <!--android:text="@string/onboarding" />-->
+        <ImageView
+            android:id="@+id/assetImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:src="@drawable/logo"
+            android:adjustViewBounds="true" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true" >
+
+            <TextView
+                android:id="@+id/assetText"
+                android:textSize="20dp"
+                android:textColor="@color/colorAccent"
+                android:lineSpacingMultiplier="1.2"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:textAlignment="center"
+                android:layout_marginBottom="120dp" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
 </ScrollView>

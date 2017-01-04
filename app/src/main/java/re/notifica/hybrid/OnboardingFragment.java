@@ -3,6 +3,7 @@ package re.notifica.hybrid;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -24,16 +25,15 @@ public class OnboardingFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate( R.layout.fragment_onboarding, container, false);
+        Typeface regularFont = Typeface.createFromAsset(getContext().getAssets(), "fonts/Lato-Regular.ttf");
         String title = getArguments().getString("title");
         String file = getArguments().getString("file");
-        Uri myFile = Uri.parse(file);
-        //TextView titleText = (TextView) rootView.findViewById(R.id.assetText);
+        TextView titleText = (TextView) rootView.findViewById(R.id.assetText);
+        titleText.setTypeface(regularFont);
         new DownloadImageTask((ImageView) rootView.findViewById(R.id.assetImage))
                 .execute(file);
+        titleText.setText(title);
 
-        //ImageView imageView = (ImageView) rootView.findViewById(R.id.assetImage);
-        //titleText.setText(title);
-        //imageView.setImageURI(myFile);
         return rootView;
     }
 
