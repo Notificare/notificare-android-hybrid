@@ -9,7 +9,9 @@ import java.util.List;
 import re.notifica.Notificare;
 import re.notifica.NotificareCallback;
 import re.notifica.NotificareError;
+import re.notifica.model.NotificareInboxItem;
 import re.notifica.model.NotificareNotification;
+import re.notifica.model.NotificareTimeOfDayRange;
 import re.notifica.push.gcm.DefaultIntentReceiver;
 
 
@@ -17,6 +19,19 @@ public class AppReceiver extends DefaultIntentReceiver {
 
     public static final String PREFS_NAME = "AppPrefsFile";
     private static final String TAG = AppReceiver.class.getSimpleName();
+
+    @Override
+    public void onNotificationReceived(String alert, String notificationId, final String inboxItemId, Bundle extras) {
+        boolean canShowNotification = false;
+
+        if (AppBaseApplication.getNotificationsEnabled()) {
+            canShowNotification = true;
+        }
+
+        if (canShowNotification) {
+            super.onNotificationReceived(alert, notificationId, inboxItemId, extras);
+        }
+    }
 
     @Override
     public void onNotificationOpenRegistered(NotificareNotification notification, Boolean handled) {

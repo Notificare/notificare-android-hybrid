@@ -100,7 +100,6 @@ public class SettingsActivity extends ActionBarBaseActivity {
         List<Object> items = new ArrayList<>();
         items.add(new Section(getString(R.string.settings_section_title_general)));
         items.add(new Setting(SettingsAdapter.TYPE_NOTIFICATIONS));
-        items.add(new Setting(SettingsAdapter.TYPE_LOCATION));
 
         if (AppBaseApplication.getNotificationsEnabled()) {
             items.add(mSettingDnd);
@@ -110,6 +109,8 @@ public class SettingsActivity extends ActionBarBaseActivity {
                 items.add(mSettingDndEnd);
             }
         }
+
+        items.add(new Setting(SettingsAdapter.TYPE_LOCATION));
 
         items.add(new Section(getString(R.string.settings_section_title_others)));
         items.add(new Setting(SettingsAdapter.TYPE_FEEDBACK));
