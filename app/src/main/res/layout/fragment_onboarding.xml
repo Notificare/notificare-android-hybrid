@@ -3,10 +3,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <TextView style="?android:textAppearanceMedium"
-        android:padding="16dp"
-        android:lineSpacingMultiplier="1.2"
+    <ImageView
+        android:id="@+id/assetImage"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/onboarding" />
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:scaleType="fitCenter"
+        android:src="@drawable/logo" />
+
+    <!--<TextView style="?android:textAppearanceMedium"-->
+        <!--android:id="@+id/assetText"-->
+        <!--android:padding="16dp"-->
+        <!--android:lineSpacingMultiplier="1.2"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:textAlignment="center"-->
+        <!--android:text="@string/onboarding" />-->
 </ScrollView>

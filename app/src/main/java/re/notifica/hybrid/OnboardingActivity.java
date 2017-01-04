@@ -7,16 +7,24 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
+
+import java.util.List;
+
+import re.notifica.Notificare;
+import re.notifica.NotificareCallback;
+import re.notifica.NotificareError;
+import re.notifica.model.NotificareAsset;
 
 /**
  * Created by joel on 04/01/2017.
  */
 
 public class OnboardingActivity extends FragmentActivity {
-    /**
-     * The number of pages (wizard steps) to show in this demo.
-     */
-    private static final int NUM_PAGES = 5;
+
+    protected static final String TAG = OnboardingActivity.class.getSimpleName();
+
+    public List<NotificareAsset> assets;
 
     /**
      * The pager widget, which handles animation and allows swiping horizontally to access previous
@@ -35,9 +43,23 @@ public class OnboardingActivity extends FragmentActivity {
         setContentView(R.layout.activity_onboarding);
 
         // Instantiate a ViewPager and a PagerAdapter.
-        mPager = (ViewPager) findViewById(R.id.pager);
-        mPagerAdapter = new OnboardingPagerAdapter(getSupportFragmentManager());
-        mPager.setAdapter(mPagerAdapter);
+
+        Notificare.shared().fetchAssets("ONBOARDING", new NotificareCallback<List<NotificareAsset>>() {
+            @Override
+            public void onSuccess(List<NotificareAsset> notificareAssets) {
+
+                assets = notificareAssets;
+
+                mPager = (ViewPager) findViewById(R.id.pager);
+                mPagerAdapter = new OnboardingPagerAdapter(getSupportFragmentManager());
+                mPager.setAdapter(mPagerAdapter);
+            }
+
+            @Override
+            public void onError(NotificareError notificareError) {
+
+            }
+        });
     }
 
     @Override
@@ -63,12 +85,21 @@ public class OnboardingActivity extends FragmentActivity {
 
         @Override
         public Fragment getItem(int position) {
-            return new OnboardingFragment();
+            OnboardingFragment frag = new OnboardingFragment();
+            NotificareAsset asset = assets.get(position);
+            Bundle bundle = new Bundle();
+            bundle.putString("title", asset.getTitle());
+            bundle.putString("description", asset.getDescription());
+            bundle.putString("buttonLabel", asset.getButtonLabel());
+            bundle.putString("buttonAction", asset.getButtonAction());
+            bundle.putString("file", asset.getUrl().toString());
+            frag.setArguments(bundle);
+            return frag;
         }
 
         @Override
         public int getCount() {
-            return NUM_PAGES;
+            return assets.size();
         }
     }
 }
