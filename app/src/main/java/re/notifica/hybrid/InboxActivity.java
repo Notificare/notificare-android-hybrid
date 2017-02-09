@@ -20,6 +20,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Date;
 
+import me.leolin.shortcutbadger.ShortcutBadger;
 import re.notifica.Notificare;
 import re.notifica.NotificareCallback;
 import re.notifica.NotificareError;
@@ -124,6 +125,8 @@ public class InboxActivity extends ActionBarBaseActivity implements Notificare.O
                     @Override
                     public void onSuccess(Boolean aBoolean) {
                         Log.d(TAG, "Inbox cleared");
+                        int badgeCount = Notificare.shared().getInboxManager().getUnreadCount();
+                        ShortcutBadger.applyCount(getApplicationContext(), badgeCount);
                     }
 
                     @Override
@@ -240,6 +243,8 @@ public class InboxActivity extends ActionBarBaseActivity implements Notificare.O
                             @Override
                             public void onSuccess(Boolean aBoolean) {
                                 Log.d(TAG, "Removed inboxItem");
+                                int badgeCount = Notificare.shared().getInboxManager().getUnreadCount();
+                                ShortcutBadger.applyCount(getApplicationContext(), badgeCount);
                             }
 
                             @Override

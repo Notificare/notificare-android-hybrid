@@ -21,6 +21,8 @@ public class AppBaseApplication extends Application {
     private static final String PREF_KEY_LOCATION_ENABLED = "location_enabled";
     private static final String PREF_KEY_DND_ENABLED = "dnd_enabled";
     private static final String PREF_KEY_DND_RANGE = "dnd_range";
+    private static final String PREF_KEY_CONFIG = "config";
+    private static final String PREF_KEY_CUSTOMJS = "customJS";
 
     @Override
     public void onCreate() {
@@ -145,6 +147,30 @@ public class AppBaseApplication extends Application {
 
         editor.remove(PREF_KEY_DND_ENABLED);
         editor.remove(PREF_KEY_DND_RANGE);
+        editor.apply();
+    }
+
+    public static String getConfigJSONString() {
+        SharedPreferences sharedPreferences = getAppContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        return sharedPreferences.getString(PREF_KEY_CONFIG, "");
+    }
+
+    public static void setConfigJSONString(String config) {
+        SharedPreferences sharedPreferences = getAppContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(PREF_KEY_CONFIG, config);
+        editor.apply();
+    }
+
+    public static String getCustomJSString() {
+        SharedPreferences sharedPreferences = getAppContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        return sharedPreferences.getString(PREF_KEY_CUSTOMJS, "");
+    }
+
+    public static void setCustomJSString(String customJS) {
+        SharedPreferences sharedPreferences = getAppContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(PREF_KEY_CUSTOMJS, customJS);
         editor.apply();
     }
 }

@@ -15,14 +15,28 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.google.gson.JsonObject;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
+import me.leolin.shortcutbadger.ShortcutBadger;
 import re.notifica.Notificare;
+import re.notifica.NotificareCallback;
+import re.notifica.NotificareError;
 import re.notifica.beacon.BeaconRangingListener;
 import re.notifica.model.NotificareApplicationInfo;
+import re.notifica.model.NotificareAsset;
 import re.notifica.model.NotificareBeacon;
+import re.notifica.model.NotificareProduct;
 
 public class MainActivity extends AppCompatActivity implements Notificare.OnNotificareReadyListener, BeaconRangingListener {
 
@@ -70,6 +84,12 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
 
     @Override
     public void onNotificareReady(NotificareApplicationInfo notificareApplicationInfo) {
+
+        if (AppBaseApplication.getNotificationsEnabled()) {
+            int badgeCount = Notificare.shared().getInboxManager().getUnreadCount();
+            ShortcutBadger.applyCount(this.getApplicationContext(), badgeCount);
+        }
+
         if (!Notificare.shared().hasLocationPermissionGranted()) {
             Log.i(TAG, "permission not granted");
             if (Notificare.shared().didRequestLocationPermission()) {
@@ -88,6 +108,13 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
                 }
             } else {
                 Notificare.shared().requestLocationPermission(this, LOCATION_PERMISSION_REQUEST_CODE);
+            }
+        } else {
+            Log.i(TAG, "permission granted");
+            Notificare.shared().enableLocationUpdates();
+            AppBaseApplication.setLocationEnabled(true);
+            if (BuildConfig.ENABLE_BEACONS) {
+                Notificare.shared().enableBeacons(60000);
             }
         }
     }
@@ -112,4 +139,5 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
     public void onRangingBeacons(List<NotificareBeacon> list) {
 
     }
+
 }

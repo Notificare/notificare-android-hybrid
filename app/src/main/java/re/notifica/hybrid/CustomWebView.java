@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 
+import re.notifica.action.App;
 import re.notifica.ui.UserPreferencesActivity;
 
 /**
@@ -46,7 +47,7 @@ public class CustomWebView extends WebViewClient {
         if (dialog != null) {
             dialog.dismiss();
         }
-        injectScriptFile(view, "customScripts.js");
+        injectScriptFile(view, AppBaseApplication.getCustomJSString());
     }
 
     @SuppressWarnings("deprecation")
@@ -111,25 +112,13 @@ public class CustomWebView extends WebViewClient {
     }
 
     private void injectScriptFile(WebView view, String scriptFile) {
-        InputStream input;
-        try {
-            input = mActivityRef.get().getAssets().open(scriptFile);
-            byte[] buffer = new byte[input.available()];
-            input.read(buffer);
-            input.close();
-
-            String encoded = Base64.encodeToString(buffer, Base64.NO_WRAP);
-            view.loadUrl("javascript:(function() {" +
-                    "var parent = document.getElementsByTagName('head').item(0);" +
-                    "var script = document.createElement('script');" +
-                    "script.type = 'text/javascript';" +
-                    // Tell the browser to BASE64-decode the string into your script !!!
-                    "script.innerHTML = window.atob('" + encoded + "');" +
-                    "parent.appendChild(script)" +
-                    "})()");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        view.loadUrl("javascript:(function() {" +
+                "var parent = document.getElementsByTagName('head').item(0);" +
+                "var script = document.createElement('script');" +
+                "script.type = 'text/javascript';" +
+                "script.innerHTML = " + scriptFile + "" +
+                "parent.appendChild(script)" +
+                "})()");
     }
 
     private Intent newEmailIntent(Context context, String address, String subject, String body, String cc) {

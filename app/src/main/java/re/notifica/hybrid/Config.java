@@ -6,6 +6,7 @@ package re.notifica.hybrid;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -28,17 +29,17 @@ public class Config {
 
 
     public String getProperty(String property) {
-        JsonObject result = toJsonObject(assetJSONFile("config.json", mContext));
+        JsonObject result = toJsonObject(AppBaseApplication.getConfigJSONString());
         return result.get(property).getAsString();
     }
 
     public JsonArray getArray(String property) {
-        JsonObject result = toJsonObject(assetJSONFile("config.json", mContext));
+        JsonObject result = toJsonObject(AppBaseApplication.getConfigJSONString());
         return result.get(property).getAsJsonArray();
     }
 
     public JsonObject getObject(String property) {
-        JsonObject result = toJsonObject(assetJSONFile("config.json", mContext));
+        JsonObject result = toJsonObject(AppBaseApplication.getConfigJSONString());
         return result.get(property).getAsJsonObject();
     }
 

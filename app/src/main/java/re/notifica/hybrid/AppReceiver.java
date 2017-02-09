@@ -2,10 +2,12 @@ package re.notifica.hybrid;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 
 import java.util.List;
 
+import me.leolin.shortcutbadger.ShortcutBadger;
 import re.notifica.Notificare;
 import re.notifica.NotificareCallback;
 import re.notifica.NotificareError;
@@ -26,6 +28,13 @@ public class AppReceiver extends DefaultIntentReceiver {
 
         if (AppBaseApplication.getNotificationsEnabled()) {
             canShowNotification = true;
+            Handler handler = new android.os.Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    int badgeCount = Notificare.shared().getInboxManager().getUnreadCount();
+                    ShortcutBadger.applyCount(Notificare.shared().getApplicationContext(), badgeCount);
+                }
+            }, 1000);
         }
 
         if (canShowNotification) {
@@ -35,6 +44,8 @@ public class AppReceiver extends DefaultIntentReceiver {
 
     @Override
     public void onNotificationOpenRegistered(NotificareNotification notification, Boolean handled) {
+        int badgeCount = Notificare.shared().getInboxManager().getUnreadCount();
+        ShortcutBadger.applyCount(Notificare.shared().getApplicationContext(), badgeCount);
         Log.d(TAG, "Notification with type " + notification.getType() + " was opened, handled by SDK: " + handled);
     }
 
