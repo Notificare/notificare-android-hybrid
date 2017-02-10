@@ -148,16 +148,33 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
         if (tag.equals("inbox")) {
 
             getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.fragment_enter,
+                            R.anim.fragment_exit,
+                            R.anim.fragment_pop_enter,
+                            R.anim.fragment_pop_exit)
                     .replace(R.id.content_frame, new InboxFragment())
-                    // Add this transaction to the back stack
+                    .addToBackStack(tag)
+                    .commit();
+
+        } else if (tag.equals("settings")) {
+
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.fragment_enter,
+                            R.anim.fragment_exit,
+                            R.anim.fragment_pop_enter,
+                            R.anim.fragment_pop_exit)
+                    .replace(R.id.content_frame, new SettingsFragment())
                     .addToBackStack(tag)
                     .commit();
 
         } else {
 
             getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.fragment_enter,
+                            R.anim.fragment_exit,
+                            R.anim.fragment_pop_enter,
+                            R.anim.fragment_pop_exit)
                     .replace(R.id.content_frame, new MainFragment())
-                    // Add this transaction to the back stack
                     .addToBackStack(tag)
                     .commit();
         }

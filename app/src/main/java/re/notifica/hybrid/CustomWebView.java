@@ -92,11 +92,9 @@ public class CustomWebView extends WebViewClient {
 
                     activity.manageFragments("inbox");
 
-                    //activity.startActivity(new Intent(activity, InboxActivity.class));
-
                 } else if (uri.getPath().equals("/settings")) {
 
-                    activity.startActivity(new Intent(activity, SettingsActivity.class));
+                    activity.manageFragments("settings");
 
                 }
                 return true;

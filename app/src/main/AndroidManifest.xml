@@ -28,12 +28,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!--<activity android:name=".MainActivity">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
-        <!--</activity>-->
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation"
@@ -43,16 +37,6 @@
             android:name=".OnboardingActivity"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/title_inbox"
-            android:screenOrientation="portrait"></activity>
-        <activity
-            android:name=".InboxActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:label="@string/title_inbox"
-            android:screenOrientation="portrait"></activity>
-        <activity
-            android:name=".SettingsActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:label="@string/title_settings"
             android:screenOrientation="portrait"></activity>
         <activity
             android:name="re.notifica.ui.NotificationActivity"

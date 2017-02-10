@@ -1,8 +1,5 @@
 package re.notifica.hybrid;
 
-/**
- * Created by joel on 03/01/2017.
- */
 
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
@@ -10,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -32,31 +30,43 @@ import re.notifica.NotificareError;
 import re.notifica.model.NotificareTimeOfDay;
 import re.notifica.model.NotificareTimeOfDayRange;
 import re.notifica.support.recyclerview.decorators.ConditionalDividerItemDecoration;
-import re.notifica.support.v7.app.ActionBarBaseActivity;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SettingsActivity extends ActionBarBaseActivity {
+public class SettingsFragment extends Fragment {
+
 
     private SettingsAdapter mAdapter;
     private Setting mSettingDnd;
     private Setting mSettingDndStart;
     private Setting mSettingDndEnd;
 
+    public SettingsFragment() {
+        // Required empty public constructor
+    }
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
 
-        setContentView(R.layout.activity_settings);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.list);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.title_settings);
+        View rootView = inflater.inflate(R.layout.fragment_settings, container, false);
+
+
+        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.list);
+
+        mAdapter = new SettingsAdapter(getActivity());
+        recyclerView.setAdapter(mAdapter);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         configListDecorations(recyclerView);
 
-        mAdapter = new SettingsAdapter(this);
-        recyclerView.setAdapter(mAdapter);
 
 
         mSettingDnd = new Setting(SettingsAdapter.TYPE_DND);
@@ -83,11 +93,12 @@ public class SettingsActivity extends ActionBarBaseActivity {
         } else {
             loadData();
         }
-
+        // Inflate the layout for this fragment
+        return rootView;
     }
 
     private void configListDecorations(RecyclerView recyclerView) {
-        ConditionalDividerItemDecoration conditionalDivider = new ConditionalDividerItemDecoration(this, null, false, false);
+        ConditionalDividerItemDecoration conditionalDivider = new ConditionalDividerItemDecoration(getActivity(), null, false, false);
         conditionalDivider.addViewTypeConfiguration(new ConditionalDividerItemDecoration.ViewTypeConfiguration(SettingsAdapter.SectionViewHolder.class));
         conditionalDivider.addViewTypeConfiguration(new ConditionalDividerItemDecoration.ViewTypeConfiguration(SettingsAdapter.NotificationsViewHolder.class, true, 0, 0));
         conditionalDivider.addViewTypeConfiguration(new ConditionalDividerItemDecoration.ViewTypeConfiguration(SettingsAdapter.DndViewHolder.class, false, 0, 0));
@@ -184,7 +195,7 @@ public class SettingsActivity extends ActionBarBaseActivity {
         public SettingsAdapter(Context context, List<Object> items) {
             mLayoutInflater = LayoutInflater.from(context);
             mData = items == null ? new ArrayList<>() : items;
-            config = new Config(SettingsActivity.this);
+            config = new Config(getActivity());
         }
 
 
@@ -221,22 +232,22 @@ public class SettingsActivity extends ActionBarBaseActivity {
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             if (viewType == TYPE_SECTION) {
                 View view = mLayoutInflater.inflate(R.layout.row_material_subheader_list, parent, false);
-                return new SectionViewHolder(view);
+                return new SettingsFragment.SettingsAdapter.SectionViewHolder(view);
             } else if (viewType == TYPE_NOTIFICATIONS) {
                 View view = mLayoutInflater.inflate(R.layout.row_material_three_lines_switch, parent, false);
-                return new NotificationsViewHolder(view);
+                return new SettingsFragment.SettingsAdapter.NotificationsViewHolder(view);
             } else if (viewType == TYPE_LOCATION) {
                 View view = mLayoutInflater.inflate(R.layout.row_material_three_lines_switch, parent, false);
-                return new NotificationsViewHolder(view);
+                return new SettingsFragment.SettingsAdapter.NotificationsViewHolder(view);
             } else if (viewType == TYPE_FEEDBACK || viewType == TYPE_APP_VERSION) {
                 View view = mLayoutInflater.inflate(R.layout.row_material_two_lines, parent, false);
-                return new SettingViewHolder(view);
+                return new SettingsFragment.SettingsAdapter.SettingViewHolder(view);
             } else if (viewType == TYPE_DND) {
                 View view = mLayoutInflater.inflate(R.layout.row_material_three_lines_switch, parent, false);
-                return new NotificationsViewHolder(view);
+                return new SettingsFragment.SettingsAdapter.NotificationsViewHolder(view);
             } else if (viewType == TYPE_DND_START || viewType == TYPE_DND_END) {
                 View view = mLayoutInflater.inflate(R.layout.row_material_two_lines, parent, false);
-                return new DndViewHolder(view);
+                return new SettingsFragment.SettingsAdapter.DndViewHolder(view);
             }
 
             return null;
@@ -247,13 +258,13 @@ public class SettingsActivity extends ActionBarBaseActivity {
             int viewType = getItemViewType(position);
 
             if (viewType == TYPE_SECTION) {
-                Section section = (Section) mData.get(position);
-                ((SectionViewHolder) holder).name.setText(section.getName());
+                SettingsFragment.Section section = (SettingsFragment.Section) mData.get(position);
+                ((SettingsFragment.SettingsAdapter.SectionViewHolder) holder).name.setText(section.getName());
             } else if (viewType == TYPE_NOTIFICATIONS) {
-                ((NotificationsViewHolder) holder).label.setText(R.string.settings_general_notifications_label);
-                ((NotificationsViewHolder) holder).description.setText(R.string.settings_general_notifications_description);
-                ((NotificationsViewHolder) holder).switchEditor.setChecked(AppBaseApplication.getNotificationsEnabled());
-                ((NotificationsViewHolder) holder).switchEditor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).label.setText(R.string.settings_general_notifications_label);
+                ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).description.setText(R.string.settings_general_notifications_description);
+                ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).switchEditor.setChecked(AppBaseApplication.getNotificationsEnabled());
+                ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).switchEditor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) {
@@ -273,10 +284,10 @@ public class SettingsActivity extends ActionBarBaseActivity {
                     }
                 });
             } else if (viewType == TYPE_LOCATION) {
-                ((NotificationsViewHolder) holder).label.setText(R.string.settings_general_location_label);
-                ((NotificationsViewHolder) holder).description.setText(R.string.settings_general_location_description);
-                ((NotificationsViewHolder) holder).switchEditor.setChecked(AppBaseApplication.getLocationEnabled());
-                ((NotificationsViewHolder) holder).switchEditor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).label.setText(R.string.settings_general_location_label);
+                ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).description.setText(R.string.settings_general_location_description);
+                ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).switchEditor.setChecked(AppBaseApplication.getLocationEnabled());
+                ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).switchEditor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) {
@@ -289,8 +300,8 @@ public class SettingsActivity extends ActionBarBaseActivity {
                     }
                 });
             } else if (viewType == TYPE_FEEDBACK) {
-                ((SettingViewHolder) holder).label.setText(R.string.settings_others_feedback_label);
-                ((SettingViewHolder) holder).description.setText(R.string.settings_others_feedback_description);
+                ((SettingsFragment.SettingsAdapter.SettingViewHolder) holder).label.setText(R.string.settings_others_feedback_label);
+                ((SettingsFragment.SettingsAdapter.SettingViewHolder) holder).description.setText(R.string.settings_others_feedback_description);
                 holder.itemView.setClickable(true);
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -304,21 +315,21 @@ public class SettingsActivity extends ActionBarBaseActivity {
                     }
                 });
             } else if (viewType == TYPE_APP_VERSION) {
-                ((SettingViewHolder) holder).label.setText(R.string.settings_others_app_version_label);
-                ((SettingViewHolder) holder).description.setText(BuildConfig.VERSION_NAME);
+                ((SettingsFragment.SettingsAdapter.SettingViewHolder) holder).label.setText(R.string.settings_others_app_version_label);
+                ((SettingsFragment.SettingsAdapter.SettingViewHolder) holder).description.setText(BuildConfig.VERSION_NAME);
                 holder.itemView.setClickable(false);
             } else if (viewType == TYPE_DND) {
-                ((NotificationsViewHolder) holder).label.setText(R.string.settings_general_dnd_label);
-                ((NotificationsViewHolder) holder).description.setText(R.string.settings_general_dnd_description);
-                ((NotificationsViewHolder) holder).switchEditor.setChecked(AppBaseApplication.getDndEnabled());
-                ((NotificationsViewHolder) holder).switchEditor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).label.setText(R.string.settings_general_dnd_label);
+                ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).description.setText(R.string.settings_general_dnd_description);
+                ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).switchEditor.setChecked(AppBaseApplication.getDndEnabled());
+                ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).switchEditor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) {
                             AppBaseApplication.setDndEnabled(true);
                             addAll(3, Arrays.asList(mSettingDndStart, mSettingDndEnd));
                         } else {
-                            final ProgressDialog progressDialog = ProgressDialog.show(SettingsActivity.this, getString(R.string.app_name), getString(R.string.settings_general_dnd_updating_message), true, false);
+                            final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), getString(R.string.app_name), getString(R.string.settings_general_dnd_updating_message), true, false);
                             Notificare.shared().clearDoNotDisturb(new NotificareCallback<Boolean>() {
                                 @Override
                                 public void onSuccess(Boolean aBoolean) {
@@ -338,9 +349,9 @@ public class SettingsActivity extends ActionBarBaseActivity {
                     }
                 });
             } else if (viewType == TYPE_DND_START) {
-                NotificareTimeOfDay timeOfDay = (NotificareTimeOfDay) ((Setting) mData.get(position)).getData();
-                ((DndViewHolder) holder).label.setText(R.string.settings_general_dnd_start_label);
-                ((DndViewHolder) holder).description.setText(timeOfDay == null ? null : String.format(Locale.getDefault(), "%02d:%02d", timeOfDay.getHour(), timeOfDay.getMinute()));
+                NotificareTimeOfDay timeOfDay = (NotificareTimeOfDay) ((SettingsFragment.Setting) mData.get(position)).getData();
+                ((SettingsFragment.SettingsAdapter.DndViewHolder) holder).label.setText(R.string.settings_general_dnd_start_label);
+                ((SettingsFragment.SettingsAdapter.DndViewHolder) holder).description.setText(timeOfDay == null ? null : String.format(Locale.getDefault(), "%02d:%02d", timeOfDay.getHour(), timeOfDay.getMinute()));
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -355,7 +366,7 @@ public class SettingsActivity extends ActionBarBaseActivity {
                                 notifyItemRangeChanged(3, 2);
 
                                 if (mSettingDndStart.getData() != null && mSettingDndEnd.getData() != null) {
-                                    final ProgressDialog progressDialog = ProgressDialog.show(SettingsActivity.this, getString(R.string.app_name), getString(R.string.settings_general_dnd_updating_message), true, false);
+                                    final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), getString(R.string.app_name), getString(R.string.settings_general_dnd_updating_message), true, false);
                                     Notificare.shared().updateDoNotDisturb(
                                             new NotificareTimeOfDayRange(
                                                     (NotificareTimeOfDay) mSettingDndStart.getData(),
@@ -377,23 +388,23 @@ public class SettingsActivity extends ActionBarBaseActivity {
                             }
                         };
 
-                        TimePickerDialog timePickerDialog = new TimePickerDialog(SettingsActivity.this, listener, hour, minute, true);
+                        TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), listener, hour, minute, true);
                         timePickerDialog.show();
 
                     }
                 });
             } else if (viewType == TYPE_DND_END) {
-                NotificareTimeOfDay timeOfDay = (NotificareTimeOfDay) ((Setting) mData.get(position)).getData();
-                ((DndViewHolder) holder).label.setText(R.string.settings_general_dnd_end_label);
+                NotificareTimeOfDay timeOfDay = (NotificareTimeOfDay) ((SettingsFragment.Setting) mData.get(position)).getData();
+                ((SettingsFragment.SettingsAdapter.DndViewHolder) holder).label.setText(R.string.settings_general_dnd_end_label);
                 if (timeOfDay != null) {
                     boolean isNextDay = TimeOfDayUtils.endsInNextDay((NotificareTimeOfDay) mSettingDndStart.getData(), timeOfDay);
                     if (!isNextDay) {
-                        ((DndViewHolder) holder).description.setText(String.format(Locale.getDefault(), "%02d:%02d", timeOfDay.getHour(), timeOfDay.getMinute()));
+                        ((SettingsFragment.SettingsAdapter.DndViewHolder) holder).description.setText(String.format(Locale.getDefault(), "%02d:%02d", timeOfDay.getHour(), timeOfDay.getMinute()));
                     } else {
-                        ((DndViewHolder) holder).description.setText(String.format(Locale.getDefault(), "%02d:%02d %s", timeOfDay.getHour(), timeOfDay.getMinute(), getString(R.string.settings_general_dnd_next_day_label)));
+                        ((SettingsFragment.SettingsAdapter.DndViewHolder) holder).description.setText(String.format(Locale.getDefault(), "%02d:%02d %s", timeOfDay.getHour(), timeOfDay.getMinute(), getString(R.string.settings_general_dnd_next_day_label)));
                     }
                 } else {
-                    ((DndViewHolder) holder).description.setText(null);
+                    ((SettingsFragment.SettingsAdapter.DndViewHolder) holder).description.setText(null);
                 }
 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -410,7 +421,7 @@ public class SettingsActivity extends ActionBarBaseActivity {
                                 notifyItemChanged(4);
 
                                 if (mSettingDndStart.getData() != null && mSettingDndEnd.getData() != null) {
-                                    final ProgressDialog progressDialog = ProgressDialog.show(SettingsActivity.this, getString(R.string.app_name), getString(R.string.settings_general_dnd_updating_message), true, false);
+                                    final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), getString(R.string.app_name), getString(R.string.settings_general_dnd_updating_message), true, false);
                                     Notificare.shared().updateDoNotDisturb(
                                             new NotificareTimeOfDayRange(
                                                     (NotificareTimeOfDay) mSettingDndStart.getData(),
@@ -432,7 +443,7 @@ public class SettingsActivity extends ActionBarBaseActivity {
                             }
                         };
 
-                        TimePickerDialog timePickerDialog = new TimePickerDialog(SettingsActivity.this, listener, hour, minute, true);
+                        TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), listener, hour, minute, true);
                         timePickerDialog.show();
 
                     }
@@ -448,10 +459,10 @@ public class SettingsActivity extends ActionBarBaseActivity {
         @Override
         public int getItemViewType(int position) {
             Object data = mData.get(position);
-            if (data instanceof Section) {
+            if (data instanceof SettingsFragment.Section) {
                 return TYPE_SECTION;
             } else {
-                return ((Setting) data).getType();
+                return ((SettingsFragment.Setting) data).getType();
             }
         }
 
