@@ -29,14 +29,14 @@ import re.notifica.ui.UserPreferencesActivity;
 
 public class CustomWebView extends WebViewClient {
 
-    private final WeakReference<Activity> mActivityRef;
+    private final WeakReference<MainActivity> mActivityRef;
     protected static final String TAG = CustomWebView.class.getSimpleName();
     protected  ProgressDialog dialog;
     protected  Boolean isLoading;
     protected Config config;
 
-    public CustomWebView(Activity activity) {
-        mActivityRef = new WeakReference<Activity>(activity);
+    public CustomWebView(MainActivity activity) {
+        mActivityRef = new WeakReference<MainActivity>(activity);
         config = new Config(mActivityRef.get());
     }
 
@@ -73,7 +73,7 @@ public class CustomWebView extends WebViewClient {
         final Uri configHost = Uri.parse(config.getProperty("url"));
 
         if (uri.getScheme().startsWith("mailto:")) {
-            final Activity activity = mActivityRef.get();
+            final MainActivity activity = mActivityRef.get();
             if (activity != null) {
                 MailTo mt = MailTo.parse(uri.getHost());
                 Intent i = newEmailIntent(activity.getApplicationContext(), mt.getTo(), mt.getSubject(), mt.getBody(), mt.getCc());
@@ -86,11 +86,13 @@ public class CustomWebView extends WebViewClient {
             if (dialog != null) {
                 dialog.dismiss();
             }
-            final Activity activity = mActivityRef.get();
+            final MainActivity activity = mActivityRef.get();
             if (activity != null) {
                 if (uri.getPath().equals("/inbox")) {
 
-                    activity.startActivity(new Intent(activity, InboxActivity.class));
+                    activity.manageFragments("inbox");
+
+                    //activity.startActivity(new Intent(activity, InboxActivity.class));
 
                 } else if (uri.getPath().equals("/settings")) {
 
@@ -101,7 +103,7 @@ public class CustomWebView extends WebViewClient {
             }
         } else if (! uri.getHost().equals(configHost.getHost()) && ! isLoading) {
 
-            final Activity activity = mActivityRef.get();
+            final MainActivity activity = mActivityRef.get();
             final Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             activity.startActivity(intent);
             return true;

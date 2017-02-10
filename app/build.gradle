@@ -51,13 +51,15 @@ dependencies {
     compile 're.notifica:notificare-push-lib-android:1.9.2'
     compile 're.notifica:notificare-support-lib-android:1.1.1'
     compile 'org.altbeacon:android-beacon-library:2.9.1'
-    compile 'com.android.support:appcompat-v7:25.0.1'
+    compile 'com.android.support:appcompat-v7:25.1.1'
     compile 'com.google.firebase:firebase-messaging:10.0.1'
-    compile 'com.android.support:support-v4:25.0.1'
+    compile 'com.android.support:support-v4:25.1.1'
     compile 'com.koushikdutta.ion:ion:2.+'
-    compile "me.leolin:ShortcutBadger:1.1.10@aar"
+    compile 'me.leolin:ShortcutBadger:1.1.10@aar'
     testCompile 'junit:junit:4.12'
 }
+
+
 
 
 

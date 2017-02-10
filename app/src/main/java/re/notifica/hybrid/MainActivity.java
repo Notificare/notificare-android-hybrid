@@ -3,10 +3,12 @@ package re.notifica.hybrid;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.MenuItem;
 import android.webkit.ValueCallback;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -38,31 +40,22 @@ import re.notifica.model.NotificareAsset;
 import re.notifica.model.NotificareBeacon;
 import re.notifica.model.NotificareProduct;
 
-public class MainActivity extends AppCompatActivity implements Notificare.OnNotificareReadyListener, BeaconRangingListener {
+public class MainActivity extends AppCompatActivity implements Notificare.OnNotificareReadyListener, BeaconRangingListener, InboxFragment.OnFragmentInteractionListener {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     protected static final String TAG = MainActivity.class.getSimpleName();
     private AlertDialog.Builder builder;
-    protected Config config;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        config = new Config(this);
-
-        WebView webView =  (WebView) findViewById(R.id.webView);
-        WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webView.loadUrl(config.getProperty("url"));
-        webView.setWebViewClient(new CustomWebView(this) {
-
-        });
+        manageFragments("main");
 
         Notificare.shared().addNotificareReadyListener(this);
 
-        getSupportActionBar().hide();
     }
 
     @Override
@@ -140,4 +133,38 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
 
     }
 
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        if (menuItem.getItemId() == android.R.id.home) {
+
+            getSupportFragmentManager().popBackStack();
+        }
+        return super.onOptionsItemSelected(menuItem);
+    }
+
+    public void manageFragments(String tag){
+
+        if (tag.equals("inbox")) {
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.content_frame, new InboxFragment())
+                    // Add this transaction to the back stack
+                    .addToBackStack(tag)
+                    .commit();
+
+        } else {
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.content_frame, new MainFragment())
+                    // Add this transaction to the back stack
+                    .addToBackStack(tag)
+                    .commit();
+        }
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        Log.i(TAG, uri.toString());
+    }
 }
