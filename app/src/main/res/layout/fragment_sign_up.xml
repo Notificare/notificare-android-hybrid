@@ -2,12 +2,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="re.notifica.hybrid.SignInFragment">
+    tools:context="re.notifica.hybrid.SignUpFragment">
 
     <ScrollView android:id="@+id/ScrlView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="@color/colorWhite">
+
         <LinearLayout
             android:id="@+id/layoutForScroll"
             android:orientation="vertical"
@@ -15,47 +16,53 @@
             android:layout_height="fill_parent"
             android:background="@color/colorWhite" >
 
+
             <EditText
-                android:id="@+id/email"
+                android:id="@+id/nameField"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="60dp"
-                android:inputType="textEmailAddress"
-                android:hint="@string/hint_email"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginBottom="20dp">
+                android:layout_marginBottom="20dp"
+                android:hint="@string/hint_name" >
             </EditText>
 
             <EditText
-                android:id="@+id/pass"
+                android:id="@+id/emailField"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
+                android:layout_marginBottom="20dp"
+                android:inputType="textEmailAddress"
+                android:hint="@string/hint_email" >
+            </EditText>
+
+            <EditText
+                android:id="@+id/passField"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="20dp"
                 android:inputType="textPassword"
                 android:hint="@string/hint_pass" >
             </EditText>
 
-
-            <Button
-                android:id="@+id/buttonLostPass"
+            <EditText
+                android:id="@+id/confirmPassField"
                 android:layout_width="fill_parent"
-                android:layout_height="32dp"
-                android:textColor="@color/colorPrimary"
-                android:background="@color/colorWhite"
-                android:layout_marginTop="7dp"
-                android:layout_marginBottom="10dp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:stateListAnimator="@null"
-                android:text="@string/button_forgot_pass"
-                android:textSize="16sp"
-                android:textAlignment="viewEnd"
-                android:gravity="bottom|end" />
+                android:layout_marginBottom="20dp"
+                android:inputType="textPassword"
+                android:hint="@string/hint_confirm_pass" >
+            </EditText>
 
             <Button
-                android:id="@+id/buttonSignin"
+                android:id="@+id/buttonSignup"
                 android:layout_width="fill_parent"
                 android:layout_height="60dp"
                 android:textColor="#FFFFFF"
@@ -64,23 +71,9 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginBottom="20dp"
-                android:text="@string/button_sign_in"
-                android:textSize="20sp"
-                />
-
-            <Button
-                android:id="@+id/buttonSignup"
-                android:layout_width="fill_parent"
-                android:layout_height="60dp"
-                android:textColor="#FFFFFF"
-                android:background="@color/colorPrimary"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginBottom="20dp"
                 android:text="@string/button_sign_up"
-                android:textSize="20sp"
-                android:layout_gravity="bottom" />
-
+                android:textSize="20dp"
+                />
 
         </LinearLayout>
     </ScrollView>

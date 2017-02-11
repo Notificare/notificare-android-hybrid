@@ -6,7 +6,9 @@
     <string name="onboarding">text for onboarding</string>
 
     <string name="title_signin">Sign In</string>
+    <string name="title_signup">Create Account</string>
     <string name="title_profile">Profile</string>
+    <string name="title_lostpass">Forgot Password?</string>
 
     <string name="title_settings">Settings</string>
     <string name="settings_section_title_general">Notification Settings</string>

@@ -190,6 +190,28 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
                     .addToBackStack(tag)
                     .commit();
 
+        } else if (tag.equals("/signup")) {
+
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.fragment_enter,
+                            R.anim.fragment_exit,
+                            R.anim.fragment_pop_enter,
+                            R.anim.fragment_pop_exit)
+                    .replace(R.id.content_frame, new SignUpFragment())
+                    .addToBackStack(tag)
+                    .commit();
+
+        } else if (tag.equals("/lostpass")) {
+
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.fragment_enter,
+                            R.anim.fragment_exit,
+                            R.anim.fragment_pop_enter,
+                            R.anim.fragment_pop_exit)
+                    .replace(R.id.content_frame, new LostPassFragment())
+                    .addToBackStack(tag)
+                    .commit();
+
         } else if (tag.equals("/profile")) {
 
             if (Notificare.shared().isLoggedIn()) {
@@ -217,12 +239,7 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
         } else {
 
             getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.fragment_enter,
-                            R.anim.fragment_exit,
-                            R.anim.fragment_pop_enter,
-                            R.anim.fragment_pop_exit)
                     .replace(R.id.content_frame, new MainFragment())
-                    .addToBackStack(tag)
                     .commit();
         }
     }
@@ -231,62 +248,5 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
     public void onFragmentInteraction(Uri uri) {
         Log.i(TAG, uri.toString());
     }
-//
-//    @Override
-//    public void onMapReady(GoogleMap googleMap) {
-//        map = googleMap;
-//        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
-//        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-//        googleMap.getUiSettings().setCompassEnabled(true);
-//        googleMap.getUiSettings().setRotateGesturesEnabled(true);
-//        googleMap.getUiSettings().setScrollGesturesEnabled(true);
-//        googleMap.getUiSettings().setTiltGesturesEnabled(true);
-//        googleMap.getUiSettings().setZoomGesturesEnabled(true);
-//        googleMap.getUiSettings().setZoomControlsEnabled(true);
-//    }
-//
-//    public void loadLocations(){
-//
-//        // Updates the location and zoom of the MapView
-//        //float zoom = map.getCameraPosition().zoom;
-//        //map.moveCamera(CameraUpdateFactory.newLatLngZoom(, zoom));
-//
-//        Log.i("HERERERERE", "BLA");
-//        circlesList = new ArrayList<Circle>();
-//
-//        Notificare.shared().doCloudRequest("GET", "region", null, null, new NotificareCallback<JSONObject>() {
-//            @Override
-//            public void onSuccess(JSONObject jsonObject) {
-//
-//                JSONArray regions = null;
-//                try {
-//                    regions = jsonObject.getJSONArray("regions");
-//                    for (int i = 0; i < regions.length(); i++) {
-//
-//                        JSONObject region = (JSONObject)regions.get(i);
-//                        Circle circle;
-//                        circle = map.addCircle(new CircleOptions()
-//                                .center(new LatLng((double)region.getJSONObject("geometry").getJSONArray("coordinates").get(1), (double)region.getJSONObject("geometry").getJSONArray("coordinates").get(0)))
-//                                .radius(region.getDouble("distance"))
-//                                .fillColor(R.color.colorPrimary)
-//                                .strokeColor(0)
-//                                .strokeWidth(0));
-//
-//                        circlesList.add(circle);
-//                    }
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//
-//
-//
-//
-//            }
-//
-//            @Override
-//            public void onError(NotificareError notificareError) {
-//
-//            }
-//        });
-//    }
+
 }

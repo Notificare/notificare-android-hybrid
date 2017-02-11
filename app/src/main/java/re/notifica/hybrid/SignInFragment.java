@@ -57,6 +57,22 @@ public class SignInFragment extends Fragment {
         signUpButton.setTypeface(lightFont);
         lostPassButton.setTypeface(lightFont);
 
+        rootView.findViewById(R.id.buttonSignup).setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                ((MainActivity)getActivity()).manageFragments("/signup");
+            }
+        });
+
+        rootView.findViewById(R.id.buttonLostPass).setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                ((MainActivity)getActivity()).manageFragments("/lostpass");
+            }
+        });
+
         rootView.findViewById(R.id.buttonSignin).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -152,7 +168,8 @@ public class SignInFragment extends Fragment {
 
                                 @Override
                                 public void onSuccess(NotificareUser user) {
-                                    //@TODO: Open the profile fragment
+
+                                    ((MainActivity)getActivity()).manageFragments("/profile");
                                     emailField.setText(null);
                                     passwordField.setText(null);
                                     dialog.dismiss();
