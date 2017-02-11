@@ -17,9 +17,19 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,6 +37,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -45,7 +56,8 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     protected static final String TAG = MainActivity.class.getSimpleName();
     private AlertDialog.Builder builder;
-
+    public List<Circle> circlesList;
+    public GoogleMap map;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
         manageFragments("main");
 
         Notificare.shared().addNotificareReadyListener(this);
-
+        getSupportActionBar().setShowHideAnimationEnabled(false);
     }
 
     @Override
@@ -167,6 +179,23 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
                     .addToBackStack(tag)
                     .commit();
 
+        } else if (tag.equals("regions")) {
+
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.fragment_enter,
+                            R.anim.fragment_exit,
+                            R.anim.fragment_pop_enter,
+                            R.anim.fragment_pop_exit)
+                    .replace(R.id.content_frame, new RegionsFragment())
+                    .addToBackStack(tag)
+                    .commit();
+
+//            getSupportActionBar().show();
+//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//            getSupportActionBar().setShowHideAnimationEnabled(false);
+//            getSupportActionBar().setTitle(R.string.title_regions);
+
+
         } else {
 
             getSupportFragmentManager().beginTransaction()
@@ -184,4 +213,62 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
     public void onFragmentInteraction(Uri uri) {
         Log.i(TAG, uri.toString());
     }
+//
+//    @Override
+//    public void onMapReady(GoogleMap googleMap) {
+//        map = googleMap;
+//        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+//        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+//        googleMap.getUiSettings().setCompassEnabled(true);
+//        googleMap.getUiSettings().setRotateGesturesEnabled(true);
+//        googleMap.getUiSettings().setScrollGesturesEnabled(true);
+//        googleMap.getUiSettings().setTiltGesturesEnabled(true);
+//        googleMap.getUiSettings().setZoomGesturesEnabled(true);
+//        googleMap.getUiSettings().setZoomControlsEnabled(true);
+//    }
+//
+//    public void loadLocations(){
+//
+//        // Updates the location and zoom of the MapView
+//        //float zoom = map.getCameraPosition().zoom;
+//        //map.moveCamera(CameraUpdateFactory.newLatLngZoom(, zoom));
+//
+//        Log.i("HERERERERE", "BLA");
+//        circlesList = new ArrayList<Circle>();
+//
+//        Notificare.shared().doCloudRequest("GET", "region", null, null, new NotificareCallback<JSONObject>() {
+//            @Override
+//            public void onSuccess(JSONObject jsonObject) {
+//
+//                JSONArray regions = null;
+//                try {
+//                    regions = jsonObject.getJSONArray("regions");
+//                    for (int i = 0; i < regions.length(); i++) {
+//
+//                        JSONObject region = (JSONObject)regions.get(i);
+//                        Circle circle;
+//                        circle = map.addCircle(new CircleOptions()
+//                                .center(new LatLng((double)region.getJSONObject("geometry").getJSONArray("coordinates").get(1), (double)region.getJSONObject("geometry").getJSONArray("coordinates").get(0)))
+//                                .radius(region.getDouble("distance"))
+//                                .fillColor(R.color.colorPrimary)
+//                                .strokeColor(0)
+//                                .strokeWidth(0));
+//
+//                        circlesList.add(circle);
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//
+//
+//
+//
+//            }
+//
+//            @Override
+//            public void onError(NotificareError notificareError) {
+//
+//            }
+//        });
+//    }
 }

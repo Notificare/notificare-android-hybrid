@@ -65,17 +65,6 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="re.notifica.ui.UserPreferencesActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:label="@string/title_settings"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="re.notifica.intent.action.OpenUserPreferences" />
-
-                <category android:name="re.notifica.hybrid" />
-            </intent-filter>
-        </activity>
 
         <service
             android:name="re.notifica.push.fcm.PushService"
@@ -121,7 +110,7 @@
         <!-- API key for Google Maps -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyASd9psfiY0OWOjrjmalerIT6tQ9F_pyaQ" />
+            android:value="AIzaSyCdpGKp0md3zVCvTaXwS0mHN6Nny25Nc-s" />
         <meta-data
             android:name="re.notifica.metadata.UrlSchemes"
             android:resource="@array/url_schemes" />

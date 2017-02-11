@@ -28,6 +28,7 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setShowHideAnimationEnabled(false);
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         config = new Config(getActivity());

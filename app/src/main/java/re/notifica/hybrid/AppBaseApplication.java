@@ -31,7 +31,7 @@ public class AppBaseApplication extends Application {
         //Notificare.shared().setUseLegacyGCM();
         Notificare.shared().launch(this);
         Notificare.shared().setIntentReceiver(AppReceiver.class);
-        Notificare.shared().setUserPreferencesResource(R.xml.preferences);
+        //Notificare.shared().setUserPreferencesResource(R.xml.preferences);
         Notificare.shared().setSmallIcon(R.drawable.ic_stat_notify_msg);
         Notificare.shared().setAllowJavaScript(true);
         Notificare.shared().setAllowOrientationChange(false);

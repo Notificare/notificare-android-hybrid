@@ -96,6 +96,10 @@ public class CustomWebView extends WebViewClient {
 
                     activity.manageFragments("settings");
 
+                } else if (uri.getPath().equals("/regions")) {
+
+                    activity.manageFragments("regions");
+
                 }
                 return true;
             }

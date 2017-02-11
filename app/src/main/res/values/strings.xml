@@ -33,6 +33,6 @@
     <string name="your_subject">Write a subject</string>
     <string name="your_message">Write a message</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_regions">Stores &amp; Venues</string>
+
 </resources>
