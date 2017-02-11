@@ -88,19 +88,7 @@ public class CustomWebView extends WebViewClient {
             }
             final MainActivity activity = mActivityRef.get();
             if (activity != null) {
-                if (uri.getPath().equals("/inbox")) {
-
-                    activity.manageFragments("inbox");
-
-                } else if (uri.getPath().equals("/settings")) {
-
-                    activity.manageFragments("settings");
-
-                } else if (uri.getPath().equals("/regions")) {
-
-                    activity.manageFragments("regions");
-
-                }
+                activity.manageFragments(uri.getPath());
                 return true;
             }
         } else if (! uri.getHost().equals(configHost.getHost()) && ! isLoading) {

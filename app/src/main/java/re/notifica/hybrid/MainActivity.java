@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
 
     public void manageFragments(String tag){
 
-        if (tag.equals("inbox")) {
+        if (tag.equals("/inbox")) {
 
             getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.fragment_enter,
@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
                     .addToBackStack(tag)
                     .commit();
 
-        } else if (tag.equals("settings")) {
+        } else if (tag.equals("/settings")) {
 
             getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.fragment_enter,
@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
                     .addToBackStack(tag)
                     .commit();
 
-        } else if (tag.equals("regions")) {
+        } else if (tag.equals("/regions")) {
 
             getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.fragment_enter,
@@ -190,11 +190,29 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
                     .addToBackStack(tag)
                     .commit();
 
-//            getSupportActionBar().show();
-//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//            getSupportActionBar().setShowHideAnimationEnabled(false);
-//            getSupportActionBar().setTitle(R.string.title_regions);
+        } else if (tag.equals("/profile")) {
 
+            if (Notificare.shared().isLoggedIn()) {
+
+                getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.fragment_enter,
+                                R.anim.fragment_exit,
+                                R.anim.fragment_pop_enter,
+                                R.anim.fragment_pop_exit)
+                        .replace(R.id.content_frame, new ProfileFragment())
+                        .addToBackStack(tag)
+                        .commit();
+            } else {
+
+                getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.fragment_enter,
+                                R.anim.fragment_exit,
+                                R.anim.fragment_pop_enter,
+                                R.anim.fragment_pop_exit)
+                        .replace(R.id.content_frame, new SignInFragment())
+                        .addToBackStack(tag)
+                        .commit();
+            }
 
         } else {
 
