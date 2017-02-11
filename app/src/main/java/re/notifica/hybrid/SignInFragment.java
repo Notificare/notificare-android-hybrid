@@ -85,7 +85,7 @@ public class SignInFragment extends Fragment {
 
 
                 if (TextUtils.isEmpty(email) && TextUtils.isEmpty(password)) {
-                    //info.setText(R.string.error_sign_in);
+
                     builder.setMessage(R.string.error_sign_in)
                             .setTitle(R.string.app_name)
                             .setCancelable(false)
@@ -96,8 +96,9 @@ public class SignInFragment extends Fragment {
                             });
                     AlertDialog dialogInfo = builder.create();
                     dialogInfo.show();
-                } else if (password.length() < 6) {
-                    //info.setText(R.string.error_pass_too_short);
+
+                } else if (password.length() < 5) {
+
                     builder.setMessage(R.string.error_pass_too_short)
                             .setTitle(R.string.app_name)
                             .setCancelable(false)
@@ -108,6 +109,7 @@ public class SignInFragment extends Fragment {
                             });
                     AlertDialog dialogInfo = builder.create();
                     dialogInfo.show();
+
                 } else if (!email.contains("@")) {
                     builder.setMessage(R.string.error_invalid_email)
                             .setTitle(R.string.app_name)
@@ -119,7 +121,7 @@ public class SignInFragment extends Fragment {
                             });
                     AlertDialog dialogInfo = builder.create();
                     dialogInfo.show();
-                    //info.setText(R.string.error_invalid_email);
+
                 } else {
 
                     final ProgressDialog dialog = ProgressDialog.show(getActivity(), "", getString(R.string.loader), true);
@@ -169,10 +171,12 @@ public class SignInFragment extends Fragment {
                                 @Override
                                 public void onSuccess(NotificareUser user) {
 
-                                    ((MainActivity)getActivity()).manageFragments("/profile");
                                     emailField.setText(null);
                                     passwordField.setText(null);
                                     dialog.dismiss();
+
+                                    ((MainActivity)getActivity()).manageFragments("/profile");
+
                                 }
 
                             });
