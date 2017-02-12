@@ -7,18 +7,27 @@
     <ScrollView android:id="@+id/ScrlView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="@color/colorWhite">
+        android:background="@color/colorBackground">
         <LinearLayout
             android:id="@+id/layoutForScroll"
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background="@color/colorWhite" >
+            android:background="@color/colorBackground" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="200dp"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter"
+                android:src="@drawable/key"
+                android:layout_marginTop="20dp"/>
 
             <EditText
                 android:id="@+id/emailField"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginBottom="20dp"

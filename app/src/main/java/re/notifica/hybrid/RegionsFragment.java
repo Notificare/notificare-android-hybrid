@@ -52,6 +52,7 @@ public class RegionsFragment extends Fragment implements OnMapReadyCallback {
     public List<Circle> circlesList;
     public List<Polygon> polygonsList;
     public List<Marker> markersList;
+    public Marker userLocation;
 
     public RegionsFragment() {
         // Required empty public constructor
@@ -123,9 +124,13 @@ public class RegionsFragment extends Fragment implements OnMapReadyCallback {
         double lat = Notificare.shared().getCurrentLocation().getLatitude();
         double lon = Notificare.shared().getCurrentLocation().getLongitude();
 
+        userLocation = map.addMarker(new MarkerOptions()
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("user_location",64,64)))
+                .position(new LatLng(lat, lon))
+                .title("My Location"));
+
         // Updates the location and zoom of the MapView
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 15));
-
 
         circlesList = new ArrayList<Circle>();
         polygonsList = new ArrayList<Polygon>();
@@ -199,7 +204,7 @@ public class RegionsFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
-        map.getUiSettings().setMyLocationButtonEnabled(true);
+        map.getUiSettings().setMyLocationButtonEnabled(false);
         map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         map.getUiSettings().setCompassEnabled(true);
         map.getUiSettings().setRotateGesturesEnabled(true);

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 
+import re.notifica.Notificare;
 import re.notifica.action.App;
 import re.notifica.ui.UserPreferencesActivity;
 
@@ -31,7 +32,6 @@ public class CustomWebView extends WebViewClient {
 
     private final WeakReference<MainActivity> mActivityRef;
     protected static final String TAG = CustomWebView.class.getSimpleName();
-    protected  ProgressDialog dialog;
     protected  Boolean isLoading;
     protected Config config;
 
@@ -44,9 +44,6 @@ public class CustomWebView extends WebViewClient {
     @Override
     public void onPageFinished(WebView view, final String url) {
         isLoading = false;
-        if (dialog != null) {
-            dialog.dismiss();
-        }
         injectScriptFile(view, AppBaseApplication.getCustomJSString());
     }
 
@@ -54,7 +51,6 @@ public class CustomWebView extends WebViewClient {
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
         isLoading = true;
-        dialog = ProgressDialog.show(mActivityRef.get(), "", mActivityRef.get().getString(R.string.loader), true);
         final Uri uri = Uri.parse(url);
         return handleUri(view, uri);
     }
@@ -63,7 +59,6 @@ public class CustomWebView extends WebViewClient {
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
         isLoading = true;
-        dialog = ProgressDialog.show(mActivityRef.get(), "", mActivityRef.get().getString(R.string.loader), true);
         final Uri uri = request.getUrl();
         return handleUri(view, uri);
     }
@@ -83,9 +78,7 @@ public class CustomWebView extends WebViewClient {
             }
         } else if (uri.getScheme().startsWith(config.getProperty("urlScheme"))) {
             isLoading = false;
-            if (dialog != null) {
-                dialog.dismiss();
-            }
+
             final MainActivity activity = mActivityRef.get();
             if (activity != null) {
                 activity.manageFragments(uri.getPath());
@@ -104,11 +97,19 @@ public class CustomWebView extends WebViewClient {
     }
 
     private void injectScriptFile(WebView view, String scriptFile) {
+
+        String badge = "";
+        if (Notificare.shared().getInboxManager().getUnreadCount() > 0) {
+            int b = Notificare.shared().getInboxManager().getUnreadCount();
+            badge = Integer.toString(b);
+        }
+        String js = scriptFile.replace("%@", badge);
+
         view.loadUrl("javascript:(function() {" +
                 "var parent = document.getElementsByTagName('head').item(0);" +
                 "var script = document.createElement('script');" +
                 "script.type = 'text/javascript';" +
-                "script.innerHTML = " + scriptFile + "" +
+                "script.innerHTML = " + js + "" +
                 "parent.appendChild(script)" +
                 "})()");
     }

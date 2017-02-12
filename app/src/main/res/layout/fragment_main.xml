@@ -2,11 +2,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="re.notifica.hybrid.MainFragment">
+    tools:context="re.notifica.hybrid.MainFragment"
+    android:background="@color/colorBackground">
 
     <WebView
         android:id="@+id/webView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity = "center_vertical|center_horizontal"
+        />
 
 </FrameLayout>
