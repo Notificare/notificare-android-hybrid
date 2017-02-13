@@ -22,7 +22,8 @@ public class AppBaseApplication extends Application {
     private static final String PREF_KEY_DND_ENABLED = "dnd_enabled";
     private static final String PREF_KEY_DND_RANGE = "dnd_range";
     private static final String PREF_KEY_CONFIG = "config";
-    private static final String PREF_KEY_CUSTOMJS = "customJS";
+    private static final String PREF_KEY_CUSTOMJS = "custom_js";
+    private static final String PREF_KEY_MEMBERCARD_SERIAL = "member_card_serial";
 
     @Override
     public void onCreate() {
@@ -171,6 +172,18 @@ public class AppBaseApplication extends Application {
         SharedPreferences sharedPreferences = getAppContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(PREF_KEY_CUSTOMJS, customJS);
+        editor.apply();
+    }
+
+    public static String getMemberCardSerial() {
+        SharedPreferences sharedPreferences = getAppContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        return sharedPreferences.getString(PREF_KEY_MEMBERCARD_SERIAL, "");
+    }
+
+    public static void setMemberCardSerial(String serial) {
+        SharedPreferences sharedPreferences = getAppContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(PREF_KEY_MEMBERCARD_SERIAL, serial);
         editor.apply();
     }
 }

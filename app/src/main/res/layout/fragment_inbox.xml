@@ -18,8 +18,7 @@
         android:id="@+id/empty_message"
         android:layout_width="wrap_content"
         android:layout_height="30dip"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
         android:text="@string/title_empty_inbox"
         android:textSize="12sp" />
 

@@ -61,7 +61,7 @@ public class ResetPassActivity extends AppCompatActivity {
         }
 
         if (token == null) {
-            Toast.makeText(this, "No token provided", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.error_reset_pass_token), Toast.LENGTH_LONG).show();
             finish();
         }
 
@@ -88,8 +88,8 @@ public class ResetPassActivity extends AppCompatActivity {
                             //do things
                         }
                     });
-            AlertDialog dialogInfo = builder.create();
-            dialogInfo.show();
+            builder.create();
+            builder.show();
 
         } else if (!password.equals(confirmPassword)) {
 
@@ -102,8 +102,8 @@ public class ResetPassActivity extends AppCompatActivity {
                             confirmPasswordField.setText("");
                         }
                     });
-            AlertDialog dialogInfo = builder.create();
-            dialogInfo.show();
+            builder.create();
+            builder.show();
 
         } else if (password.length() < 5) {
 
@@ -117,8 +117,8 @@ public class ResetPassActivity extends AppCompatActivity {
                             passwordField.setText("");
                         }
                     });
-            AlertDialog dialogInfo = builder.create();
-            dialogInfo.show();
+            builder.create();
+            builder.show();
 
         }else {
 
@@ -128,8 +128,8 @@ public class ResetPassActivity extends AppCompatActivity {
 
                 @Override
                 public void onError(NotificareError arg0) {
-                    dialog.dismiss();
 
+                    dialog.dismiss();
                     builder.setMessage(arg0.getMessage())
                             .setTitle(R.string.app_name)
                             .setCancelable(false)
@@ -139,14 +139,14 @@ public class ResetPassActivity extends AppCompatActivity {
                                     passwordField.setText("");
                                 }
                             });
-                    AlertDialog dialogInfo = builder.create();
-                    dialogInfo.show();
+                    builder.create();
+                    builder.show();
                 }
 
                 @Override
                 public void onSuccess(Boolean arg0) {
-                    dialog.dismiss();
 
+                    dialog.dismiss();
                     builder.setMessage(R.string.success_reset_pass)
                             .setTitle(R.string.app_name)
                             .setCancelable(false)
@@ -155,8 +155,8 @@ public class ResetPassActivity extends AppCompatActivity {
                                     finish();
                                 }
                             });
-                    AlertDialog dialogInfo = builder.create();
-                    dialogInfo.show();
+                    builder.create();
+                    builder.show();
                 }
 
             });

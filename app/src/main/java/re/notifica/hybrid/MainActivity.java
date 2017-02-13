@@ -1,63 +1,27 @@
 package re.notifica.hybrid;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Base64;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
-import android.webkit.ValueCallback;
-import android.webkit.WebResourceError;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.widget.EditText;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.gson.JsonObject;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 import re.notifica.Notificare;
-import re.notifica.NotificareCallback;
-import re.notifica.NotificareError;
 import re.notifica.beacon.BeaconRangingListener;
 import re.notifica.model.NotificareApplicationInfo;
-import re.notifica.model.NotificareAsset;
 import re.notifica.model.NotificareBeacon;
-import re.notifica.model.NotificareProduct;
 
 public class MainActivity extends AppCompatActivity implements Notificare.OnNotificareReadyListener, BeaconRangingListener, InboxFragment.OnFragmentInteractionListener {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     protected static final String TAG = MainActivity.class.getSimpleName();
     private AlertDialog.Builder builder;
-    public List<Circle> circlesList;
-    public GoogleMap map;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +29,8 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
         setContentView(R.layout.activity_main);
 
         manageFragments("main");
+
+        builder = new AlertDialog.Builder(this);
 
         Notificare.shared().addNotificareReadyListener(this);
         getSupportActionBar().setShowHideAnimationEnabled(false);
@@ -235,6 +201,62 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
                         .addToBackStack(tag)
                         .commit();
             }
+
+        } else if (tag.equals("/analytics")) {
+
+            final EditText input = new EditText(this);
+            input.setHint(R.string.hint_event_name);
+
+            builder.setMessage(R.string.analytics_text)
+                    .setTitle(R.string.app_name)
+                    .setCancelable(false)
+                    .setView(input)
+                    .setCancelable(true)
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                        }
+                    })
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+
+                            Notificare.shared().getEventLogger().logCustomEvent(input.getText().toString());
+
+                        }
+                    });
+            builder.create();
+            builder.show();
+
+
+        } else if (tag.equals("/membercard")) {
+
+            if (AppBaseApplication.getMemberCardSerial().isEmpty()) {
+
+                getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.fragment_enter,
+                                R.anim.fragment_exit,
+                                R.anim.fragment_pop_enter,
+                                R.anim.fragment_pop_exit)
+                        .replace(R.id.content_frame, new SignInFragment())
+                        .addToBackStack(tag)
+                        .commit();
+
+            } else {
+
+                Notificare.shared().getPassbookManager().open(AppBaseApplication.getMemberCardSerial());
+
+            }
+
+        } else if (tag.equals("/storage")) {
+
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.fragment_enter,
+                            R.anim.fragment_exit,
+                            R.anim.fragment_pop_enter,
+                            R.anim.fragment_pop_exit)
+                    .replace(R.id.content_frame, new StorageFragment())
+                    .addToBackStack(tag)
+                    .commit();
 
         } else {
 

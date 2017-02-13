@@ -46,6 +46,7 @@ public class ValidateActivity extends AppCompatActivity {
                         }
                     });
             builder.create();
+            builder.show();
 
         } else {
             Notificare.shared().validateUser(token, new NotificareCallback<Boolean>(){
@@ -61,6 +62,7 @@ public class ValidateActivity extends AppCompatActivity {
                                 }
                             });
                    builder.create();
+                   builder.show();
                 }
 
                 @Override
@@ -75,6 +77,7 @@ public class ValidateActivity extends AppCompatActivity {
                                 }
                             });
                     builder.create();
+                    builder.show();
                 }
             });
         }

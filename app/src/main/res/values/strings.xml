@@ -11,6 +11,7 @@
     <string name="title_lostpass">Forgot Password?</string>
     <string name="title_validate">Validate Account</string>
     <string name="title_resetpass">Recover Password</string>
+    <string name="title_storage">Storage</string>
 
     <string name="title_settings">Settings</string>
     <string name="settings_section_title_general">Notification Settings</string>
@@ -46,6 +47,9 @@
     <string name="hint_pass">password</string>
     <string name="hint_name">name</string>
     <string name="hint_confirm_pass">confirm password</string>
+    <string name="hint_event_name">Type an event name</string>
+    <string name="hint_search_assets">Type an asset group name</string>
+
 
     <string name="button_sign_in">sign in</string>
     <string name="button_sign_up">create an account</string>
@@ -71,8 +75,13 @@
     <string name="success_generate_token">New token generated successfully.</string>
     <string name="success_change_password">Password changed successfully.</string>
 
+    <string name="error_reset_pass_token">Unknown reset password token</string>
+
     <string name="error_validate_token">Unknown validate token</string>
     <string name="validating_account">Validating account please wait...</string>
     <string name="success_validate_account">Account validated successfully</string>
 
+    <string name="analytics_text">Create a custom event by typing an event name</string>
+    <string name="title_empty_assets">No assets found</string>
+    <string name="title_search_assets">Search asset groups</string>
 </resources>

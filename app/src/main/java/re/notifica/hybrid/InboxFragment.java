@@ -42,9 +42,14 @@ import re.notifica.util.Log;
  * create an instance of this fragment.
  */
 public class InboxFragment extends Fragment implements Notificare.OnNotificationReceivedListener {
+
+    private static final String TAG = InboxFragment.class.getSimpleName();
+
     private ListView listView;
     private ArrayList<Integer> itemsToRemove;
     protected ArrayAdapter<NotificareInboxItem> inboxListAdapter;
+    private ActionMode mActionMode;
+    private Menu mOptionsMenu;
 
     private Typeface lightFont;
     private Typeface regularFont;
@@ -116,6 +121,13 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
                     view.findViewById(R.id.inbox_delete).setVisibility(View.VISIBLE);
                 }
 
+                if (mActionMode != null) {
+                    return true;
+                }
+
+                // Start the CAB using the ActionMode.Callback defined above
+                mActionMode = getActivity().startActionMode(mActionModeCallback);
+
                 view.setSelected(true);
                 return true;
             }
@@ -136,7 +148,39 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
     }
 
 
-    // TODO: Rename method, update argument and hook method into UI event
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        mOptionsMenu = menu;
+        inflater.inflate(R.menu.inbox, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action buttons
+        switch(item.getItemId()) {
+            case R.id.action_clear:
+                inboxListAdapter.clear();
+                if (Notificare.shared().getInboxManager() != null) {
+                    Notificare.shared().getInboxManager().clearInbox();
+                }
+                Notificare.shared().clearInbox(new NotificareCallback<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean aBoolean) {
+                        Log.d(TAG, "Inbox cleared");
+                    }
+
+                    @Override
+                    public void onError(NotificareError notificareError) {
+                        Log.e(TAG, "Failed to clear inbox: " + notificareError.getMessage());
+                    }
+                });
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -165,7 +209,12 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
 
     @Override
     public void onNotificationReceived(NotificareNotification notificareNotification) {
-
+        inboxListAdapter.clear();
+        if (Notificare.shared().getInboxManager() != null) {
+            for (NotificareInboxItem item : Notificare.shared().getInboxManager().getItems()) {
+                inboxListAdapter.add(item);
+            }
+        }
     }
 
     /**
