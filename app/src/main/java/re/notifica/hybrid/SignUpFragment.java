@@ -81,8 +81,8 @@ public class SignUpFragment extends Fragment {
      */
     public void doSignUp() {
 
-        String name = nameField.getText().toString();
-        String email = emailField.getText().toString();
+        final String name = nameField.getText().toString();
+        final String email = emailField.getText().toString();
         String password = passwordField.getText().toString();
         String confirmPassword = confirmPasswordField.getText().toString();
 
@@ -158,8 +158,8 @@ public class SignUpFragment extends Fragment {
                                     emailField.setText("");
                                 }
                             });
-                    AlertDialog dialogInfo = builder.create();
-                    dialogInfo.show();
+                    builder.create();
+                    builder.show();
 
                 }
 
@@ -174,7 +174,10 @@ public class SignUpFragment extends Fragment {
                                     getFragmentManager().popBackStack();
                                 }
                             });
-                    AlertDialog dialogInfo = builder.create();
+                    builder.create();
+                    builder.show();
+
+                    ((MainActivity)getActivity()).createMemberCard(name, email);
                 }
 
             });

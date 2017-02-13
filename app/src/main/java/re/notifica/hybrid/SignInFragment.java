@@ -19,6 +19,7 @@ import android.widget.EditText;
 import re.notifica.Notificare;
 import re.notifica.NotificareCallback;
 import re.notifica.NotificareError;
+import re.notifica.action.App;
 import re.notifica.model.NotificareUser;
 
 
@@ -56,6 +57,10 @@ public class SignInFragment extends Fragment {
         signInButton.setTypeface(lightFont);
         signUpButton.setTypeface(lightFont);
         lostPassButton.setTypeface(lightFont);
+
+        if (Notificare.shared().isLoggedIn()) {
+            getFragmentManager().popBackStack();
+        }
 
         rootView.findViewById(R.id.buttonSignup).setOnClickListener(new View.OnClickListener(){
 
@@ -173,9 +178,37 @@ public class SignInFragment extends Fragment {
 
                                     emailField.setText(null);
                                     passwordField.setText(null);
-                                    dialog.dismiss();
 
-                                    ((MainActivity)getActivity()).manageFragments("/profile");
+
+                                    if (user.getAccessToken().isEmpty()) {
+
+                                        Notificare.shared().generateAccessToken(new NotificareCallback<NotificareUser>() {
+                                            @Override
+                                            public void onSuccess(NotificareUser notificareUser) {
+                                                finishSignIn(notificareUser);
+                                                dialog.dismiss();
+                                            }
+
+                                            @Override
+                                            public void onError(NotificareError notificareError) {
+                                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                                builder.setMessage(R.string.error_sign_in)
+                                                        .setTitle(R.string.app_name)
+                                                        .setCancelable(false)
+                                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                            public void onClick(DialogInterface dialog, int id) {
+                                                                //do things
+                                                            }
+                                                        });
+                                                AlertDialog dialogInfo = builder.create();
+                                                dialogInfo.show();
+                                            }
+                                        });
+
+                                    } else {
+                                        finishSignIn(user);
+                                        dialog.dismiss();
+                                    }
 
                                 }
 
@@ -189,5 +222,13 @@ public class SignInFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    public void finishSignIn(NotificareUser user){
+        ((MainActivity)getActivity()).manageFragments("/profile");
+
+        if (AppBaseApplication.getMemberCardSerial().isEmpty()) {
+            ((MainActivity)getActivity()).createMemberCard(user.getUserName(), user.getUserId());
+        }
     }
 }

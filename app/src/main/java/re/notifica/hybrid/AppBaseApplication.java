@@ -24,6 +24,7 @@ public class AppBaseApplication extends Application {
     private static final String PREF_KEY_CONFIG = "config";
     private static final String PREF_KEY_CUSTOMJS = "custom_js";
     private static final String PREF_KEY_MEMBERCARD_SERIAL = "member_card_serial";
+    private static final String PREF_KEY_MEMBERCARD_TEMPLATE = "member_card_template";
 
     @Override
     public void onCreate() {
@@ -184,6 +185,18 @@ public class AppBaseApplication extends Application {
         SharedPreferences sharedPreferences = getAppContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(PREF_KEY_MEMBERCARD_SERIAL, serial);
+        editor.apply();
+    }
+
+    public static String getMemberCardTemplate() {
+        SharedPreferences sharedPreferences = getAppContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        return sharedPreferences.getString(PREF_KEY_MEMBERCARD_TEMPLATE, "");
+    }
+
+    public static void setMemberCardTemplate(String template) {
+        SharedPreferences sharedPreferences = getAppContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(PREF_KEY_MEMBERCARD_TEMPLATE, template);
         editor.apply();
     }
 }

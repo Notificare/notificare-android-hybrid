@@ -9,10 +9,18 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.EditText;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 import re.notifica.Notificare;
+import re.notifica.NotificareCallback;
+import re.notifica.NotificareError;
 import re.notifica.beacon.BeaconRangingListener;
 import re.notifica.model.NotificareApplicationInfo;
 import re.notifica.model.NotificareBeacon;
@@ -34,12 +42,12 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
 
         Notificare.shared().addNotificareReadyListener(this);
         getSupportActionBar().setShowHideAnimationEnabled(false);
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
     }
 
     @Override
@@ -230,6 +238,8 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
 
         } else if (tag.equals("/membercard")) {
 
+            Log.i("SERIAL",AppBaseApplication.getMemberCardSerial());
+
             if (AppBaseApplication.getMemberCardSerial().isEmpty()) {
 
                 getSupportFragmentManager().beginTransaction()
@@ -266,5 +276,83 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
         }
     }
 
+    public void createMemberCard(String name, String email){
+
+        JSONObject payload = null;
+        JSONArray primaryFields = null;
+        JSONArray secondaryFields = null;
+        try {
+            payload = new JSONObject(AppBaseApplication.getMemberCardTemplate());
+            payload.put("passbook", payload.getString("_id"));
+
+            String url = "http://gravatar.com/avatar/" + md5(email.trim().toLowerCase()) + "?s=512";
+            payload.getJSONObject("data").put("thumbnail", url);
+
+            primaryFields = payload.getJSONObject("data").getJSONArray("primaryFields");
+
+            for (int i = 0; i < primaryFields.length(); i++) {
+                JSONObject field = (JSONObject) primaryFields.get(i);
+                if (field.getString("key").equals("name")) {
+                    field.put("value", name);
+                }
+            }
+
+            secondaryFields = payload.getJSONObject("data").getJSONArray("secondaryFields");
+            for (int i = 0; i < secondaryFields.length(); i++) {
+                JSONObject field = (JSONObject) secondaryFields.get(i);
+                if (field.getString("key").equals("email")) {
+                    field.put("value", email);
+                }
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        Notificare.shared().doCloudRequest("POST", "/api/pass", null, payload, new NotificareCallback<JSONObject>() {
+            @Override
+            public void onSuccess(JSONObject jsonObject) {
+
+                String serial = null;
+                try {
+                    serial = jsonObject.getJSONObject("pass").getString("serial");
+                    AppBaseApplication.setMemberCardSerial(serial);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(NotificareError notificareError) {
+                Log.i("PASS", notificareError.getMessage());
+            }
+        });
+    }
+
+    public static final String md5(final String s) {
+        final String MD5 = "MD5";
+        try {
+            // Create MD5 Hash
+            MessageDigest digest = java.security.MessageDigest
+                    .getInstance(MD5);
+            digest.update(s.getBytes());
+            byte messageDigest[] = digest.digest();
+
+            // Create Hex String
+            StringBuilder hexString = new StringBuilder();
+            for (byte aMessageDigest : messageDigest) {
+                String h = Integer.toHexString(0xFF & aMessageDigest);
+                while (h.length() < 2)
+                    h = "0" + h;
+                hexString.append(h);
+            }
+            return hexString.toString();
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
 
 }

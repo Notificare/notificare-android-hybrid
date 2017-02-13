@@ -14,6 +14,10 @@ import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
@@ -105,7 +109,7 @@ public class SplashActivity extends AppCompatActivity implements Notificare.OnNo
 
                                             if (e == null) {
                                                 AppBaseApplication.setCustomJSString(result.toString());
-                                                continueToApp();
+                                                fetchPassTemplate();
                                             }
                                         }
                                     });
@@ -115,7 +119,7 @@ public class SplashActivity extends AppCompatActivity implements Notificare.OnNo
 
                     @Override
                     public void onError(NotificareError notificareError) {
-
+                        fetchConfig();
                     }
                 });
 
@@ -124,6 +128,40 @@ public class SplashActivity extends AppCompatActivity implements Notificare.OnNo
             @Override
             public void onError(NotificareError notificareError) {
 
+                fetchConfig();
+            }
+        });
+    }
+
+    public void fetchPassTemplate(){
+
+        final Config config = new Config(this);
+        final JsonObject memberCardTemplate = config.getObject("memberCard");
+
+        Notificare.shared().doCloudRequest("GET", "/api/passbook", null, null, new NotificareCallback<JSONObject>() {
+
+            @Override
+            public void onSuccess(JSONObject jsonObject) {
+
+                try {
+                    JSONArray templates = jsonObject.getJSONArray("passbooks");
+
+                    for (int i = 0; i < templates.length(); i++) {
+                        JSONObject template = (JSONObject) templates.get(i);
+                        if (memberCardTemplate.get("templateId").getAsString().equals(template.getString("_id"))) {
+                            AppBaseApplication.setMemberCardTemplate(template.toString());
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                continueToApp();
+            }
+
+            @Override
+            public void onError(NotificareError notificareError) {
+                continueToApp();
             }
         });
     }
