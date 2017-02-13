@@ -17,7 +17,7 @@ import re.notifica.beacon.BeaconRangingListener;
 import re.notifica.model.NotificareApplicationInfo;
 import re.notifica.model.NotificareBeacon;
 
-public class MainActivity extends AppCompatActivity implements Notificare.OnNotificareReadyListener, BeaconRangingListener, InboxFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements Notificare.OnNotificareReadyListener, BeaconRangingListener {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     protected static final String TAG = MainActivity.class.getSimpleName();
@@ -266,9 +266,5 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
         }
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-        Log.i(TAG, uri.toString());
-    }
 
 }

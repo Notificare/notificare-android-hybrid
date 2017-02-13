@@ -27,6 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -51,7 +52,7 @@ public class StorageFragment extends Fragment {
     private MenuItem mSearchMenuItem;
     private SearchView mSearchView;
     private AssetsAdapter mAdapter;
-
+    public TextView emptyView;
     private boolean mHasStoragePermission;
 
     public StorageFragment() {
@@ -76,8 +77,10 @@ public class StorageFragment extends Fragment {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_storage);
 
         View rootView = inflater.inflate(R.layout.fragment_storage, container, false);
-        ListView listView = (ListView) rootView.findViewById(R.id.list);
-        View emptyView = rootView.findViewById(R.id.empty_message);
+
+        GridView listView = (GridView) rootView.findViewById(R.id.gridView);
+        emptyView = (TextView) rootView.findViewById(R.id.emptyMessage);
+        emptyView.setText(getString(R.string.title_intro_assets));
 
         mAdapter = new AssetsAdapter(getActivity());
         listView.setAdapter(mAdapter);
@@ -111,7 +114,6 @@ public class StorageFragment extends Fragment {
                 mSearchView.clearFocus();
                 mSearchMenuItem.collapseActionView();
                 mAdapter.clear();
-
                 Notificare.shared().fetchAssets(query, new NotificareCallback<List<NotificareAsset>>() {
                     @Override
                     public void onSuccess(List<NotificareAsset> notificareAssets) {
@@ -122,12 +124,7 @@ public class StorageFragment extends Fragment {
                     @Override
                     public void onError(NotificareError notificareError) {
                         Log.e(TAG, "Error fetching assets", notificareError);
-                        new AlertDialog.Builder(getActivity())
-                                .setTitle(R.string.app_name)
-                                .setMessage(notificareError.getMessage())
-                                .setCancelable(false)
-                                .setPositiveButton("OK", null)
-                                .show();
+                        emptyView.setText(getString(R.string.title_empty_assets));
                     }
                 });
                 return true;
@@ -135,6 +132,7 @@ public class StorageFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                emptyView.setText(getString(R.string.title_intro_assets));
                 return false;
             }
         });
@@ -175,28 +173,53 @@ public class StorageFragment extends Fragment {
             convertView = mInflater.inflate(R.layout.row_asset, parent, false);
             NotificareAsset notificareAsset = getItem(position);
 
-            AppCompatImageView imageView = (AppCompatImageView) convertView.findViewById(R.id.asset_image);
+            AppCompatImageView imageView = (AppCompatImageView) convertView.findViewById(R.id.assetImage);
             if (notificareAsset.getKey() == null) {
                 imageView.setVisibility(View.GONE);
             } else {
+
+
                 if (notificareAsset.getContentType() != null &&
                         (notificareAsset.getContentType().equals("image/jpeg") ||
                                 notificareAsset.getContentType().equals("image/gif") ||
                                 notificareAsset.getContentType().equals("image/png"))) {
                     Ion.with(imageView)
                             .load("GET", Notificare.shared().getPushApiBaseUrl() + "/asset/file/" + notificareAsset.getKey());
-                } else {
-                    imageView.setBackgroundResource(R.drawable.ic_circle_black);
-                    imageView.setSupportBackgroundTintList(ColorStateList.valueOf(0xF5F5F5));
+                } else if(notificareAsset.getContentType() != null &&
+                        notificareAsset.getContentType().equals("video/mp4")){
 
-                    Drawable drawable = ContextCompat.getDrawable(getActivity(), R.drawable.html);
-                    drawable.setColorFilter(new LightingColorFilter(0x000000, 0x757575));
-                    imageView.setBackgroundDrawable(drawable);
+                    imageView.setImageResource(R.drawable.video);
+
+                } else if(notificareAsset.getContentType() != null &&
+                        notificareAsset.getContentType().equals("application/pdf")){
+
+                    imageView.setImageResource(R.drawable.pdf);
+
+                } else if(notificareAsset.getContentType() != null &&
+                        notificareAsset.getContentType().equals("application/json")){
+
+                    imageView.setImageResource(R.drawable.json);
+
+                } else if(notificareAsset.getContentType() != null &&
+                        notificareAsset.getContentType().equals("text/javascript")){
+
+                    imageView.setImageResource(R.drawable.js);
+
+                } else if(notificareAsset.getContentType() != null &&
+                        notificareAsset.getContentType().equals("text/css")){
+
+                    imageView.setImageResource(R.drawable.css);
+
+                } else if(notificareAsset.getContentType() != null &&
+                        notificareAsset.getContentType().equals("text/html")){
+
+                    imageView.setImageResource(R.drawable.html);
+
                 }
             }
 
-            ((TextView) convertView.findViewById(R.id.asset_title)).setText(notificareAsset.getTitle());
-            ((TextView) convertView.findViewById(R.id.asset_description)).setText(Html.fromHtml(notificareAsset.getDescription()));
+            //((TextView) convertView.findViewById(R.id.asset_title)).setText(notificareAsset.getTitle());
+            //((TextView) convertView.findViewById(R.id.asset_description)).setText(Html.fromHtml(notificareAsset.getDescription()));
 
             convertView.setClickable(false);
             convertView.setTag(notificareAsset);

@@ -5,17 +5,27 @@
     tools:context="re.notifica.hybrid.StorageFragment">
 
 
-    <ListView
-        android:id="@+id/list"
+    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/gridView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorBackground" />
+        android:verticalSpacing="0dp"
+        android:horizontalSpacing="10dp"
+        android:stretchMode="columnWidth"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:numColumns="2"
+        android:gravity="center"
+        />
 
     <TextView
-        android:id="@+id/empty_message"
+        android:id="@+id/emptyMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginRight="30dp"
+        android:layout_marginLeft="30dp"
+        android:textAlignment="center"
         android:text="@string/title_empty_assets"
         android:textSize="12sp" />
 

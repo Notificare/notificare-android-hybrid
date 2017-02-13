@@ -83,5 +83,6 @@
 
     <string name="analytics_text">Create a custom event by typing an event name</string>
     <string name="title_empty_assets">No assets found</string>
-    <string name="title_search_assets">Search asset groups</string>
+    <string name="title_search_assets">Search</string>
+    <string name="title_intro_assets">Use the search option above to search for asset groups created in the dashboard.</string>
 </resources>

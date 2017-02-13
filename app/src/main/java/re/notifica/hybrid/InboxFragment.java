@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateUtils;
 import android.view.ActionMode;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,11 +36,6 @@ import re.notifica.util.Log;
 
 /**
  * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link InboxFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link InboxFragment#newInstance} factory method to
- * create an instance of this fragment.
  */
 public class InboxFragment extends Fragment implements Notificare.OnNotificationReceivedListener {
 
@@ -53,8 +49,6 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
 
     private Typeface lightFont;
     private Typeface regularFont;
-
-    private OnFragmentInteractionListener mListener;
 
     public InboxFragment() {
         // Required empty public constructor
@@ -141,10 +135,22 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
                 NotificareInboxItem item = inboxListAdapter.getItem(position);
                 Notificare.shared().getInboxManager().markItem(item);
                 Notificare.shared().openNotification(getActivity(), item.getNotification());
+                refreshInbox();
             }
         });
 
         return rootView;
+    }
+
+    public void refreshInbox(){
+        if (inboxListAdapter != null) {
+            inboxListAdapter.clear();
+            if (Notificare.shared().getInboxManager() != null) {
+                for (NotificareInboxItem item : Notificare.shared().getInboxManager().getItems()) {
+                    inboxListAdapter.add(item);
+                }
+            }
+        }
     }
 
 
@@ -181,29 +187,16 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
         }
     }
 
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-
         Notificare.shared().addNotificationReceivedListener(this);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
         Notificare.shared().removeNotificationReceivedListener(this);
     }
 
@@ -217,20 +210,6 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
         }
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 
     /**
      * List adapter to show a row per beacon
@@ -330,7 +309,7 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
                 listView.getChildAt(position).findViewById(R.id.inbox_delete).setVisibility(View.INVISIBLE);
             }
             itemsToRemove.removeAll(itemsToRemove);
-            //mActionMode = null;
+            mActionMode = null;
         }
     };
 }
