@@ -2,7 +2,6 @@
 <resources>
     <string-array
         name="url_schemes">
-        <item>codept</item>
-        <item>testscheme2</item>
+        <item>re.notifica</item>
     </string-array>
 </resources>

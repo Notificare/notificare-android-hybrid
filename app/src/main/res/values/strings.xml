@@ -85,4 +85,19 @@
     <string name="title_empty_assets">No assets found</string>
     <string name="title_search_assets">Search</string>
     <string name="title_intro_assets">Use the search option above to search for asset groups created in the dashboard.</string>
+
+    <string name="header_user_preferences">User Preferences</string>
+
+    <string name="signout">Signing out...</string>
+    <string name="text_change_pass">Change your current password</string>
+
+    <string name="label_user_profile">User Profile</string>
+    <string name="label_name">Name</string>
+    <string name="label_email">Email</string>
+    <string name="label_push_email">Push Email</string>
+    <string name="label_member_card">Open Member Card</string>
+    <string name="label_change_pass">Change Password</string>
+    <string name="label_generate_token">New Push Email</string>
+    <string name="label_signout">Sign Out</string>
+
 </resources>

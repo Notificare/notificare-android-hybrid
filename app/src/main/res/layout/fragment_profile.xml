@@ -4,6 +4,22 @@
     android:layout_height="match_parent"
     tools:context="re.notifica.hybrid.ProfileFragment">
 
+    <ListView
+        android:id="@+id/userProfileList"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:divider="@null"
+        android:scaleType="fitXY"
+        android:dividerHeight="0dp"
+        android:drawSelectorOnTop="false">
+    </ListView>
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity = "center_vertical|center_horizontal"
+        />
 
 </FrameLayout>

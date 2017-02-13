@@ -180,7 +180,7 @@ public class SignInFragment extends Fragment {
                                     passwordField.setText(null);
 
 
-                                    if (user.getAccessToken().isEmpty()) {
+                                    if (user != null && (user.getAccessToken() == null || user.getAccessToken().isEmpty())) {
 
                                         Notificare.shared().generateAccessToken(new NotificareCallback<NotificareUser>() {
                                             @Override

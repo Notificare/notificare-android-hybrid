@@ -177,7 +177,7 @@ public class SignUpFragment extends Fragment {
                     builder.create();
                     builder.show();
 
-                    ((MainActivity)getActivity()).createMemberCard(name, email);
+                    ((MainActivity)getActivity()).createMemberCard(name, email.trim().toLowerCase());
                 }
 
             });
