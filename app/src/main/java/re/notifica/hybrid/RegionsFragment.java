@@ -204,7 +204,7 @@ public class RegionsFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
-        map.getUiSettings().setMyLocationButtonEnabled(false);
+        map.getUiSettings().setMyLocationButtonEnabled(true);
         map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         map.getUiSettings().setCompassEnabled(true);
         map.getUiSettings().setRotateGesturesEnabled(true);
@@ -212,14 +212,8 @@ public class RegionsFragment extends Fragment implements OnMapReadyCallback {
         map.getUiSettings().setTiltGesturesEnabled(true);
         map.getUiSettings().setZoomGesturesEnabled(true);
         map.getUiSettings().setZoomControlsEnabled(true);
+        loadLocations();
 
-
-        if (!checkPermission()){
-            askPermission();
-        } else {
-            map.setMyLocationEnabled(true);
-            loadLocations();
-        }
     }
 
     public Bitmap resizeMapIcons(String iconName, int width, int height){

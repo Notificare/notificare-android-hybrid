@@ -3,7 +3,7 @@
     package="re.notifica.hybrid">
 
     <!-- PERMISSIONS -->
-    <!--<uses-permission android:name="android.permission.WAKE_LOCK" />-->
+    <!-- <uses-permission android:name="android.permission.WAKE_LOCK" /> -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -21,10 +21,10 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".SplashActivity">
+        <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -32,12 +32,12 @@
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/title_inbox"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".OnboardingActivity"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/title_inbox"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name="re.notifica.ui.NotificationActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -55,16 +55,62 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
                     android:host="push.notifica.re"
                     android:pathPrefix="/pass/forapplication/${notificareAppId}"
                     android:scheme="https" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ResetPassActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:label="@string/title_resetpass"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="push.notifica.re"
+                    android:pathPrefix="/oauth/resetpassword/${notificareAppId}"
+                    android:scheme="https" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ValidateActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:label="@string/title_validate"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="push.notifica.re"
+                    android:pathPrefix="/oauth/validate/${notificareAppId}"
+                    android:scheme="https" />
+            </intent-filter>
+        </activity>
+
 
         <service
             android:name="re.notifica.push.fcm.PushService"
@@ -86,12 +132,12 @@
         <service
             android:name="re.notifica.push.fcm.RegistrationService"
             android:exported="false" />
-
-        <service android:name="re.notifica.push.gcm.TaskService"
-            android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE"
-            android:exported="true">
+        <service
+            android:name="re.notifica.push.gcm.TaskService"
+            android:exported="true"
+            android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
             <intent-filter>
-                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY"/>
+                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
             </intent-filter>
         </service>
 
@@ -114,6 +160,7 @@
         <meta-data
             android:name="re.notifica.metadata.UrlSchemes"
             android:resource="@array/url_schemes" />
+
     </application>
 
 </manifest>
