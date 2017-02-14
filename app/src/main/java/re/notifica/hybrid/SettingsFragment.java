@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -307,11 +308,11 @@ public class SettingsFragment extends Fragment {
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(Intent.ACTION_SEND);
-                        intent.putExtra(Intent.EXTRA_EMAIL, new String[] { config.getProperty("email") });
-                        intent.putExtra(Intent.EXTRA_TEXT, R.string.your_message);
-                        intent.putExtra(Intent.EXTRA_SUBJECT, R.string.your_subject);
-                        intent.setType("message/rfc822");
+                        Intent intent = new Intent(Intent.ACTION_SENDTO);
+                        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{config.getProperty("email")});
+                        intent.putExtra(Intent.EXTRA_SUBJECT, "Android Demo App");
+                        intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.your_message));
+                        intent.setData(Uri.parse("mailto:"));
                         startActivity(intent);
                     }
                 });

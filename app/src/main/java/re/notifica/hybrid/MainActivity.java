@@ -2,7 +2,6 @@ package re.notifica.hybrid;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -93,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
             Notificare.shared().enableLocationUpdates();
             AppBaseApplication.setLocationEnabled(true);
             if (BuildConfig.ENABLE_BEACONS) {
-                Notificare.shared().enableBeacons(60000);
+                Notificare.shared().enableBeacons(30000);
             }
         }
     }
@@ -107,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
                     Notificare.shared().enableLocationUpdates();
                     AppBaseApplication.setLocationEnabled(true);
                     if (BuildConfig.ENABLE_BEACONS) {
-                        Notificare.shared().enableBeacons(60000);
+                        Notificare.shared().enableBeacons(30000);
                     }
                 }
                 break;
@@ -265,6 +264,17 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
                             R.anim.fragment_pop_enter,
                             R.anim.fragment_pop_exit)
                     .replace(R.id.content_frame, new StorageFragment())
+                    .addToBackStack(tag)
+                    .commit();
+
+        } else if (tag.equals("/beacons")) {
+
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.fragment_enter,
+                            R.anim.fragment_exit,
+                            R.anim.fragment_pop_enter,
+                            R.anim.fragment_pop_exit)
+                    .replace(R.id.content_frame, new BeaconsFragment())
                     .addToBackStack(tag)
                     .commit();
 

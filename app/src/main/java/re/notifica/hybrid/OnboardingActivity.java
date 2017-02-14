@@ -131,7 +131,7 @@ public class OnboardingActivity extends FragmentActivity implements Notificare.O
                     AppBaseApplication.setLocationEnabled(true);
 
                     if (BuildConfig.ENABLE_BEACONS) {
-                        Notificare.shared().enableBeacons(60000);
+                        Notificare.shared().enableBeacons(30000);
                     }
 
                     AppBaseApplication.setOnboardingStatus(true);

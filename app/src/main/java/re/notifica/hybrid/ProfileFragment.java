@@ -34,6 +34,7 @@ import com.koushikdutta.ion.Ion;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -646,7 +647,7 @@ public class ProfileFragment extends Fragment {
                         convertView = inflater.inflate(R.layout.row_user_profile, null);
                         holder.icon = (ImageView) convertView.findViewById(R.id.item_icon);
 
-                        String url = "http://gravatar.com/avatar/" + ((MainActivity)getActivity()).md5(itemHash.get("value").trim().toLowerCase()) + "?s=512";
+                        String url = "http://gravatar.com/avatar/" + ((MainActivity)getActivity()).md5(itemHash.get("value").trim().toLowerCase()) + "?s=512&x=" + new Date().getTime();
 
                         final ViewHolder finalHolder = holder;
                         Ion.with(finalHolder.icon).load(url);

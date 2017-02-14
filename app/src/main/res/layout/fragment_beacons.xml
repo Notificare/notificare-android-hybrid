@@ -1,0 +1,27 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="re.notifica.hybrid.BeaconsFragment">
+
+    <ListView
+        android:id="@+id/beaconsList"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/colorBackground"
+        android:divider="@null"
+        android:scaleType="fitXY"
+        android:dividerHeight="1dp"
+        android:drawSelectorOnTop="false">
+    </ListView>
+
+    <TextView
+        android:id="@+id/empty_message"
+        android:layout_width="wrap_content"
+        android:layout_height="30dip"
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        android:text="@string/title_empty_beacons"
+        android:textSize="12sp" />
+
+</FrameLayout>
