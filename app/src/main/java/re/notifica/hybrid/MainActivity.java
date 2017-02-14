@@ -2,6 +2,8 @@ package re.notifica.hybrid;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -23,8 +25,9 @@ import re.notifica.NotificareError;
 import re.notifica.beacon.BeaconRangingListener;
 import re.notifica.model.NotificareApplicationInfo;
 import re.notifica.model.NotificareBeacon;
+import re.notifica.support.v7.app.ActionBarBaseActivity;
 
-public class MainActivity extends AppCompatActivity implements Notificare.OnNotificareReadyListener, BeaconRangingListener {
+public class MainActivity extends ActionBarBaseActivity implements Notificare.OnNotificareReadyListener, BeaconRangingListener {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     protected static final String TAG = MainActivity.class.getSimpleName();
@@ -35,23 +38,37 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        manageFragments("main");
+        manageFragments("");
 
         builder = new AlertDialog.Builder(this);
 
         Notificare.shared().addNotificareReadyListener(this);
         getSupportActionBar().setShowHideAnimationEnabled(false);
 
+        Uri data = getIntent().getData();
+        if (data != null) {
+            String base = data.getPath();
+            if (data.getQuery() != null) {
+                base = base.concat("?").concat(data.getQuery());
+            }
+            manageFragments(base);
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        if (Notificare.shared().getBeaconClient() != null) {
+            Notificare.shared().getBeaconClient().addRangingListener(this);
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        if (Notificare.shared().getBeaconClient() != null) {
+            Notificare.shared().getBeaconClient().removeRangingListener(this);
+        }
     }
 
     @Override
@@ -111,11 +128,6 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
                 }
                 break;
         }
-    }
-
-    @Override
-    public void onRangingBeacons(List<NotificareBeacon> list) {
-
     }
 
 
@@ -280,8 +292,13 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
 
         } else {
 
+            MainFragment fragment = new MainFragment();
+            Bundle args = new Bundle();
+            args.putString("url", tag);
+            fragment.setArguments(args);
+
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.content_frame, new MainFragment())
+                    .replace(R.id.content_frame, fragment)
                     .commit();
         }
     }
@@ -365,4 +382,17 @@ public class MainActivity extends AppCompatActivity implements Notificare.OnNoti
         return "";
     }
 
+    @Override
+    public void onRangingBeacons(final List<NotificareBeacon> list) {
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+
+                Log.d("MAIN ACTIVITY", list.toString());
+
+            }
+
+        });
+    }
 }

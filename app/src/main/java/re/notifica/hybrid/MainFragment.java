@@ -2,15 +2,20 @@ package re.notifica.hybrid;
 
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import re.notifica.Notificare;
 import re.notifica.model.NotificareNotification;
@@ -34,6 +39,8 @@ public class MainFragment extends Fragment implements Notificare.OnNotificationR
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        String url = getArguments().getString("url");
+
         ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
         ((AppCompatActivity)getActivity()).getSupportActionBar().setShowHideAnimationEnabled(false);
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
@@ -46,7 +53,21 @@ public class MainFragment extends Fragment implements Notificare.OnNotificationR
         webView =  (WebView) rootView.findViewById(R.id.webView);
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        webView.loadUrl(config.getProperty("url"));
+
+        if (!url.isEmpty()) {
+            URL mainURL = null;
+            try {
+                mainURL = new URL(config.getProperty("url"));
+                Log.d("URL", mainURL.getProtocol().concat("://").concat(config.getProperty("host").concat(url)));
+                webView.loadUrl(mainURL.getProtocol().concat("://").concat(config.getProperty("host").concat(url)));
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Log.d("URL", config.getProperty("url"));
+            webView.loadUrl(config.getProperty("url"));
+        }
+
         webView.setWebViewClient(new CustomWebView((MainActivity) getActivity()) {
 
             @Override

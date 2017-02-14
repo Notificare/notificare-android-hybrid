@@ -51,10 +51,6 @@ public class BeaconsFragment extends Fragment implements BeaconRangingListener {
         TextView emptyText = (TextView)rootView.findViewById(R.id.empty_message);
         listView.setEmptyView(emptyText);
 
-        if (Notificare.shared().getBeaconClient() != null) {
-            Notificare.shared().getBeaconClient().addRangingListener(this);
-        }
-
         return rootView;
     }
 
@@ -64,6 +60,7 @@ public class BeaconsFragment extends Fragment implements BeaconRangingListener {
         if (Notificare.shared().getBeaconClient() != null) {
             Notificare.shared().getBeaconClient().addRangingListener(this);
         }
+        Notificare.shared().setForeground(true);
     }
 
     @Override
@@ -72,19 +69,20 @@ public class BeaconsFragment extends Fragment implements BeaconRangingListener {
         if (Notificare.shared().getBeaconClient() != null) {
             Notificare.shared().getBeaconClient().removeRangingListener(this);
         }
+        Notificare.shared().setForeground(false);
     }
 
     @Override
     public void onRangingBeacons(final List<NotificareBeacon> list) {
-        Log.d("TAGGGGG", "HERERERE");
+
         getActivity().runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
-                beaconListAdapter.clear();
 
-                Log.d("TAGGGGG", "HERERERE");
+                beaconListAdapter.clear();
                 for (NotificareBeacon beacon : list) {
+                    Log.d("Received Beacons", beacon.getName());
                     beaconListAdapter.add(beacon);
                 }
             }
