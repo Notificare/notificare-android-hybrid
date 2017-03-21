@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="re.notifica.hybrid.SignInFragment">
+    tools:context="re.notifica.demo.SignInFragment">
 
     <ScrollView android:id="@+id/ScrlView"
         android:layout_width="fill_parent"

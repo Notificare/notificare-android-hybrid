@@ -1,8 +1,7 @@
-package re.notifica.hybrid;
+package re.notifica.demo;
 
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -61,7 +60,8 @@ public class MainFragment extends Fragment implements Notificare.OnNotificationR
                 Log.d("URL", mainURL.getProtocol().concat("://").concat(config.getProperty("host").concat(url)));
                 webView.loadUrl(mainURL.getProtocol().concat("://").concat(config.getProperty("host").concat(url)));
             } catch (MalformedURLException e) {
-                e.printStackTrace();
+                Log.d("URL", config.getProperty("url"));
+                webView.loadUrl(config.getProperty("url"));
             }
         } else {
             Log.d("URL", config.getProperty("url"));

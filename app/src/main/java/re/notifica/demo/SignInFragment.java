@@ -1,8 +1,7 @@
-package re.notifica.hybrid;
+package re.notifica.demo;
 
 
 import android.app.AlertDialog;
-import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
@@ -19,7 +18,6 @@ import android.widget.EditText;
 import re.notifica.Notificare;
 import re.notifica.NotificareCallback;
 import re.notifica.NotificareError;
-import re.notifica.action.App;
 import re.notifica.model.NotificareUser;
 
 

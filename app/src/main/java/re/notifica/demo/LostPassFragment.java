@@ -1,4 +1,4 @@
-package re.notifica.hybrid;
+package re.notifica.demo;
 
 
 import android.app.AlertDialog;
@@ -23,16 +23,13 @@ import re.notifica.NotificareError;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SignUpFragment extends Fragment {
+public class LostPassFragment extends Fragment {
 
-    private EditText nameField;
     private EditText emailField;
-    private EditText passwordField;
-    private EditText confirmPasswordField;
     private ProgressDialog dialog;
     private AlertDialog.Builder builder;
 
-    public SignUpFragment() {
+    public LostPassFragment() {
         // Required empty public constructor
     }
 
@@ -45,50 +42,33 @@ public class SignUpFragment extends Fragment {
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setShowHideAnimationEnabled(false);
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.title_signup);
-        View rootView = inflater.inflate(R.layout.fragment_sign_up, container, false);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.title_lostpass);
+        View rootView = inflater.inflate(R.layout.fragment_lost_pass, container, false);
 
-        Button signupButton = (Button) rootView.findViewById(R.id.buttonSignup);
-
-        nameField = (EditText) rootView.findViewById(R.id.nameField);
-        emailField = (EditText) rootView.findViewById(R.id.emailField);
-        passwordField = (EditText) rootView.findViewById(R.id.passField);
-        confirmPasswordField = (EditText) rootView.findViewById(R.id.confirmPassField);
-
-        builder = new AlertDialog.Builder(getActivity());
-
+        Button lostPassButton = (Button) rootView.findViewById(R.id.buttonLostPass);
         Typeface lightFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Lato-Light.ttf");
         Typeface regularFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Lato-Regular.ttf");
+        builder = new AlertDialog.Builder(getActivity());
+        emailField = (EditText) rootView.findViewById(R.id.emailField);
         emailField.setTypeface(lightFont);
-        passwordField.setTypeface(lightFont);
-        nameField.setTypeface(lightFont);
-        confirmPasswordField.setTypeface(lightFont);
-        signupButton.setTypeface(lightFont);
-
-        rootView.findViewById(R.id.buttonSignup).setOnClickListener(new View.OnClickListener() {
+        lostPassButton.setTypeface(lightFont);
+        rootView.findViewById(R.id.buttonLostPass).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                doSignUp();
+                doRecoverPassword();
             }
         });
-
 
         return rootView;
     }
 
-    /**
-     * Do SignUp
-     */
-    public void doSignUp() {
+    public void doRecoverPassword() {
 
-        final String name = nameField.getText().toString();
-        final String email = emailField.getText().toString();
-        String password = passwordField.getText().toString();
-        String confirmPassword = confirmPasswordField.getText().toString();
+        String email = emailField.getText().toString();
 
-        if (TextUtils.isEmpty(email) && TextUtils.isEmpty(password)) {
-
-            builder.setMessage(R.string.error_sign_up)
+        if (TextUtils.isEmpty(email) ) {
+            //info.setText(R.string.error_lost_pass);
+            builder.setMessage(R.string.error_lost_pass)
                     .setTitle(R.string.app_name)
                     .setCancelable(false)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -98,37 +78,9 @@ public class SignUpFragment extends Fragment {
                     });
             AlertDialog dialogInfo = builder.create();
             dialogInfo.show();
-
-        } else if (!password.equals(confirmPassword)) {
-
-            builder.setMessage(R.string.error_pass_not_match)
-                    .setTitle(R.string.app_name)
-                    .setCancelable(false)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            confirmPasswordField.setText("");
-                        }
-                    });
-            AlertDialog dialogInfo = builder.create();
-            dialogInfo.show();
-
-        } else if (password.length() < 6) {
-
-            builder.setMessage(R.string.error_pass_too_short)
-                    .setTitle(R.string.app_name)
-                    .setCancelable(false)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            passwordField.setText("");
-                            confirmPasswordField.setText("");
-                        }
-                    });
-            AlertDialog dialogInfo = builder.create();
-            dialogInfo.show();
-
-        } else if (!email.contains("@")) {
-
-            builder.setMessage(R.string.error_invalid_email)
+        }  else if (!email.contains("@")) {
+            //info.setText(R.string.error_lost_pass);
+            builder.setMessage(R.string.error_lost_pass)
                     .setTitle(R.string.app_name)
                     .setCancelable(false)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -139,34 +91,31 @@ public class SignUpFragment extends Fragment {
                     });
             AlertDialog dialogInfo = builder.create();
             dialogInfo.show();
-
         } else {
             dialog = ProgressDialog.show(getActivity(), "", getString(R.string.loader), true);
 
-            Notificare.shared().createAccount(email, password, name, new NotificareCallback<Boolean>(){
+            Notificare.shared().sendPassword(email, new NotificareCallback<Boolean>(){
 
                 @Override
                 public void onError(NotificareError arg0) {
-                    // TODO Auto-generated method stub
+
                     dialog.dismiss();
                     builder.setMessage(arg0.getMessage())
                             .setTitle(R.string.app_name)
                             .setCancelable(false)
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-                                    //do things
                                     emailField.setText("");
                                 }
                             });
-                    builder.create();
-                    builder.show();
-
+                    AlertDialog dialogInfo = builder.create();
+                    dialogInfo.show();
                 }
 
                 @Override
                 public void onSuccess(Boolean arg0) {
-                    dialog.dismiss();
-                    builder.setMessage(R.string.success_account_created)
+
+                    builder.setMessage(R.string.success_email_found)
                             .setTitle(R.string.app_name)
                             .setCancelable(false)
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -174,13 +123,13 @@ public class SignUpFragment extends Fragment {
                                     getFragmentManager().popBackStack();
                                 }
                             });
-                    builder.create();
-                    builder.show();
-
-                    ((MainActivity)getActivity()).createMemberCard(name, email.trim().toLowerCase());
+                    AlertDialog dialogInfo = builder.create();
+                    dialogInfo.show();
+                    dialog.dismiss();
                 }
 
             });
         }
+
     }
 }

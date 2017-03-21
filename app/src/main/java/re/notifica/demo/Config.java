@@ -1,4 +1,4 @@
-package re.notifica.hybrid;
+package re.notifica.demo;
 
 /**
  * Created by joel on 03/01/2017.
@@ -6,7 +6,6 @@ package re.notifica.hybrid;
 
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -14,8 +13,6 @@ import com.google.gson.JsonParser;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class Config {

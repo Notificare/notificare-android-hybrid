@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Hybrid</string>
+    <string name="app_name">Demo</string>
     <string name="app_url_scheme">re.notifica</string>
     <string name="no_internet_label">No internet connection found</string>
     <string name="loader">Loading...</string>

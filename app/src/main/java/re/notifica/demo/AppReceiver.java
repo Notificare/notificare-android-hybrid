@@ -1,4 +1,4 @@
-package re.notifica.hybrid;
+package re.notifica.demo;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,9 +11,7 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 import re.notifica.Notificare;
 import re.notifica.NotificareCallback;
 import re.notifica.NotificareError;
-import re.notifica.model.NotificareInboxItem;
 import re.notifica.model.NotificareNotification;
-import re.notifica.model.NotificareTimeOfDayRange;
 import re.notifica.push.gcm.DefaultIntentReceiver;
 
 

@@ -1,28 +1,18 @@
-package re.notifica.hybrid;
+package re.notifica.demo;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.MailTo;
 import android.net.Uri;
 import android.os.Build;
-import android.util.Base64;
-import android.util.Log;
-import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.ref.WeakReference;
 
 import re.notifica.Notificare;
-import re.notifica.action.App;
-import re.notifica.ui.UserPreferencesActivity;
 
 /**
  * Created by joel on 03/01/2017.

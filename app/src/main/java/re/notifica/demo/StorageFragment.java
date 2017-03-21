@@ -1,10 +1,9 @@
-package re.notifica.hybrid;
+package re.notifica.demo;
 
 
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.graphics.LightingColorFilter;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -13,8 +12,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.SearchView;
@@ -28,7 +25,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;

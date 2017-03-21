@@ -1,4 +1,4 @@
-package re.notifica.hybrid;
+package re.notifica.demo;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;

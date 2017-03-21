@@ -1,4 +1,4 @@
-package re.notifica.hybrid;
+package re.notifica.demo;
 
 
 import android.content.pm.PackageManager;
@@ -153,19 +153,17 @@ public class RegionsFragment extends Fragment implements OnMapReadyCallback {
 
                             JSONArray coordinates = (JSONArray) region.getJSONObject("advancedGeometry").getJSONArray("coordinates").get(0);
 
-                            ArrayList<LatLng> locations = new ArrayList<LatLng>();
+                            PolygonOptions poly = new PolygonOptions();
+                            poly.fillColor(R.color.colorPrimary);
+                            poly.strokeColor(0);
+                            poly.strokeWidth(0);
 
                             for (int j = 0; j < coordinates.length(); j++) {
-                                //locations.add(new LatLng(coordinates[j][1], coordinates[j][0]));
+                                JSONArray c = coordinates.getJSONArray(j);
+                                poly.add(new LatLng(c.getDouble(1), c.getDouble(0)));
                             }
 
-
-                            //It's a polygon
-                            Polygon polygon = map.addPolygon(new PolygonOptions()
-                                            .add()
-                                            .fillColor(R.color.colorPrimary)
-                                            .strokeColor(0)
-                                            .strokeWidth(0));
+                            Polygon polygon = map.addPolygon(poly);
 
                             polygonsList.add(polygon);
 

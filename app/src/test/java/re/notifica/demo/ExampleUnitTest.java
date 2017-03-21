@@ -1,4 +1,4 @@
-package re.notifica.hybrid;
+package re.notifica.demo;
 
 import org.junit.Test;
 

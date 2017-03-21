@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="re.notifica.hybrid">
+    package="re.notifica.demo">
 
     <!-- PERMISSIONS -->
     <!-- <uses-permission android:name="android.permission.WAKE_LOCK" /> -->
@@ -14,21 +14,21 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <application
-        android:name=".AppBaseApplication"
+        android:name="re.notifica.demo.AppBaseApplication"
         android:allowBackup="true"
         android:allowClearUserData="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SplashActivity">
+        <activity android:name="re.notifica.demo.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name="re.notifica.demo.MainActivity"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
@@ -38,9 +38,15 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="@string/app_url_scheme" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="nc${notificareAppId}" />
+            </intent-filter>
         </activity>
         <activity
-            android:name=".OnboardingActivity"
+            android:name="re.notifica.demo.OnboardingActivity"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/title_inbox"
             android:screenOrientation="portrait" />
@@ -48,19 +54,19 @@
             android:name="re.notifica.ui.NotificationActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:hardwareAccelerated="true"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="re.notifica.demo.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value="re.notifica.demo.MainActivity" />
         </activity>
         <activity
             android:name="re.notifica.ui.PassbookActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:hardwareAccelerated="true"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="re.notifica.demo.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value="re.notifica.demo.MainActivity" />
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -69,20 +75,20 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="push.notifica.re"
+                    android:host="${notificareHost}"
                     android:pathPrefix="/pass/forapplication/${notificareAppId}"
                     android:scheme="https" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".ResetPassActivity"
+            android:name="re.notifica.demo.ResetPassActivity"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/title_resetpass"
             android:screenOrientation="portrait"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="re.notifica.demo.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value="re.notifica.demo.MainActivity" />
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -90,20 +96,20 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="push.notifica.re"
+                    android:host="${notificareHost}"
                     android:pathPrefix="/oauth/resetpassword/${notificareAppId}"
                     android:scheme="https" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".ValidateActivity"
+            android:name="re.notifica.demo.ValidateActivity"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/title_validate"
             android:screenOrientation="portrait"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="re.notifica.demo.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value="re.notifica.demo.MainActivity" />
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -157,7 +163,7 @@
             Most likely you will need customized registration and dispatching; please override
             this class or the BaseIntentReceiver parent class.
         -->
-        <receiver android:name=".AppReceiver" />
+        <receiver android:name="re.notifica.demo.AppReceiver" />
 
         <!-- API key for Google Maps -->
         <meta-data

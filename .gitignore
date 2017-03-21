@@ -41,7 +41,8 @@ captures/
 *.jks
 
 # Notificare
-app/assets/notificareconfig.properties
+app/src/main/assets/notificareconfig.properties
+app/src/apiTest/assets/notificareconfig.properties
 
 # Firebase
 app/google-services.json

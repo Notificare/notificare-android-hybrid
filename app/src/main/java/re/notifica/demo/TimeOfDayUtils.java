@@ -1,4 +1,4 @@
-package re.notifica.hybrid;
+package re.notifica.demo;
 
 import java.util.Calendar;
 import java.util.Date;

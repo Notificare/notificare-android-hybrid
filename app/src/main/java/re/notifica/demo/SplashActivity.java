@@ -1,14 +1,8 @@
-package re.notifica.hybrid;
+package re.notifica.demo;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.nfc.Tag;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.View;
 
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;

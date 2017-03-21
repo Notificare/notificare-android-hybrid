@@ -1,16 +1,27 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.6.3'
+    }
+}
+
 apply plugin: 'com.android.application'
+apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.0"
     defaultConfig {
-        applicationId "re.notifica.hybrid"
+        applicationId "re.notifica.demo"
         minSdkVersion 19
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        manifestPlaceholders = [notificareAppId: "586a543c28414d0a0c06c7f0"]
+        manifestPlaceholders = [notificareAppId: "586a543c28414d0a0c06c7f0", notificareHost: "push.notifica.re"]
     }
     buildTypes {
         release {
@@ -29,6 +40,13 @@ android {
             buildConfigField BOOLEAN, ENABLE_BEACONS, TRUE
             buildConfigField BOOLEAN, ENABLE_BILLING, FALSE
             buildConfigField BOOLEAN, ENABLE_TEST_CALLS, FALSE
+        }
+        apiTest {
+            buildConfigField BOOLEAN, ENABLE_BEACONS, TRUE
+            buildConfigField BOOLEAN, ENABLE_BILLING, TRUE
+            buildConfigField BOOLEAN, ENABLE_TEST_CALLS, TRUE
+            applicationId "re.notifica.demo.test"
+            manifestPlaceholders = [ notificareAppId: "55aca82cf231d9e80ef851d2", notificareHost: "push-test.notifica.re" ]
         }
     }
 
