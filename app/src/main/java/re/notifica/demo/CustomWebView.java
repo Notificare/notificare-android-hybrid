@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.MailTo;
 import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -30,6 +31,11 @@ public class CustomWebView extends WebViewClient {
         config = new Config(mActivityRef.get());
     }
 
+    @Override
+    public void onLoadResource(WebView view, String url) {
+        super.onLoadResource(view, url);
+        isLoading = true;
+    }
 
     @Override
     public void onPageFinished(WebView view, final String url) {
@@ -40,7 +46,6 @@ public class CustomWebView extends WebViewClient {
     @SuppressWarnings("deprecation")
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
-        isLoading = true;
         final Uri uri = Uri.parse(url);
         return handleUri(view, uri);
     }
@@ -48,7 +53,6 @@ public class CustomWebView extends WebViewClient {
     @TargetApi(Build.VERSION_CODES.N)
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-        isLoading = true;
         final Uri uri = request.getUrl();
         return handleUri(view, uri);
     }
@@ -57,32 +61,32 @@ public class CustomWebView extends WebViewClient {
 
         final Uri configHost = Uri.parse(config.getProperty("url"));
 
-        if (uri.getScheme().startsWith("mailto:")) {
-            final MainActivity activity = mActivityRef.get();
-            if (activity != null) {
-                MailTo mt = MailTo.parse(uri.getHost());
-                Intent i = newEmailIntent(activity.getApplicationContext(), mt.getTo(), mt.getSubject(), mt.getBody(), mt.getCc());
-                activity.startActivity(i);
-                view.reload();
-                return true;
-            }
-        } else if (uri.getScheme().startsWith(config.getProperty("urlScheme"))) {
-            isLoading = false;
+        if (uri.getScheme().startsWith(config.getProperty("urlScheme"))) {
 
+            //Handle recognizable url schemes
             final MainActivity activity = mActivityRef.get();
             if (activity != null) {
                 activity.manageFragments(uri.getPath());
                 return true;
             }
-        } else if (! uri.getHost().equals(configHost.getHost()) && ! isLoading) {
+        } else if (uri.getHost() != null && !uri.getHost().equals(configHost.getHost())) {
 
+            //Handle https urls not for this domain
             final MainActivity activity = mActivityRef.get();
             final Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             activity.startActivity(intent);
             return true;
 
+        } else if (uri.getScheme() != null && uri.getHost() == null)  {
+
+            //Handle email links
+            final MainActivity activity = mActivityRef.get();
+            final Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            activity.startActivity(intent);
+            return true;
         }
 
+        //Handle urls in this domain
         return false;
     }
 
@@ -102,16 +106,6 @@ public class CustomWebView extends WebViewClient {
                 "script.innerHTML = " + js + "" +
                 "parent.appendChild(script)" +
                 "})()");
-    }
-
-    private Intent newEmailIntent(Context context, String address, String subject, String body, String cc) {
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.putExtra(Intent.EXTRA_EMAIL, new String[] { address });
-        intent.putExtra(Intent.EXTRA_TEXT, body);
-        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
-        intent.putExtra(Intent.EXTRA_CC, cc);
-        intent.setType("message/rfc822");
-        return intent;
     }
 
 }
