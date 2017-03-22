@@ -38,7 +38,7 @@ captures/
 .idea/workspace.xml
 
 # Keystore files
-*.jks
+#*.jks
 
 # Notificare
 app/src/main/assets/notificareconfig.properties
