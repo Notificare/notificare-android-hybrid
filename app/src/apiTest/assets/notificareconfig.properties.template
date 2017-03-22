@@ -3,3 +3,4 @@ developmentApplicationSecret =
 productionApplicationKey =
 productionApplicationSecret =
 production = false
+useTestApi = true
