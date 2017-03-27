@@ -1,7 +1,9 @@
 package re.notifica.demo;
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -54,8 +56,7 @@ public class AppBaseApplication extends Application {
         NotificareSupport.shared().setInternetConnectionActivityTheme(R.style.AppTheme);
         NotificareSupport.shared().setInternetConnectionActivityLayout(R.layout.activity_no_internet);
 
-        // Run internet connection manager
-        NotificareSupport.shared().getInternetConnectionManager().registerNetworkStateReceiver();
+        registerActivityLifecycleCallbacks(NotificareSupport.shared());
     }
 
     public static Context getAppContext() {
@@ -199,4 +200,5 @@ public class AppBaseApplication extends Application {
         editor.putString(PREF_KEY_MEMBERCARD_TEMPLATE, template);
         editor.apply();
     }
+
 }
