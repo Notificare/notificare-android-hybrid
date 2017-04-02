@@ -14,8 +14,8 @@ android {
         applicationId "re.notifica.demo"
         minSdkVersion 19
         targetSdkVersion 25
-        versionCode 10004
-        versionName "1.0.4"
+        versionCode 10005
+        versionName "1.0.5"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [notificareAppId: "586a543c28414d0a0c06c7f0", notificareHost: "push.notifica.re"]
     }
@@ -64,10 +64,10 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 're.notifica:notificare-push-lib-android:1.9.4'
-    compile 're.notifica:notificare-support-lib-android:1.2.0'
+    compile 're.notifica:notificare-push-lib-android:1.9.5'
+    compile 're.notifica:notificare-support-lib-android:1.2.1'
     compile 'org.altbeacon:android-beacon-library:2.9.2'
-    compile 'com.google.firebase:firebase-messaging:10.2.0'
+    compile 'com.google.firebase:firebase-messaging:10.2.1'
     compile 'me.leolin:ShortcutBadger:1.1.10@aar'
     testCompile 'junit:junit:4.12'
 }
