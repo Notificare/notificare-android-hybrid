@@ -14,8 +14,8 @@ android {
         applicationId "re.notifica.demo"
         minSdkVersion 19
         targetSdkVersion 25
-        versionCode 10005
-        versionName "1.0.5"
+        versionCode 10006
+        versionName "1.0.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [notificareAppId: "586a543c28414d0a0c06c7f0", notificareHost: "push.notifica.re"]
     }
