@@ -116,6 +116,8 @@ public class OnboardingActivity extends FragmentActivity implements Notificare.O
                 } else {
                     Notificare.shared().requestLocationPermission(OnboardingActivity.this, LOCATION_PERMISSION_REQUEST_CODE);
                 }
+            } else {
+                finishOnBoarding(true);
             }
         }
 
@@ -125,22 +127,29 @@ public class OnboardingActivity extends FragmentActivity implements Notificare.O
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case LOCATION_PERMISSION_REQUEST_CODE:
-                if (Notificare.shared().checkRequestLocationPermissionResult(permissions, grantResults)) {
-
-                    Notificare.shared().enableLocationUpdates();
-                    AppBaseApplication.setLocationEnabled(true);
-
-                    if (BuildConfig.ENABLE_BEACONS) {
-                        Notificare.shared().enableBeacons(30000);
-                    }
-
-                    AppBaseApplication.setOnboardingStatus(true);
-                    Intent intent = new Intent(this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
+                finishOnBoarding(Notificare.shared().checkRequestLocationPermissionResult(permissions, grantResults));
                 break;
         }
+    }
+
+
+    private void finishOnBoarding(Boolean status){
+
+        AppBaseApplication.setLocationEnabled(status);
+
+        if (status) {
+            Notificare.shared().enableLocationUpdates();
+
+            if (BuildConfig.ENABLE_BEACONS) {
+                Notificare.shared().enableBeacons(30000);
+            }
+        }
+
+        AppBaseApplication.setOnboardingStatus(true);
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
+
     }
 
 

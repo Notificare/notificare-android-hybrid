@@ -39,7 +39,6 @@ public class BeaconsFragment extends Fragment implements BeaconRangingListener {
                              Bundle savedInstanceState) {
         ((AppCompatActivity)getActivity()).getSupportActionBar().show();
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setShowHideAnimationEnabled(false);
 
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.title_beacons);
         View rootView = inflater.inflate(R.layout.fragment_beacons, container, false);

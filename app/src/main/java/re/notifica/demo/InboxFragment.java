@@ -75,7 +75,6 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
 
         ((AppCompatActivity)getActivity()).getSupportActionBar().show();
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setShowHideAnimationEnabled(false);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.title_inbox);
 
         View rootView = inflater.inflate(R.layout.fragment_inbox, container, false);

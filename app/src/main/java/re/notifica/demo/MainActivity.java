@@ -14,7 +14,9 @@ import org.json.JSONObject;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 import re.notifica.Notificare;
@@ -41,7 +43,6 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
         builder = new AlertDialog.Builder(this);
 
         Notificare.shared().addNotificareReadyListener(this);
-        getSupportActionBar().setShowHideAnimationEnabled(false);
 
         Uri data = getIntent().getData();
         if (data != null) {
@@ -82,7 +83,10 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
             int badgeCount = Notificare.shared().getInboxManager().getUnreadCount();
             ShortcutBadger.applyCount(this.getApplicationContext(), badgeCount);
         }
+        askLocationPermission();
+    }
 
+    public void askLocationPermission() {
         if (!Notificare.shared().hasLocationPermissionGranted()) {
             Log.i(TAG, "permission not granted");
             if (Notificare.shared().didRequestLocationPermission()) {

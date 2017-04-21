@@ -36,7 +36,6 @@ public class SignInFragment extends Fragment {
 
         ((AppCompatActivity)getActivity()).getSupportActionBar().show();
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setShowHideAnimationEnabled(false);
 
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.title_signin);
         View rootView = inflater.inflate(R.layout.fragment_sign_in, container, false);
