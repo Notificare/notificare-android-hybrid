@@ -122,8 +122,34 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
+<!--
+        <receiver
+            android:name="re.notifica.push.gcm.PushReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+                <category android:name="${applicationId}" />
+            </intent-filter>
+        </receiver>
 
+        <service android:name="re.notifica.push.gcm.PushService"
+            android:exported="false"
+            android:label="Notificare Push Service">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
 
+        <service android:name="re.notifica.push.gcm.InstanceIDService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID" />
+            </intent-filter>
+        </service>
+
+        <service android:name="re.notifica.push.gcm.RegistrationService" android:exported="false" />
+-->
         <service
             android:name="re.notifica.push.fcm.PushService"
             android:exported="false"
@@ -144,6 +170,7 @@
         <service
             android:name="re.notifica.push.fcm.RegistrationService"
             android:exported="false" />
+
         <service
             android:name="re.notifica.push.gcm.TaskService"
             android:exported="true"
