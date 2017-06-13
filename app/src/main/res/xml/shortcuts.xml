@@ -1,0 +1,38 @@
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="inbox"
+        android:enabled="true"
+        android:icon="@drawable/account"
+        android:shortcutShortLabel="@string/title_inbox"
+        android:shortcutLongLabel="@string/title_inbox"
+        android:shortcutDisabledMessage="@string/title_empty_inbox">
+        <intent
+            android:action="android.intent.action.MAIN"
+            android:targetPackage="re.notifica.demo"
+            android:targetClass="re.notifica.demo.SplashActivity" />
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="re.notifica.demo"
+            android:targetClass="re.notifica.demo.MainActivity"
+            android:data="nc586a543c28414d0a0c06c7f0://inbox"/>
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="profile"
+        android:enabled="true"
+        android:icon="@drawable/account"
+        android:shortcutShortLabel="@string/title_profile"
+        android:shortcutLongLabel="@string/title_profile"
+        android:shortcutDisabledMessage="@string/title_empty_inbox">
+        <intent
+            android:action="android.intent.action.MAIN"
+            android:targetPackage="re.notifica.demo"
+            android:targetClass="re.notifica.demo.SplashActivity" />
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="re.notifica.demo"
+            android:targetClass="re.notifica.demo.MainActivity"
+            android:data="/profile"/>
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+</shortcuts>

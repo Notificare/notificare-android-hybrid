@@ -7,9 +7,9 @@ package re.notifica.demo;
 import android.content.Context;
 import android.content.res.AssetManager;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,18 +26,31 @@ public class Config {
 
 
     public String getProperty(String property) {
-        JsonObject result = toJsonObject(AppBaseApplication.getConfigJSONString());
-        return result.get(property).getAsString();
+        try {
+            JSONObject result = new JSONObject(AppBaseApplication.getConfigJSONString());
+            return result.getString(property);
+        } catch (JSONException e) {
+            return null;
+        }
+
     }
 
-    public JsonArray getArray(String property) {
-        JsonObject result = toJsonObject(AppBaseApplication.getConfigJSONString());
-        return result.get(property).getAsJsonArray();
+    public JSONArray getArray(String property) {
+        try {
+            JSONObject result = new JSONObject(AppBaseApplication.getConfigJSONString());
+            return result.getJSONArray(property);
+        } catch (JSONException e) {
+            return null;
+        }
     }
 
-    public JsonObject getObject(String property) {
-        JsonObject result = toJsonObject(AppBaseApplication.getConfigJSONString());
-        return result.get(property).getAsJsonObject();
+    public JSONObject getObject(String property) {
+        try {
+            JSONObject result = new JSONObject(AppBaseApplication.getConfigJSONString());
+            return result.getJSONObject(property);
+        } catch (JSONException e) {
+            return null;
+        }
     }
 
     private static String assetJSONFile(String filename, Context context) {
@@ -52,13 +65,6 @@ public class Config {
         } catch (IOException e) {
             return null;
         }
-    }
-
-    private static JsonObject toJsonObject(String jsonString) {
-        if (jsonString == null) return null;
-
-        JsonParser parser = new JsonParser();
-        return parser.parse(jsonString).getAsJsonObject();
     }
 
 }

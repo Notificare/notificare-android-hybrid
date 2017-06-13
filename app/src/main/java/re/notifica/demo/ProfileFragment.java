@@ -27,8 +27,6 @@ import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.koushikdutta.ion.Ion;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -40,6 +38,7 @@ import re.notifica.NotificareError;
 import re.notifica.model.NotificareUser;
 import re.notifica.model.NotificareUserPreference;
 import re.notifica.model.NotificareUserPreferenceOption;
+import re.notifica.util.AssetLoader;
 
 
 /**
@@ -645,7 +644,7 @@ public class ProfileFragment extends Fragment {
                         String url = "http://gravatar.com/avatar/" + ((MainActivity)getActivity()).md5(itemHash.get("value").trim().toLowerCase()) + "?s=512&x=" + new Date().getTime();
 
                         final ViewHolder finalHolder = holder;
-                        Ion.with(finalHolder.icon).load(url);
+                        AssetLoader.loadImage(url, finalHolder.icon);
                         break;
                     case TYPE_SEPARATOR:
                         convertView = inflater.inflate(R.layout.row_header, null);

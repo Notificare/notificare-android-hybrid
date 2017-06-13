@@ -32,6 +32,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="nc${notificareAppId}" />
             </intent-filter>
+            <meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts" />
         </activity>
         <activity
             android:name="re.notifica.demo.MainActivity"
@@ -70,14 +71,9 @@
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="${notificareHost}"
-                    android:pathPrefix="/pass/forapplication/${notificareAppId}"
-                    android:scheme="https" />
+                <data android:host="${notificareHost}" android:pathPrefix="/pass/forapplication/${notificareAppId}" android:scheme="https" />
             </intent-filter>
         </activity>
         <activity
@@ -147,8 +143,6 @@
                 <action android:name="com.google.android.gms.iid.InstanceID" />
             </intent-filter>
         </service>
-
-        <service android:name="re.notifica.push.gcm.RegistrationService" android:exported="false" />
 -->
         <service
             android:name="re.notifica.push.fcm.PushService"
@@ -167,10 +161,6 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-        <service
-            android:name="re.notifica.push.fcm.RegistrationService"
-            android:exported="false" />
-
         <service
             android:name="re.notifica.push.gcm.TaskService"
             android:exported="true"

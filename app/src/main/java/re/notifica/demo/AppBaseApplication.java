@@ -34,6 +34,7 @@ public class AppBaseApplication extends Application {
         Notificare.shared().setDebugLogging(BuildConfig.DEBUG);
         //Notificare.shared().setUseLegacyGCM();
         Notificare.shared().launch(this);
+        //Notificare.shared().createDefaultChannel();
         Notificare.shared().setIntentReceiver(AppReceiver.class);
         //Notificare.shared().setUserPreferencesResource(R.xml.preferences);
         Notificare.shared().setSmallIcon(R.drawable.ic_stat_notify_msg);

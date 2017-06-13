@@ -4,10 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.google.gson.JsonObject;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,6 +17,8 @@ import re.notifica.NotificareError;
 import re.notifica.model.NotificareApplicationInfo;
 import re.notifica.model.NotificareAsset;
 import re.notifica.support.NotificareSupport;
+import re.notifica.util.AssetLoader;
+import re.notifica.util.Log;
 
 /**
  * Created by joel on 04/01/2017.
@@ -74,16 +72,17 @@ public class SplashActivity extends AppCompatActivity implements Notificare.OnNo
             @Override
             public void onSuccess(List<NotificareAsset> notificareAssets) {
 
-                for(NotificareAsset asset : notificareAssets){
+                for (NotificareAsset asset : notificareAssets) {
 
-                    Ion.with(getApplicationContext())
-                            .load(asset.getUrl().toString()).asJsonObject().setCallback(new FutureCallback<JsonObject>() {
+                    AssetLoader.loadJSON(asset.getUrl(), new NotificareCallback<JSONObject>() {
                         @Override
-                        public void onCompleted(Exception e, JsonObject result) {
+                        public void onSuccess(JSONObject jsonObject) {
+                            AppBaseApplication.setConfigJSONString(jsonObject.toString());
+                        }
 
-                            if (e == null) {
-                                AppBaseApplication.setConfigJSONString(result.toString());
-                            }
+                        @Override
+                        public void onError(NotificareError notificareError) {
+                            Log.w(TAG, notificareError.getMessage());
                         }
                     });
                 }
@@ -92,21 +91,21 @@ public class SplashActivity extends AppCompatActivity implements Notificare.OnNo
                     @Override
                     public void onSuccess(List<NotificareAsset> notificareAssets) {
 
-                        for(NotificareAsset asset : notificareAssets){
+                        for (NotificareAsset asset : notificareAssets) {
 
-                            Ion.with(getApplicationContext())
-                                    .load(asset.getUrl().toString())
-                                    .asString()
-                                    .setCallback(new FutureCallback<String>() {
-                                        @Override
-                                        public void onCompleted(Exception e, String result) {
+                            AssetLoader.loadString(asset.getUrl(), new NotificareCallback<String>() {
 
-                                            if (e == null) {
-                                                AppBaseApplication.setCustomJSString(result.toString());
-                                                fetchPassTemplate();
-                                            }
-                                        }
-                                    });
+                                @Override
+                                public void onSuccess(String asset) {
+                                    AppBaseApplication.setCustomJSString(asset);
+                                    fetchPassTemplate();
+                                }
+
+                                @Override
+                                public void onError(NotificareError notificareError) {
+                                    Log.w(TAG, notificareError.getMessage());
+                                }
+                            });
                         }
 
                     }
@@ -130,7 +129,7 @@ public class SplashActivity extends AppCompatActivity implements Notificare.OnNo
     public void fetchPassTemplate(){
 
         final Config config = new Config(this);
-        final JsonObject memberCardTemplate = config.getObject("memberCard");
+        final JSONObject memberCardTemplate = config.getObject("memberCard");
 
         Notificare.shared().doCloudRequest("GET", "/api/passbook", null, null, new NotificareCallback<JSONObject>() {
 
@@ -142,7 +141,7 @@ public class SplashActivity extends AppCompatActivity implements Notificare.OnNo
 
                     for (int i = 0; i < templates.length(); i++) {
                         JSONObject template = (JSONObject) templates.get(i);
-                        if (memberCardTemplate.get("templateId").getAsString().equals(template.getString("_id"))) {
+                        if (memberCardTemplate.getString("templateId").equals(template.getString("_id"))) {
                             AppBaseApplication.setMemberCardTemplate(template.toString());
                         }
                     }

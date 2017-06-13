@@ -1,8 +1,10 @@
 package re.notifica.demo;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.List;
@@ -21,7 +23,7 @@ public class AppReceiver extends DefaultIntentReceiver {
     private static final String TAG = AppReceiver.class.getSimpleName();
 
     @Override
-    public void onNotificationReceived(String alert, String notificationId, final String inboxItemId, Bundle extras) {
+    protected void generateNotification(String intentAction, int icon, @Nullable NotificareNotification notification, @Nullable String inboxItemId, Bundle extras, Bitmap picture, Bitmap largeIcon) {
         boolean canShowNotification = false;
 
         if (AppBaseApplication.getNotificationsEnabled()) {
@@ -36,7 +38,7 @@ public class AppReceiver extends DefaultIntentReceiver {
         }
 
         if (canShowNotification) {
-            super.onNotificationReceived(alert, notificationId, inboxItemId, extras);
+            super.generateNotification(intentAction, icon, notification, inboxItemId, extras, picture, largeIcon);
         }
     }
 

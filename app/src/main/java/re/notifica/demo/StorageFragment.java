@@ -27,8 +27,6 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
 
-import com.koushikdutta.ion.Ion;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +34,7 @@ import re.notifica.Notificare;
 import re.notifica.NotificareCallback;
 import re.notifica.NotificareError;
 import re.notifica.model.NotificareAsset;
+import re.notifica.util.AssetLoader;
 
 
 /**
@@ -178,8 +177,7 @@ public class StorageFragment extends Fragment {
                         (notificareAsset.getContentType().equals("image/jpeg") ||
                                 notificareAsset.getContentType().equals("image/gif") ||
                                 notificareAsset.getContentType().equals("image/png"))) {
-                    Ion.with(imageView)
-                            .load("GET", Notificare.shared().getPushApiBaseUrl() + "/asset/file/" + notificareAsset.getKey());
+                    AssetLoader.loadImage(Notificare.shared().getPushApiBaseUrl() + "/asset/file/" + notificareAsset.getKey(), imageView);
                 } else if(notificareAsset.getContentType() != null &&
                         notificareAsset.getContentType().equals("video/mp4")){
 
