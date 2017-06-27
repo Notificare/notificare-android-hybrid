@@ -28,7 +28,7 @@ public class AppReceiver extends DefaultIntentReceiver {
 
         if (AppBaseApplication.getNotificationsEnabled()) {
             canShowNotification = true;
-            Handler handler = new android.os.Handler();
+            Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 public void run() {
                     int badgeCount = Notificare.shared().getInboxManager().getUnreadCount();

@@ -14,7 +14,7 @@
             android:action="android.intent.action.VIEW"
             android:targetPackage="re.notifica.demo"
             android:targetClass="re.notifica.demo.MainActivity"
-            android:data="nc586a543c28414d0a0c06c7f0://inbox"/>
+            android:data="/inbox"/>
         <categories android:name="android.shortcut.conversation" />
     </shortcut>
     <shortcut
