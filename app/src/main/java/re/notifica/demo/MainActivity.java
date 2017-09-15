@@ -2,11 +2,16 @@ package re.notifica.demo;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
+import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import com.google.android.gms.common.api.CommonStatusCodes;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,9 +19,7 @@ import org.json.JSONObject;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 import re.notifica.Notificare;
@@ -25,18 +28,23 @@ import re.notifica.NotificareError;
 import re.notifica.beacon.BeaconRangingListener;
 import re.notifica.model.NotificareApplicationInfo;
 import re.notifica.model.NotificareBeacon;
+import re.notifica.model.NotificareScannable;
 import re.notifica.support.v7.app.ActionBarBaseActivity;
+import re.notifica.ui.ScannableActivity;
 
 public class MainActivity extends ActionBarBaseActivity implements Notificare.OnNotificareReadyListener, BeaconRangingListener {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private static final int SCANNABLE_REQUEST_CODE = 9001;
     protected static final String TAG = MainActivity.class.getSimpleName();
     private AlertDialog.Builder builder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
+
 
         manageFragments("");
 
@@ -44,13 +52,75 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
 
         Notificare.shared().addNotificareReadyListener(this);
 
-        Uri data = getIntent().getData();
-        if (data != null) {
-            String base = data.getPath();
-            if (data.getQuery() != null) {
-                base = base.concat("?").concat(data.getQuery());
+        Log.i(TAG, "Intent: " + getIntent().getData());
+        handleIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.i(TAG, "new intent: " + intent.getData());
+        handleIntent(intent);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == SCANNABLE_REQUEST_CODE) {
+            if (resultCode == CommonStatusCodes.SUCCESS) {
+                if (data != null) {
+                    NotificareScannable scannable = Notificare.shared().extractScannableFromActivityResult(data);
+                    if (scannable != null) {
+                        if (scannable.getNotification() != null) {
+                            Notificare.shared().openNotification(this, scannable.getNotification());
+                        } else {
+                            Log.i(TAG, "scannable with type " + scannable.getType());
+                        }
+                    } else {
+                        Toast.makeText(this, "scannable not found", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Toast.makeText(this, "scan did not return any results", Toast.LENGTH_LONG).show();
+                }
+            } else if (resultCode == CommonStatusCodes.CANCELED) {
+                Toast.makeText(this, "scan was canceled", Toast.LENGTH_LONG).show();
+            } else {
+                Log.w(TAG, "error result: " + resultCode);
             }
-            manageFragments(base);
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    protected void handleIntent(Intent intent) {
+        Uri data = intent.getData();
+        if (data != null && intent.getAction() != null && intent.getAction().equals(NfcAdapter.ACTION_NDEF_DISCOVERED)) {
+            Notificare.shared().fetchScannable(data.toString(), new NotificareCallback<NotificareScannable>() {
+
+                @Override
+                public void onSuccess(NotificareScannable notificareScannable) {
+                    if (notificareScannable != null) {
+                        if (notificareScannable.getNotification() != null) {
+                            Notificare.shared().openNotification(MainActivity.this, notificareScannable.getNotification());
+                        } else {
+                            Toast.makeText(MainActivity.this, "scannable found", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+
+                @Override
+                public void onError(NotificareError notificareError) {
+                    Toast.makeText(MainActivity.this, "scannable not found", Toast.LENGTH_LONG).show();
+                }
+            });
+        } else {
+            if (data != null) {
+                Log.d(TAG, "uri is " + data.toString() + ", path is " + data.getPath());
+                String base = data.getPath();
+                if (data.getQuery() != null) {
+                    base = base.concat("?").concat(data.getQuery());
+                }
+                manageFragments(base);
+            }
         }
     }
 
@@ -143,6 +213,8 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
     }
 
     public void manageFragments(String tag){
+
+        Log.d(TAG, "open fragment for tag: " + tag);
 
         if (tag.equals("/inbox")) {
 
@@ -291,6 +363,10 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
                     .replace(R.id.content_frame, new BeaconsFragment())
                     .addToBackStack(tag)
                     .commit();
+
+        } else if (tag.equals("/scan")) {
+
+            Notificare.shared().startScannableActivity(this, SCANNABLE_REQUEST_CODE);
 
         } else {
 

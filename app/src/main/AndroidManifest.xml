@@ -10,12 +10,15 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+    <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <!-- This app has permission to register and receive message -->
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <application
         android:name="re.notifica.demo.AppBaseApplication"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:allowClearUserData="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -59,6 +62,11 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="re.notifica.demo.MainActivity" />
+        </activity>
+        <activity
+            android:name="re.notifica.ui.ScannableActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:hardwareAccelerated="true">
         </activity>
         <activity
             android:name="re.notifica.ui.PassbookActivity"
@@ -118,32 +126,6 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
-<!--
-        <receiver
-            android:name="re.notifica.push.gcm.PushReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-                <category android:name="${applicationId}" />
-            </intent-filter>
-        </receiver>
-
-        <service android:name="re.notifica.push.gcm.PushService"
-            android:exported="false"
-            android:label="Notificare Push Service">
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-            </intent-filter>
-        </service>
-
-        <service android:name="re.notifica.push.gcm.InstanceIDService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.android.gms.iid.InstanceID" />
-            </intent-filter>
-        </service>
--->
         <service
             android:name="re.notifica.push.fcm.PushService"
             android:exported="false"
@@ -190,6 +172,8 @@
         <meta-data
             android:name="re.notifica.metadata.UrlSchemes"
             android:resource="@array/url_schemes" />
+
+        <meta-data android:name="com.google.android.gms.vision.DEPENDENCIES" android:value="barcode" />
 
     </application>
 
