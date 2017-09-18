@@ -39,11 +39,13 @@ android {
         def ENABLE_BEACONS = "ENABLE_BEACONS"
         def ENABLE_TEST_CALLS = "ENABLE_TEST_CALLS"
         production {
+            dimension "api"
             buildConfigField BOOLEAN, ENABLE_BEACONS, TRUE
             buildConfigField BOOLEAN, ENABLE_BILLING, FALSE
             buildConfigField BOOLEAN, ENABLE_TEST_CALLS, FALSE
         }
         apiTest {
+            dimension "api"
             buildConfigField BOOLEAN, ENABLE_BEACONS, TRUE
             buildConfigField BOOLEAN, ENABLE_BILLING, TRUE
             buildConfigField BOOLEAN, ENABLE_TEST_CALLS, TRUE
