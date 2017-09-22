@@ -1,11 +1,12 @@
 package re.notifica.demo;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateUtils;
 import android.view.ActionMode;
@@ -20,8 +21,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 import re.notifica.Notificare;
@@ -40,7 +42,7 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
     private static final String TAG = InboxFragment.class.getSimpleName();
 
     private ListView listView;
-    private ArrayList<Integer> itemsToRemove;
+    private Set<NotificareInboxItem> itemsToRemove;
     protected ArrayAdapter<NotificareInboxItem> inboxListAdapter;
     private ActionMode mActionMode;
     private Menu mOptionsMenu;
@@ -73,18 +75,22 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.title_inbox);
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.show();
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(R.string.title_inbox);
+        }
+        setHasOptionsMenu(true);
 
         View rootView = inflater.inflate(R.layout.fragment_inbox, container, false);
 
-        listView = (ListView)rootView.findViewById(R.id.inboxList);
+        listView = rootView.findViewById(R.id.inboxList);
 
         Typeface lightFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Lato-Light.ttf");
         Typeface regularFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Lato-Regular.ttf");
 
-        itemsToRemove = new ArrayList<Integer>();
+        itemsToRemove = new HashSet<>();
         inboxListAdapter = new InboxListAdapter(getActivity(), R.layout.inbox_list_cell);
         listView.setAdapter(inboxListAdapter);
 
@@ -104,11 +110,11 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
                 if(view.findViewById(R.id.inbox_delete).getVisibility() == View.VISIBLE){
                     //uncheck
                     view.findViewById(R.id.inbox_delete).setVisibility(View.INVISIBLE);
-                    itemsToRemove.remove(new Integer(position));
+                    itemsToRemove.remove(inboxListAdapter.getItem(position));
 
                 } else {
                     //check
-                    itemsToRemove.add(position);
+                    itemsToRemove.add(inboxListAdapter.getItem(position));
                     view.findViewById(R.id.inbox_delete).setVisibility(View.VISIBLE);
                 }
 
@@ -143,9 +149,7 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
         if (inboxListAdapter != null) {
             inboxListAdapter.clear();
             if (Notificare.shared().getInboxManager() != null) {
-                for (NotificareInboxItem item : Notificare.shared().getInboxManager().getItems()) {
-                    inboxListAdapter.add(item);
-                }
+                inboxListAdapter.addAll(Notificare.shared().getInboxManager().getItems());
             }
         }
     }
@@ -163,14 +167,14 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
         // Handle action buttons
         switch(item.getItemId()) {
             case R.id.action_clear:
-                inboxListAdapter.clear();
-                if (Notificare.shared().getInboxManager() != null) {
-                    Notificare.shared().getInboxManager().clearInbox();
-                }
                 Notificare.shared().clearInbox(new NotificareCallback<Boolean>() {
                     @Override
                     public void onSuccess(Boolean aBoolean) {
                         Log.d(TAG, "Inbox cleared");
+                        if (Notificare.shared().getInboxManager() != null) {
+                            Notificare.shared().getInboxManager().clearInbox();
+                        }
+                        inboxListAdapter.clear();
                     }
 
                     @Override
@@ -186,14 +190,14 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
 
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    public void onResume() {
+        super.onResume();
         Notificare.shared().addNotificationReceivedListener(this);
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
+    public void onPause() {
+        super.onPause();
         Notificare.shared().removeNotificationReceivedListener(this);
     }
 
@@ -201,9 +205,7 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
     public void onNotificationReceived(NotificareNotification notificareNotification) {
         inboxListAdapter.clear();
         if (Notificare.shared().getInboxManager() != null) {
-            for (NotificareInboxItem item : Notificare.shared().getInboxManager().getItems()) {
-                inboxListAdapter.add(item);
-            }
+            inboxListAdapter.addAll(Notificare.shared().getInboxManager().getItems());
         }
     }
 
@@ -211,35 +213,34 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
     /**
      * List adapter to show a row per beacon
      */
-    public class InboxListAdapter extends ArrayAdapter<NotificareInboxItem> {
+    private class InboxListAdapter extends ArrayAdapter<NotificareInboxItem> {
 
         private Activity context;
         private int resource;
 
-        public InboxListAdapter(Activity context, int resource) {
+        InboxListAdapter(Activity context, int resource) {
             super(context, resource);
             this.context = context;
             this.resource = resource;
         }
 
+
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public @NonNull View getView(int position, View convertView, @NonNull ViewGroup parent) {
             LayoutInflater inflater = context.getLayoutInflater();
             View rowView = convertView;
             if (rowView == null) {
                 rowView = inflater.inflate(resource, null, true);
             }
-            TextView dateView = (TextView)rowView.findViewById(R.id.inbox_date);
-            TextView messageView = (TextView)rowView.findViewById(R.id.inbox_message);
-            dateView.setTypeface(regularFont);
-            messageView.setTypeface(lightFont);
+            TextView dateView = rowView.findViewById(R.id.inbox_date);
+            TextView messageView = rowView.findViewById(R.id.inbox_message);
             NotificareInboxItem item = getItem(position);
 
             dateView.setText(DateUtils.getRelativeTimeSpanString(item.getTimestamp().getTime(), new Date().getTime(), DateUtils.SECOND_IN_MILLIS));
             messageView.setText(item.getNotification().getMessage());
             dateView.setTextColor(Color.BLACK);
             messageView.setTextColor(Color.BLACK);
-            if(item.getStatus()){
+            if (item.getStatus()) {
                 dateView.setTextColor(Color.GRAY);
                 messageView.setTextColor(Color.GRAY);
             }
@@ -255,7 +256,6 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
             // Inflate a menu resource providing context menu items
             MenuInflater inflater = mode.getMenuInflater();
             inflater.inflate(R.menu.inbox_action, menu);
-
             return true;
         }
 
@@ -272,10 +272,9 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
             switch (item.getItemId()) {
                 case R.id.action_trash:
 
-                    for(Integer position : itemsToRemove){
-                        NotificareInboxItem msg = inboxListAdapter.getItem(position);
-                        Notificare.shared().getInboxManager().removeItem(msg);
-                        Notificare.shared().deleteInboxItem(msg.getItemId(), new NotificareCallback<Boolean>() {
+                    for (NotificareInboxItem itemToRemove : itemsToRemove) {
+                        Notificare.shared().getInboxManager().removeItem(itemToRemove);
+                        Notificare.shared().deleteInboxItem(itemToRemove.getItemId(), new NotificareCallback<Boolean>() {
                             @Override
                             public void onSuccess(Boolean aBoolean) {
                                 //Log.d(TAG, "Removed inboxItem");
@@ -288,10 +287,12 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
                                 //Log.e(TAG, "Failed to remove inboxItem: " + notificareError.getMessage());
                             }
                         });
-                        inboxListAdapter.remove(msg);
+                        int position = inboxListAdapter.getPosition(itemToRemove);
+                        listView.getChildAt(position).findViewById(R.id.inbox_delete).setVisibility(View.INVISIBLE);
+                        inboxListAdapter.remove(itemToRemove);
                     }
 
-                    itemsToRemove.removeAll(itemsToRemove);
+                    itemsToRemove.clear();
                     mode.finish(); // Action picked, so close the CAB
                     return true;
                 default:
@@ -302,10 +303,11 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
         // Called when the user exits the action mode
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-            for(Integer position : itemsToRemove){
+            for (NotificareInboxItem itemToRemove : itemsToRemove) {
+                int position = inboxListAdapter.getPosition(itemToRemove);
                 listView.getChildAt(position).findViewById(R.id.inbox_delete).setVisibility(View.INVISIBLE);
             }
-            itemsToRemove.removeAll(itemsToRemove);
+            itemsToRemove.clear();
             mActionMode = null;
         }
     };
