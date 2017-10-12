@@ -1,12 +1,9 @@
 package re.notifica.demo;
 
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.content.Intent;
-import android.net.MailTo;
 import android.net.Uri;
 import android.os.Build;
-import android.util.Log;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;

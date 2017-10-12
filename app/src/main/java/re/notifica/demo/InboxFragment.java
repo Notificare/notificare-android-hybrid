@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -62,8 +63,7 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
      */
     // TODO: Rename and change types and number of parameters
     public static InboxFragment newInstance() {
-        InboxFragment fragment = new InboxFragment();
-        return fragment;
+        return new InboxFragment();
     }
 
     @Override
@@ -87,8 +87,8 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
 
         listView = rootView.findViewById(R.id.inboxList);
 
-        Typeface lightFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Lato-Light.ttf");
-        Typeface regularFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Lato-Regular.ttf");
+        lightFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Lato-Light.ttf");
+        regularFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Lato-Regular.ttf");
 
         itemsToRemove = new HashSet<>();
         inboxListAdapter = new InboxListAdapter(getActivity(), R.layout.inbox_list_cell);
@@ -96,18 +96,16 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
 
         inboxListAdapter.clear();
         if (Notificare.shared().getInboxManager() != null) {
-            for (NotificareInboxItem item : Notificare.shared().getInboxManager().getItems()) {
-                inboxListAdapter.add(item);
-            }
+            inboxListAdapter.addAll(Notificare.shared().getInboxManager().getItems());
         }
 
-        TextView emptyText = (TextView)rootView.findViewById(R.id.empty_message);
+        TextView emptyText = rootView.findViewById(R.id.empty_message);
         listView.setEmptyView(emptyText);
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
-                if(view.findViewById(R.id.inbox_delete).getVisibility() == View.VISIBLE){
+                if (view.findViewById(R.id.inbox_delete).getVisibility() == View.VISIBLE) {
                     //uncheck
                     view.findViewById(R.id.inbox_delete).setVisibility(View.INVISIBLE);
                     itemsToRemove.remove(inboxListAdapter.getItem(position));
@@ -136,8 +134,10 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 NotificareInboxItem item = inboxListAdapter.getItem(position);
-                Notificare.shared().getInboxManager().markItem(item);
-                Notificare.shared().openNotification(getActivity(), item.getNotification());
+                if (item != null) {
+                    Notificare.shared().getInboxManager().markItem(item);
+                    Notificare.shared().openNotification(getActivity(), item.getNotification());
+                }
                 refreshInbox();
             }
         });
@@ -234,15 +234,22 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
             }
             TextView dateView = rowView.findViewById(R.id.inbox_date);
             TextView messageView = rowView.findViewById(R.id.inbox_message);
+            ImageView deleteIconView = rowView.findViewById(R.id.inbox_delete);
+
             NotificareInboxItem item = getItem(position);
 
-            dateView.setText(DateUtils.getRelativeTimeSpanString(item.getTimestamp().getTime(), new Date().getTime(), DateUtils.SECOND_IN_MILLIS));
-            messageView.setText(item.getNotification().getMessage());
-            dateView.setTextColor(Color.BLACK);
-            messageView.setTextColor(Color.BLACK);
-            if (item.getStatus()) {
-                dateView.setTextColor(Color.GRAY);
-                messageView.setTextColor(Color.GRAY);
+            if (item != null) {
+                dateView.setText(DateUtils.getRelativeTimeSpanString(item.getTimestamp().getTime(), new Date().getTime(), DateUtils.SECOND_IN_MILLIS));
+                messageView.setText(item.getNotification().getMessage());
+                dateView.setTextColor(Color.BLACK);
+                messageView.setTextColor(Color.BLACK);
+                if (item.getStatus()) {
+                    dateView.setTextColor(Color.GRAY);
+                    messageView.setTextColor(Color.GRAY);
+                }
+                if (itemsToRemove != null && itemsToRemove.contains(item)) {
+                    deleteIconView.setVisibility(View.VISIBLE);
+                }
             }
             return rowView;
         }

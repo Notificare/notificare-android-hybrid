@@ -1,9 +1,11 @@
 package re.notifica.demo;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -34,26 +36,30 @@ public class MainFragment extends Fragment implements Notificare.OnNotificationR
     }
 
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         String url = getArguments().getString("url");
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setShowHideAnimationEnabled(false);
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
+
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         config = new Config(getActivity());
 
-        spinner = (ProgressBar) rootView.findViewById(R.id.progressBar);
+        spinner = rootView.findViewById(R.id.progressBar);
         spinner.setVisibility(View.VISIBLE);
 
-        webView =  (WebView) rootView.findViewById(R.id.webView);
+        webView = rootView.findViewById(R.id.webView);
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
 
-        if (!url.isEmpty()) {
+        if (url != null && !url.isEmpty()) {
             URL mainURL = null;
             try {
                 mainURL = new URL(config.getProperty("url"));
@@ -80,15 +86,14 @@ public class MainFragment extends Fragment implements Notificare.OnNotificationR
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
+    public void onResume() {
+        super.onResume();
         Notificare.shared().addNotificationReceivedListener(this);
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
+    public void onPause() {
+        super.onPause();
         Notificare.shared().removeNotificationReceivedListener(this);
     }
     @Override

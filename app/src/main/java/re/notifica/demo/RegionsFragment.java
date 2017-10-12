@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -63,14 +64,16 @@ public class RegionsFragment extends Fragment implements OnMapReadyCallback {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //((AppCompatActivity) getActivity()).getSupportActionBar().setShowHideAnimationEnabled(false);
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.show();
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(R.string.title_regions);
+        }
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_regions);
         View rootView = inflater.inflate(R.layout.fragment_regions, container, false);
 
-        mapView = (MapView) rootView.findViewById(R.id.mapView);
+        mapView = rootView.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.onResume();
         mapView.getMapAsync(this);
@@ -230,7 +233,6 @@ public class RegionsFragment extends Fragment implements OnMapReadyCallback {
 
     public Bitmap resizeMapIcons(String iconName, int width, int height){
         Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(),getResources().getIdentifier(iconName, "drawable", getActivity().getPackageName()));
-        Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
-        return resizedBitmap;
+        return Bitmap.createScaledBitmap(imageBitmap, width, height, false);
     }
 }

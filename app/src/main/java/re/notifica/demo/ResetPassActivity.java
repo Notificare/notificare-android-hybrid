@@ -37,9 +37,9 @@ public class ResetPassActivity extends AppCompatActivity {
         Typeface lightFont = Typeface.createFromAsset(this.getAssets(), "fonts/Lato-Light.ttf");
         Typeface regularFont = Typeface.createFromAsset(this.getAssets(), "fonts/Lato-Regular.ttf");
 
-        Button resetButton = (Button) findViewById(R.id.buttonResetPass);
-        passwordField = (EditText) findViewById(R.id.pass);
-        confirmPasswordField = (EditText) findViewById(R.id.confirmPass);
+        Button resetButton = findViewById(R.id.buttonResetPass);
+        passwordField = findViewById(R.id.pass);
+        confirmPasswordField = findViewById(R.id.confirmPass);
         passwordField.setTypeface(lightFont);
         confirmPasswordField.setTypeface(lightFont);
         resetButton.setTypeface(lightFont);

@@ -33,20 +33,11 @@ public class SplashActivity extends AppCompatActivity implements Notificare.OnNo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        getSupportActionBar().hide();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
 
         Notificare.shared().addNotificareReadyListener(this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
     }
 
     @Override

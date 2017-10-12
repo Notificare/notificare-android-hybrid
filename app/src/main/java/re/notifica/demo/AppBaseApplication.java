@@ -1,20 +1,17 @@
 package re.notifica.demo;
-import android.app.Activity;
+
 import android.app.Application;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
-import android.os.Bundle;
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import re.notifica.Notificare;
-import re.notifica.NotificareCallback;
 import re.notifica.model.NotificareTimeOfDayRange;
 import re.notifica.support.NotificareSupport;
 
@@ -40,7 +37,7 @@ public class AppBaseApplication extends Application {
         //Notificare.shared().setUseLegacyGCM();
         Notificare.shared().launch(this);
         Notificare.shared().createDefaultChannel();
-        if (Build.VERSION.SDK_INT >= 26) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
             NotificationChannel passbookChannel = new NotificationChannel("passbook", "Passbook Channel", NotificationManager.IMPORTANCE_DEFAULT);
             passbookChannel.setDescription("This is for passbook notifications");

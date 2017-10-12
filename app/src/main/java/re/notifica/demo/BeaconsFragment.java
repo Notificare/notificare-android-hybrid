@@ -2,10 +2,11 @@ package re.notifica.demo;
 
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,25 +38,29 @@ public class BeaconsFragment extends Fragment implements BeaconRangingListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.title_beacons);
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.show();
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(R.string.title_beacons);
+        }
+
         View rootView = inflater.inflate(R.layout.fragment_beacons, container, false);
 
-        final ListView listView =  (ListView) rootView.findViewById(R.id.beaconsList);
+        final ListView listView =  rootView.findViewById(R.id.beaconsList);
         beaconListAdapter = new BeaconListAdapter(getActivity(), R.layout.beacon_list_cell);
         listView.setAdapter(beaconListAdapter);
 
-        TextView emptyText = (TextView)rootView.findViewById(R.id.empty_message);
+        TextView emptyText = rootView.findViewById(R.id.empty_message);
         listView.setEmptyView(emptyText);
 
         return rootView;
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    public void onResume() {
+        super.onResume();
         if (Notificare.shared().getBeaconClient() != null) {
             Notificare.shared().getBeaconClient().addRangingListener(this);
         }
@@ -63,8 +68,8 @@ public class BeaconsFragment extends Fragment implements BeaconRangingListener {
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
+    public void onPause() {
+        super.onPause();
         if (Notificare.shared().getBeaconClient() != null) {
             Notificare.shared().getBeaconClient().removeRangingListener(this);
         }
@@ -90,13 +95,13 @@ public class BeaconsFragment extends Fragment implements BeaconRangingListener {
 
     }
 
-    public class BeaconListAdapter extends ArrayAdapter<NotificareBeacon> {
+    private class BeaconListAdapter extends ArrayAdapter<NotificareBeacon> {
 
         private Activity context;
         private int resource;
 
 
-        public BeaconListAdapter(Activity context, int resource) {
+         BeaconListAdapter(Activity context, int resource) {
             super(context, resource);
             this.context = context;
             this.resource = resource;
@@ -104,7 +109,7 @@ public class BeaconsFragment extends Fragment implements BeaconRangingListener {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public @NonNull View getView(int position, View convertView, @NonNull ViewGroup parent) {
             LayoutInflater inflater = context.getLayoutInflater();
             View rowView = convertView;
             if (rowView == null) {
@@ -116,31 +121,32 @@ public class BeaconsFragment extends Fragment implements BeaconRangingListener {
             Typeface lightTypeface = Typeface.createFromAsset(context.getAssets(), "fonts/Lato-Light.ttf");
 
 
-            TextView nameView = (TextView)rowView.findViewById(R.id.name);
+            TextView nameView = rowView.findViewById(R.id.name);
             nameView.setTypeface(myTypeface);
-            TextView messageView = (TextView)rowView.findViewById(R.id.message);
+            TextView messageView = rowView.findViewById(R.id.message);
             messageView.setTypeface(lightTypeface);
-            ImageView iconView = (ImageView)rowView.findViewById(R.id.icon);
+            ImageView iconView = rowView.findViewById(R.id.icon);
             NotificareBeacon beacon = getItem(position);
-            nameView.setText(beacon.getName());
+            if (beacon != null) {
+                nameView.setText(beacon.getName());
 
+                if (beacon.getNotification() != null) {
+                    messageView.setText(beacon.getNotification().getMessage());
+                } else {
+                    messageView.setText("");
+                }
 
-            if (beacon.getNotification() != null) {
-                messageView.setText(beacon.getNotification().getMessage());
-            } else {
-                messageView.setText("");
-            }
-
-            if (beacon.getCurrentProximity() == NotificareBeacon.PROXIMITY_IMMEDIATE) {
-                iconView.setImageResource(R.drawable.signal_immediate);
-            } else if (beacon.getCurrentProximity() == NotificareBeacon.PROXIMITY_NEAR) {
-                iconView.setImageResource(R.drawable.signal_near);
-            } else if (beacon.getCurrentProximity() == NotificareBeacon.PROXIMITY_FAR) {
-                iconView.setImageResource(R.drawable.signal_far);
-            } else if (beacon.getCurrentProximity() == NotificareBeacon.PROXIMITY_UNKNOWN) {
-                iconView.setImageResource(R.drawable.signal_unkown);
-            } else {
-                iconView.setImageResource(R.drawable.signal_unkown);
+                if (beacon.getCurrentProximity() == NotificareBeacon.PROXIMITY_IMMEDIATE) {
+                    iconView.setImageResource(R.drawable.signal_immediate);
+                } else if (beacon.getCurrentProximity() == NotificareBeacon.PROXIMITY_NEAR) {
+                    iconView.setImageResource(R.drawable.signal_near);
+                } else if (beacon.getCurrentProximity() == NotificareBeacon.PROXIMITY_FAR) {
+                    iconView.setImageResource(R.drawable.signal_far);
+                } else if (beacon.getCurrentProximity() == NotificareBeacon.PROXIMITY_UNKNOWN) {
+                    iconView.setImageResource(R.drawable.signal_unkown);
+                } else {
+                    iconView.setImageResource(R.drawable.signal_unkown);
+                }
             }
             return rowView;
         }

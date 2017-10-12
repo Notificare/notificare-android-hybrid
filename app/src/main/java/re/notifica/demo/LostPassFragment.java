@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -38,17 +39,20 @@ public class LostPassFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.show();
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(R.string.title_lostpass);
+        }
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.title_lostpass);
         View rootView = inflater.inflate(R.layout.fragment_lost_pass, container, false);
 
-        Button lostPassButton = (Button) rootView.findViewById(R.id.buttonLostPass);
+        Button lostPassButton = rootView.findViewById(R.id.buttonLostPass);
         Typeface lightFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Lato-Light.ttf");
         Typeface regularFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Lato-Regular.ttf");
         builder = new AlertDialog.Builder(getActivity());
-        emailField = (EditText) rootView.findViewById(R.id.emailField);
+        emailField = rootView.findViewById(R.id.emailField);
         emailField.setTypeface(lightFont);
         lostPassButton.setTypeface(lightFont);
         rootView.findViewById(R.id.buttonLostPass).setOnClickListener(new View.OnClickListener() {

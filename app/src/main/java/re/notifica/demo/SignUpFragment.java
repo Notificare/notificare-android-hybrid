@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -41,18 +42,21 @@ public class SignUpFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.show();
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(R.string.title_signup);
+        }
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.title_signup);
         View rootView = inflater.inflate(R.layout.fragment_sign_up, container, false);
 
-        Button signupButton = (Button) rootView.findViewById(R.id.buttonSignup);
+        Button signupButton = rootView.findViewById(R.id.buttonSignup);
 
-        nameField = (EditText) rootView.findViewById(R.id.nameField);
-        emailField = (EditText) rootView.findViewById(R.id.emailField);
-        passwordField = (EditText) rootView.findViewById(R.id.passField);
-        confirmPasswordField = (EditText) rootView.findViewById(R.id.confirmPassField);
+        nameField = rootView.findViewById(R.id.nameField);
+        emailField = rootView.findViewById(R.id.emailField);
+        passwordField = rootView.findViewById(R.id.passField);
+        confirmPasswordField = rootView.findViewById(R.id.confirmPassField);
 
         builder = new AlertDialog.Builder(getActivity());
 

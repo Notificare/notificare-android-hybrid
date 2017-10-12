@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -30,7 +31,6 @@ import re.notifica.model.NotificareApplicationInfo;
 import re.notifica.model.NotificareBeacon;
 import re.notifica.model.NotificareScannable;
 import re.notifica.support.v7.app.ActionBarBaseActivity;
-import re.notifica.ui.ScannableActivity;
 
 public class MainActivity extends ActionBarBaseActivity implements Notificare.OnNotificareReadyListener, BeaconRangingListener {
 
@@ -187,7 +187,7 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case LOCATION_PERMISSION_REQUEST_CODE:
                 if (Notificare.shared().checkRequestLocationPermissionResult(permissions, grantResults)) {
@@ -216,168 +216,181 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
 
         Log.d(TAG, "open fragment for tag: " + tag);
 
-        if (tag.equals("/inbox")) {
-
-            getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.fragment_enter,
-                            R.anim.fragment_exit,
-                            R.anim.fragment_pop_enter,
-                            R.anim.fragment_pop_exit)
-                    .replace(R.id.content_frame, new InboxFragment())
-                    .addToBackStack(tag)
-                    .commit();
-
-        } else if (tag.equals("/settings")) {
-
-            getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.fragment_enter,
-                            R.anim.fragment_exit,
-                            R.anim.fragment_pop_enter,
-                            R.anim.fragment_pop_exit)
-                    .replace(R.id.content_frame, new SettingsFragment())
-                    .addToBackStack(tag)
-                    .commit();
-
-        } else if (tag.equals("/regions")) {
-
-            getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.fragment_enter,
-                            R.anim.fragment_exit,
-                            R.anim.fragment_pop_enter,
-                            R.anim.fragment_pop_exit)
-                    .replace(R.id.content_frame, new RegionsFragment())
-                    .addToBackStack(tag)
-                    .commit();
-
-        } else if (tag.equals("/signup")) {
-
-            getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.fragment_enter,
-                            R.anim.fragment_exit,
-                            R.anim.fragment_pop_enter,
-                            R.anim.fragment_pop_exit)
-                    .replace(R.id.content_frame, new SignUpFragment())
-                    .addToBackStack(tag)
-                    .commit();
-
-        } else if (tag.equals("/lostpass")) {
-
-            getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.fragment_enter,
-                            R.anim.fragment_exit,
-                            R.anim.fragment_pop_enter,
-                            R.anim.fragment_pop_exit)
-                    .replace(R.id.content_frame, new LostPassFragment())
-                    .addToBackStack(tag)
-                    .commit();
-
-        } else if (tag.equals("/profile")) {
-
-            if (Notificare.shared().isLoggedIn()) {
+        switch (tag) {
+            case "/inbox":
 
                 getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.fragment_enter,
                                 R.anim.fragment_exit,
                                 R.anim.fragment_pop_enter,
                                 R.anim.fragment_pop_exit)
-                        .replace(R.id.content_frame, new ProfileFragment())
+                        .replace(R.id.content_frame, new InboxFragment())
                         .addToBackStack(tag)
                         .commit();
-            } else {
+
+                break;
+            case "/settings":
 
                 getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.fragment_enter,
                                 R.anim.fragment_exit,
                                 R.anim.fragment_pop_enter,
                                 R.anim.fragment_pop_exit)
-                        .replace(R.id.content_frame, new SignInFragment())
+                        .replace(R.id.content_frame, new SettingsFragment())
                         .addToBackStack(tag)
                         .commit();
-            }
 
-        } else if (tag.equals("/analytics")) {
-
-            final EditText input = new EditText(this);
-            input.setHint(R.string.hint_event_name);
-
-            builder.setMessage(R.string.analytics_text)
-                    .setTitle(R.string.app_name)
-                    .setCancelable(false)
-                    .setView(input)
-                    .setCancelable(true)
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                        }
-                    })
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-
-                            Notificare.shared().getEventLogger().logCustomEvent(input.getText().toString());
-
-                        }
-                    });
-            builder.create();
-            builder.show();
-
-
-        } else if (tag.equals("/membercard")) {
-
-            Log.i("SERIAL",AppBaseApplication.getMemberCardSerial());
-
-            if (AppBaseApplication.getMemberCardSerial().isEmpty()) {
+                break;
+            case "/regions":
 
                 getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.fragment_enter,
                                 R.anim.fragment_exit,
                                 R.anim.fragment_pop_enter,
                                 R.anim.fragment_pop_exit)
-                        .replace(R.id.content_frame, new SignInFragment())
+                        .replace(R.id.content_frame, new RegionsFragment())
                         .addToBackStack(tag)
                         .commit();
 
-            } else {
+                break;
+            case "/signup":
 
-                Notificare.shared().getPassbookManager().open(AppBaseApplication.getMemberCardSerial());
+                getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.fragment_enter,
+                                R.anim.fragment_exit,
+                                R.anim.fragment_pop_enter,
+                                R.anim.fragment_pop_exit)
+                        .replace(R.id.content_frame, new SignUpFragment())
+                        .addToBackStack(tag)
+                        .commit();
 
-            }
+                break;
+            case "/lostpass":
 
-        } else if (tag.equals("/storage")) {
+                getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.fragment_enter,
+                                R.anim.fragment_exit,
+                                R.anim.fragment_pop_enter,
+                                R.anim.fragment_pop_exit)
+                        .replace(R.id.content_frame, new LostPassFragment())
+                        .addToBackStack(tag)
+                        .commit();
 
-            getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.fragment_enter,
-                            R.anim.fragment_exit,
-                            R.anim.fragment_pop_enter,
-                            R.anim.fragment_pop_exit)
-                    .replace(R.id.content_frame, new StorageFragment())
-                    .addToBackStack(tag)
-                    .commit();
+                break;
+            case "/profile":
 
-        } else if (tag.equals("/beacons")) {
+                if (Notificare.shared().isLoggedIn()) {
 
-            getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.fragment_enter,
-                            R.anim.fragment_exit,
-                            R.anim.fragment_pop_enter,
-                            R.anim.fragment_pop_exit)
-                    .replace(R.id.content_frame, new BeaconsFragment())
-                    .addToBackStack(tag)
-                    .commit();
+                    getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.fragment_enter,
+                                    R.anim.fragment_exit,
+                                    R.anim.fragment_pop_enter,
+                                    R.anim.fragment_pop_exit)
+                            .replace(R.id.content_frame, new ProfileFragment())
+                            .addToBackStack(tag)
+                            .commit();
+                } else {
 
-        } else if (tag.equals("/scan")) {
+                    getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.fragment_enter,
+                                    R.anim.fragment_exit,
+                                    R.anim.fragment_pop_enter,
+                                    R.anim.fragment_pop_exit)
+                            .replace(R.id.content_frame, new SignInFragment())
+                            .addToBackStack(tag)
+                            .commit();
+                }
 
-            Notificare.shared().startScannableActivity(this, SCANNABLE_REQUEST_CODE);
+                break;
+            case "/analytics":
 
-        } else {
+                final EditText input = new EditText(this);
+                input.setHint(R.string.hint_event_name);
 
-            MainFragment fragment = new MainFragment();
-            Bundle args = new Bundle();
-            args.putString("url", tag);
-            fragment.setArguments(args);
+                builder.setMessage(R.string.analytics_text)
+                        .setTitle(R.string.app_name)
+                        .setCancelable(false)
+                        .setView(input)
+                        .setCancelable(true)
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                            }
+                        })
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
 
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.content_frame, fragment)
-                    .commit();
+                                Notificare.shared().getEventLogger().logCustomEvent(input.getText().toString());
+
+                            }
+                        });
+                builder.create();
+                builder.show();
+
+
+                break;
+            case "/membercard":
+
+                Log.i("SERIAL", AppBaseApplication.getMemberCardSerial());
+
+                if (AppBaseApplication.getMemberCardSerial().isEmpty()) {
+
+                    getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.fragment_enter,
+                                    R.anim.fragment_exit,
+                                    R.anim.fragment_pop_enter,
+                                    R.anim.fragment_pop_exit)
+                            .replace(R.id.content_frame, new SignInFragment())
+                            .addToBackStack(tag)
+                            .commit();
+
+                } else {
+
+                    Notificare.shared().getPassbookManager().open(AppBaseApplication.getMemberCardSerial());
+
+                }
+
+                break;
+            case "/storage":
+
+                getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.fragment_enter,
+                                R.anim.fragment_exit,
+                                R.anim.fragment_pop_enter,
+                                R.anim.fragment_pop_exit)
+                        .replace(R.id.content_frame, new StorageFragment())
+                        .addToBackStack(tag)
+                        .commit();
+
+                break;
+            case "/beacons":
+
+                getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.fragment_enter,
+                                R.anim.fragment_exit,
+                                R.anim.fragment_pop_enter,
+                                R.anim.fragment_pop_exit)
+                        .replace(R.id.content_frame, new BeaconsFragment())
+                        .addToBackStack(tag)
+                        .commit();
+
+                break;
+            case "/scan":
+
+                Notificare.shared().startScannableActivity(this, SCANNABLE_REQUEST_CODE);
+
+                break;
+            default:
+
+                MainFragment fragment = new MainFragment();
+                Bundle args = new Bundle();
+                args.putString("url", tag);
+                fragment.setArguments(args);
+
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.content_frame, fragment)
+                        .commit();
+                break;
         }
     }
 
@@ -435,7 +448,7 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
         });
     }
 
-    public static final String md5(final String s) {
+    public static String md5(final String s) {
         final String MD5 = "MD5";
         try {
             // Create MD5 Hash

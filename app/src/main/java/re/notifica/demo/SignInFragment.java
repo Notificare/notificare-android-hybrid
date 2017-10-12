@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -34,20 +35,23 @@ public class SignInFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.show();
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(R.string.title_signin);
+        }
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.title_signin);
         View rootView = inflater.inflate(R.layout.fragment_sign_in, container, false);
 
         Typeface lightFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Lato-Light.ttf");
         Typeface regularFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Lato-Regular.ttf");
 
-        Button lostPassButton = (Button) rootView.findViewById(R.id.buttonLostPass);
-        Button signUpButton = (Button) rootView.findViewById(R.id.buttonSignup);
-        Button signInButton = (Button) rootView.findViewById(R.id.buttonSignin);
-        final EditText emailField = (EditText) rootView.findViewById(R.id.email);
-        final EditText passwordField = (EditText) rootView.findViewById(R.id.pass);
+        Button lostPassButton = rootView.findViewById(R.id.buttonLostPass);
+        Button signUpButton = rootView.findViewById(R.id.buttonSignup);
+        Button signInButton = rootView.findViewById(R.id.buttonSignin);
+        final EditText emailField = rootView.findViewById(R.id.email);
+        final EditText passwordField = rootView.findViewById(R.id.pass);
 
         emailField.setTypeface(lightFont);
         passwordField.setTypeface(lightFont);
@@ -134,17 +138,19 @@ public class SignInFragment extends Fragment {
                         @Override
                         public void onError(NotificareError error) {
                             dialog.dismiss();
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                            builder.setMessage(R.string.error_sign_in)
-                                    .setTitle(R.string.app_name)
-                                    .setCancelable(false)
-                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            //do things
-                                        }
-                                    });
-                            AlertDialog dialogInfo = builder.create();
-                            dialogInfo.show();
+                            if (getActivity() != null) {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                builder.setMessage(R.string.error_sign_in)
+                                        .setTitle(R.string.app_name)
+                                        .setCancelable(false)
+                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                //do things
+                                            }
+                                        });
+                                AlertDialog dialogInfo = builder.create();
+                                dialogInfo.show();
+                            }
                             passwordField.setText(null);
                         }
 
@@ -156,17 +162,19 @@ public class SignInFragment extends Fragment {
                                 @Override
                                 public void onError(NotificareError error) {
                                     dialog.dismiss();
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                    builder.setMessage(R.string.error_sign_in)
-                                            .setTitle(R.string.app_name)
-                                            .setCancelable(false)
-                                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int id) {
-                                                    //do things
-                                                }
-                                            });
-                                    AlertDialog dialogInfo = builder.create();
-                                    dialogInfo.show();
+                                    if (getActivity() != null) {
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                        builder.setMessage(R.string.error_sign_in)
+                                                .setTitle(R.string.app_name)
+                                                .setCancelable(false)
+                                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int id) {
+                                                        //do things
+                                                    }
+                                                });
+                                        AlertDialog dialogInfo = builder.create();
+                                        dialogInfo.show();
+                                    }
                                     passwordField.setText(null);
                                 }
 
@@ -188,17 +196,19 @@ public class SignInFragment extends Fragment {
 
                                             @Override
                                             public void onError(NotificareError notificareError) {
-                                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                                builder.setMessage(R.string.error_sign_in)
-                                                        .setTitle(R.string.app_name)
-                                                        .setCancelable(false)
-                                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                                            public void onClick(DialogInterface dialog, int id) {
-                                                                //do things
-                                                            }
-                                                        });
-                                                AlertDialog dialogInfo = builder.create();
-                                                dialogInfo.show();
+                                                if (getActivity() != null) {
+                                                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                                    builder.setMessage(R.string.error_sign_in)
+                                                            .setTitle(R.string.app_name)
+                                                            .setCancelable(false)
+                                                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                                public void onClick(DialogInterface dialog, int id) {
+                                                                    //do things
+                                                                }
+                                                            });
+                                                    AlertDialog dialogInfo = builder.create();
+                                                    dialogInfo.show();
+                                                }
                                             }
                                         });
 

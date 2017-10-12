@@ -1,6 +1,7 @@
 package re.notifica.demo;
 
-import android.app.AlertDialog;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -55,7 +56,7 @@ public class OnboardingActivity extends FragmentActivity implements Notificare.O
 
                 assets = notificareAssets;
 
-                mPager = (ViewPager) findViewById(R.id.pager);
+                mPager = findViewById(R.id.pager);
                 mPagerAdapter = new OnboardingPagerAdapter(getSupportFragmentManager());
                 mPager.setAdapter(mPagerAdapter);
             }
@@ -101,7 +102,7 @@ public class OnboardingActivity extends FragmentActivity implements Notificare.O
                 if (Notificare.shared().didRequestLocationPermission()) {
                     if (Notificare.shared().shouldShowRequestPermissionRationale(OnboardingActivity.this)) {
                         // Here we should show a dialog explaining location updates
-                        new android.support.v7.app.AlertDialog.Builder(OnboardingActivity.this)
+                        new AlertDialog.Builder(OnboardingActivity.this)
                                 .setTitle(R.string.app_name)
                                 .setMessage(R.string.alert_location_permission_rationale)
 
@@ -124,7 +125,7 @@ public class OnboardingActivity extends FragmentActivity implements Notificare.O
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case LOCATION_PERMISSION_REQUEST_CODE:
                 finishOnBoarding(Notificare.shared().checkRequestLocationPermissionResult(permissions, grantResults));
@@ -154,7 +155,7 @@ public class OnboardingActivity extends FragmentActivity implements Notificare.O
 
 
     private class OnboardingPagerAdapter extends FragmentStatePagerAdapter {
-        public OnboardingPagerAdapter(FragmentManager fm) {
+        OnboardingPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 

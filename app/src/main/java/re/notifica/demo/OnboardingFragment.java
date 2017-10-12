@@ -47,7 +47,7 @@ public class OnboardingFragment extends Fragment {
 
                 ((OnboardingActivity) getActivity()).goToFragment(pos + 1);
 
-                if (buttonAction.equals("goToApp")) {
+                if (buttonAction != null && buttonAction.equals("goToApp")) {
                     ((OnboardingActivity) getActivity()).tryRequestLocationPermission();
                 }
 
@@ -62,7 +62,7 @@ public class OnboardingFragment extends Fragment {
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
 
-        public DownloadImageTask(ImageView bmImage) {
+        DownloadImageTask(ImageView bmImage) {
             this.bmImage = bmImage;
         }
 

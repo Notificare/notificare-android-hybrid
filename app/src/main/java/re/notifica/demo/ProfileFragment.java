@@ -2,8 +2,9 @@ package re.notifica.demo;
 
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -59,16 +60,19 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.show();
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(R.string.title_profile);
+        }
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.title_profile);
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        spinner = (ProgressBar) rootView.findViewById(R.id.progressBar);
+        spinner = rootView.findViewById(R.id.progressBar);
         spinner.setVisibility(View.GONE);
 
-        userProfileList =  (ListView) rootView.findViewById(R.id.userProfileList);
+        userProfileList = rootView.findViewById(R.id.userProfileList);
         refreshView();
 
         return rootView;
@@ -84,12 +88,11 @@ public class ProfileFragment extends Fragment {
                 @Override
                 public void onSuccess(final NotificareUser userResult) {
 
-                    final NotificareUser result = userResult;
                     Notificare.shared().fetchUserPreferences(new NotificareCallback<List<NotificareUserPreference>>() {
                         @Override
                         public void onSuccess(List<NotificareUserPreference> notificareUserPreferences) {
 
-                            if(result.getAccessToken() == null){
+                            if (userResult.getAccessToken() == null) {
                                 Notificare.shared().generateAccessToken(new NotificareCallback<NotificareUser>() {
                                     @Override
                                     public void onSuccess(NotificareUser notificareUser) {
@@ -110,7 +113,7 @@ public class ProfileFragment extends Fragment {
 
                             HashMap<String, String> avatar = new HashMap<String, String>();
                             avatar.put("label", getString(R.string.label_user_profile));
-                            avatar.put("value", result.getUserId());
+                            avatar.put("value", userResult.getUserId());
                             list.add(avatar);
 
                             HashMap<String, String> name = new HashMap<String, String>();
@@ -156,7 +159,7 @@ public class ProfileFragment extends Fragment {
                                 pref.put("label", preferenceObj.getLabel());
                                 pref.put("preferenceId", preferenceObj.getId());
 
-                                if(preferenceObj.getPreferenceType().equals("choice")){
+                                if (preferenceObj.getPreferenceType().equals("choice")) {
                                     for (NotificareUserPreferenceOption segmentObj : preferenceObj.getPreferenceOptions()) {
                                         if(segmentObj.isSelected()){
                                             pref.put("name", segmentObj.getLabel());
@@ -164,7 +167,7 @@ public class ProfileFragment extends Fragment {
                                     }
                                 }
 
-                                if(preferenceObj.getPreferenceType().equals("single")){
+                                if (preferenceObj.getPreferenceType().equals("single")) {
                                     for (NotificareUserPreferenceOption segmentObj : preferenceObj.getPreferenceOptions()) {
                                         pref.put("segmentId", segmentObj.getUserSegmentId());
                                         if(segmentObj.isSelected()){
@@ -185,19 +188,19 @@ public class ProfileFragment extends Fragment {
                                 public void onItemClick(AdapterView<?> aView, View view, int position,
                                                         long arg) {
 
-                                    if(list.get(position).get("label").equals(getString(R.string.label_member_card))){
+                                    if (list.get(position).get("label").equals(getString(R.string.label_member_card))) {
                                         Notificare.shared().getPassbookManager().open(AppBaseApplication.getMemberCardSerial());
                                     }
 
-                                    if(list.get(position).get("label").equals(getString(R.string.label_change_pass))){
+                                    if (list.get(position).get("label").equals(getString(R.string.label_change_pass))) {
                                         doChangePassword();
                                     }
 
-                                    if(list.get(position).get("label").equals(getString(R.string.label_generate_token))){
+                                    if (list.get(position).get("label").equals(getString(R.string.label_generate_token))) {
                                         doGenerateToken();
                                     }
 
-                                    if(list.get(position).get("label").equals(getString(R.string.label_push_email))){
+                                    if (list.get(position).get("label").equals(getString(R.string.label_push_email))) {
                                         Intent intent = new Intent(Intent.ACTION_SENDTO);
                                         intent.putExtra(Intent.EXTRA_EMAIL, new String[]{list.get(position).get("value").concat("@pushmail.notifica.re")});
                                         intent.putExtra(Intent.EXTRA_SUBJECT, "Android Demo App");
@@ -208,15 +211,15 @@ public class ProfileFragment extends Fragment {
                                     }
 
 
-                                    if(list.get(position).get("label").equals(getString(R.string.label_signout))){
+                                    if (list.get(position).get("label").equals(getString(R.string.label_signout))) {
                                         doSignOut();
                                     }
 
-                                    if(list.get(position).get("preferenceId") != null){
+                                    if (list.get(position).get("preferenceId") != null) {
 
                                         NotificareUserPreference preference = prefs.get(position - SEGMENTS_START);
 
-                                        if(preference.getPreferenceType().equals("choice")){
+                                        if (preference.getPreferenceType().equals("choice")) {
                                             showSingleChoiceOptions(prefs.get(position - SEGMENTS_START));
                                         } else {
                                             showMultiChoiceOptions(prefs.get(position - SEGMENTS_START));
@@ -272,10 +275,10 @@ public class ProfileFragment extends Fragment {
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
 
-                if (!pass1.getText().toString().equals(pass2.getText().toString())) {
-                    onChangePasswordError(getString(R.string.error_pass_not_match));
-                } else if (pass1.getText().toString() == null && pass2.getText().toString() == null) {
+                if (pass1.getText().toString().isEmpty() && pass2.getText().toString().isEmpty()) {
                     onChangePasswordError(getString(R.string.error_reset_pass));
+                } else if (!pass1.getText().toString().equals(pass2.getText().toString())) {
+                    onChangePasswordError(getString(R.string.error_pass_not_match));
                 } else if (pass1.getText().toString().length() < 5) {
                     onChangePasswordError(getString(R.string.error_pass_too_short));
                 } else {
@@ -524,7 +527,7 @@ public class ProfileFragment extends Fragment {
     /**
      * User Profile Adapter
      */
-    public class UserProfileAdapter extends BaseAdapter {
+    private class UserProfileAdapter extends BaseAdapter {
 
         protected final String TAG = UserProfileAdapter.class.getSimpleName();
 
@@ -547,7 +550,7 @@ public class ProfileFragment extends Fragment {
         private Typeface regularFont;
         private Typeface hairlineFont;
 
-        public UserProfileAdapter(Activity activity, ArrayList<HashMap<String, String>> userProfileList, ArrayList<NotificareUserPreference> prefs) {
+        UserProfileAdapter(Activity activity, ArrayList<HashMap<String, String>> userProfileList, ArrayList<NotificareUserPreference> prefs) {
             this.activity = activity;
             this.data = userProfileList;
             this.headers = new ArrayList<Integer>();
@@ -641,10 +644,9 @@ public class ProfileFragment extends Fragment {
                         convertView = inflater.inflate(R.layout.row_user_profile, null);
                         holder.icon = (ImageView) convertView.findViewById(R.id.item_icon);
 
-                        String url = "http://gravatar.com/avatar/" + ((MainActivity)getActivity()).md5(itemHash.get("value").trim().toLowerCase()) + "?s=512&x=" + new Date().getTime();
+                        String url = "http://gravatar.com/avatar/" + MainActivity.md5(itemHash.get("value").trim().toLowerCase()) + "?s=512&x=" + new Date().getTime();
 
-                        final ViewHolder finalHolder = holder;
-                        AssetLoader.loadImage(url, finalHolder.icon);
+                        AssetLoader.loadImage(url, holder.icon);
                         break;
                     case TYPE_SEPARATOR:
                         convertView = inflater.inflate(R.layout.row_header, null);
@@ -735,7 +737,9 @@ public class ProfileFragment extends Fragment {
                         holder.name.setTypeface(regularFont);
                         break;
                 }
-                convertView.setTag(holder);
+                if (convertView != null) {
+                    convertView.setTag(holder);
+                }
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
@@ -744,7 +748,7 @@ public class ProfileFragment extends Fragment {
             return convertView;
         }
 
-        public class ViewHolder {
+        class ViewHolder {
             public Switch segmentSwitch;
             public ImageView icon;
             public TextView name;

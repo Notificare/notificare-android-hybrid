@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -53,14 +54,17 @@ public class SettingsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.show();
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(R.string.title_settings);
+        }
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.title_settings);
         View rootView = inflater.inflate(R.layout.fragment_settings, container, false);
 
 
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.list);
+        RecyclerView recyclerView = rootView.findViewById(R.id.list);
 
         mAdapter = new SettingsAdapter(getActivity());
         recyclerView.setAdapter(mAdapter);
@@ -132,16 +136,16 @@ public class SettingsFragment extends Fragment {
     }
 
 
-    class Setting {
+    private class Setting {
         private int type;
         private Object data;
 
 
-        public Setting(int type) {
+        Setting(int type) {
             this(type, null);
         }
 
-        public Setting(int type, Object data) {
+        Setting(int type, Object data) {
             this.type = type;
             this.data = data;
         }
@@ -160,11 +164,11 @@ public class SettingsFragment extends Fragment {
         }
     }
 
-    class Section {
+    private class Section {
         private String name;
 
 
-        public Section(String name) {
+        Section(String name) {
             this.name = name;
         }
 
@@ -174,26 +178,26 @@ public class SettingsFragment extends Fragment {
         }
     }
 
-    class SettingsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-        protected static final int TYPE_SECTION = 1;
-        protected static final int TYPE_NOTIFICATIONS = 2;
-        protected static final int TYPE_LOCATION = 3;
-        protected static final int TYPE_FEEDBACK = 4;
-        protected static final int TYPE_APP_VERSION = 5;
-        protected static final int TYPE_DND = 6;
-        protected static final int TYPE_DND_START = 7;
-        protected static final int TYPE_DND_END = 8;
-        protected Config config;
+    private class SettingsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        static final int TYPE_SECTION = 1;
+        static final int TYPE_NOTIFICATIONS = 2;
+        static final int TYPE_LOCATION = 3;
+        static final int TYPE_FEEDBACK = 4;
+        static final int TYPE_APP_VERSION = 5;
+        static final int TYPE_DND = 6;
+        static final int TYPE_DND_START = 7;
+        static final int TYPE_DND_END = 8;
+        Config config;
 
         private LayoutInflater mLayoutInflater;
         private List<Object> mData;
 
 
-        public SettingsAdapter(Context context) {
+        SettingsAdapter(Context context) {
             this(context, null);
         }
 
-        public SettingsAdapter(Context context, List<Object> items) {
+        SettingsAdapter(Context context, List<Object> items) {
             mLayoutInflater = LayoutInflater.from(context);
             mData = items == null ? new ArrayList<>() : items;
             config = new Config(getActivity());
@@ -471,7 +475,7 @@ public class SettingsFragment extends Fragment {
         class SectionViewHolder extends RecyclerView.ViewHolder {
             public TextView name;
 
-            public SectionViewHolder(View itemView) {
+            SectionViewHolder(View itemView) {
                 super(itemView);
                 name = (TextView) itemView;
             }

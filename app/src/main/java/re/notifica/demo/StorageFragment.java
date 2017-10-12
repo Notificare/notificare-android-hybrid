@@ -10,8 +10,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.SearchView;
@@ -65,10 +67,12 @@ public class StorageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_storage);
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.show();
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(R.string.title_storage);
+        }
 
         View rootView = inflater.inflate(R.layout.fragment_storage, container, false);
 
@@ -133,7 +137,7 @@ public class StorageFragment extends Fragment {
     }
 
     public boolean isStoragePermissionGranted() {
-        if (Build.VERSION.SDK_INT >= 23) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (getActivity().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
                 Log.v(TAG, "Permission is granted");
@@ -149,65 +153,67 @@ public class StorageFragment extends Fragment {
     }
 
 
-    class AssetsAdapter extends ArrayAdapter<NotificareAsset> {
+    private class AssetsAdapter extends ArrayAdapter<NotificareAsset> {
 
         private LayoutInflater mInflater;
 
-        public AssetsAdapter(Context context) {
+        AssetsAdapter(Context context) {
             this(context, new ArrayList<NotificareAsset>());
         }
 
-        public AssetsAdapter(Context context, List<NotificareAsset> items) {
+        AssetsAdapter(Context context, List<NotificareAsset> items) {
             super(context, 0, items);
             mInflater = LayoutInflater.from(context);
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            convertView = mInflater.inflate(R.layout.row_asset, parent, false);
+        public @NonNull View getView(int position, View convertView, @NonNull ViewGroup parent) {
+            if (convertView == null) {
+                convertView = mInflater.inflate(R.layout.row_asset, parent, false);
+            }
             NotificareAsset notificareAsset = getItem(position);
 
-            AppCompatImageView imageView = (AppCompatImageView) convertView.findViewById(R.id.assetImage);
-            if (notificareAsset.getKey() == null) {
-                imageView.setVisibility(View.GONE);
-            } else {
+            if (notificareAsset != null) {
+                AppCompatImageView imageView = convertView.findViewById(R.id.assetImage);
+                if (notificareAsset.getKey() == null) {
+                    imageView.setVisibility(View.GONE);
+                } else {
+                    if (notificareAsset.getContentType() != null &&
+                            (notificareAsset.getContentType().equals("image/jpeg") ||
+                                    notificareAsset.getContentType().equals("image/gif") ||
+                                    notificareAsset.getContentType().equals("image/png"))) {
+                        AssetLoader.loadImage(Notificare.shared().getPushApiBaseUrl() + "/asset/file/" + notificareAsset.getKey(), imageView);
+                    } else if (notificareAsset.getContentType() != null &&
+                            notificareAsset.getContentType().equals("video/mp4")) {
 
+                        imageView.setImageResource(R.drawable.video);
 
-                if (notificareAsset.getContentType() != null &&
-                        (notificareAsset.getContentType().equals("image/jpeg") ||
-                                notificareAsset.getContentType().equals("image/gif") ||
-                                notificareAsset.getContentType().equals("image/png"))) {
-                    AssetLoader.loadImage(Notificare.shared().getPushApiBaseUrl() + "/asset/file/" + notificareAsset.getKey(), imageView);
-                } else if(notificareAsset.getContentType() != null &&
-                        notificareAsset.getContentType().equals("video/mp4")){
+                    } else if (notificareAsset.getContentType() != null &&
+                            notificareAsset.getContentType().equals("application/pdf")) {
 
-                    imageView.setImageResource(R.drawable.video);
+                        imageView.setImageResource(R.drawable.pdf);
 
-                } else if(notificareAsset.getContentType() != null &&
-                        notificareAsset.getContentType().equals("application/pdf")){
+                    } else if (notificareAsset.getContentType() != null &&
+                            notificareAsset.getContentType().equals("application/json")) {
 
-                    imageView.setImageResource(R.drawable.pdf);
+                        imageView.setImageResource(R.drawable.json);
 
-                } else if(notificareAsset.getContentType() != null &&
-                        notificareAsset.getContentType().equals("application/json")){
+                    } else if (notificareAsset.getContentType() != null &&
+                            notificareAsset.getContentType().equals("text/javascript")) {
 
-                    imageView.setImageResource(R.drawable.json);
+                        imageView.setImageResource(R.drawable.js);
 
-                } else if(notificareAsset.getContentType() != null &&
-                        notificareAsset.getContentType().equals("text/javascript")){
+                    } else if (notificareAsset.getContentType() != null &&
+                            notificareAsset.getContentType().equals("text/css")) {
 
-                    imageView.setImageResource(R.drawable.js);
+                        imageView.setImageResource(R.drawable.css);
 
-                } else if(notificareAsset.getContentType() != null &&
-                        notificareAsset.getContentType().equals("text/css")){
+                    } else if (notificareAsset.getContentType() != null &&
+                            notificareAsset.getContentType().equals("text/html")) {
 
-                    imageView.setImageResource(R.drawable.css);
+                        imageView.setImageResource(R.drawable.html);
 
-                } else if(notificareAsset.getContentType() != null &&
-                        notificareAsset.getContentType().equals("text/html")){
-
-                    imageView.setImageResource(R.drawable.html);
-
+                    }
                 }
             }
 
