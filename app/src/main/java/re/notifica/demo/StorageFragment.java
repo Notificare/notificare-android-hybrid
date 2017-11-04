@@ -16,7 +16,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
-import android.support.v7.widget.SearchView;
+import android.widget.SearchView;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
