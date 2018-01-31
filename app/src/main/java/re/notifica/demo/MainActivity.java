@@ -312,15 +312,25 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
                         .setCancelable(false)
                         .setView(input)
                         .setCancelable(true)
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                             }
                         })
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
 
-                                Notificare.shared().getEventLogger().logCustomEvent(input.getText().toString());
+                                Notificare.shared().getEventLogger().logCustomEvent(input.getText().toString(), new NotificareCallback<Boolean>() {
+                                    @Override
+                                    public void onSuccess(Boolean aBoolean) {
+                                        Log.i(TAG, "Event sent");
+                                    }
+
+                                    @Override
+                                    public void onError(NotificareError notificareError) {
+                                        Log.e(TAG, "Error sending event");
+                                    }
+                                });
 
                             }
                         });

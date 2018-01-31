@@ -136,7 +136,7 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
                 NotificareInboxItem item = inboxListAdapter.getItem(position);
                 if (item != null) {
                     Notificare.shared().getInboxManager().markItem(item);
-                    Notificare.shared().openNotification(getActivity(), item.getNotification());
+                    Notificare.shared().openInboxItem(getActivity(), item);
                 }
                 refreshInbox();
             }
