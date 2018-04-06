@@ -14,7 +14,7 @@ import re.notifica.Notificare;
 import re.notifica.NotificareCallback;
 import re.notifica.NotificareError;
 import re.notifica.model.NotificareNotification;
-import re.notifica.push.gcm.DefaultIntentReceiver;
+import re.notifica.receiver.DefaultIntentReceiver;
 
 
 public class AppReceiver extends DefaultIntentReceiver {
