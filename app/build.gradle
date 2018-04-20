@@ -15,8 +15,8 @@ android {
         applicationId "re.notifica.demo"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 10022
-        versionName "1.0.22"
+        versionCode 10023
+        versionName "1.0.23"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [notificareAppId: "5489b42ff23e5815132b492a", notificareHost: "push.notifica.re"]
     }
@@ -73,7 +73,7 @@ dependencies {
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    implementation group: 're.notifica', name: 'notificare-push-lib-android', version: '1.13.5', ext: 'aar', transitive: true
+    implementation 're.notifica:notificare-push-lib-android:1.14.0'
 //    implementation group: 'com.google.http-client', name: 'google-http-client-jackson2', version: '1.23.0'
 //    implementation group: 'com.google.oauth-client', name: 'google-oauth-client', version: '1.23.0'
 //    implementation 'com.google.android.gms:play-services-location:11.6.0'
@@ -85,10 +85,10 @@ dependencies {
 //    implementation 'com.android.support:design:27.0.1'
 //    implementation 'com.android.support:exifinterface:27.0.1'
 //    implementation 'com.squareup.picasso:picasso:2.5.2'
-    implementation 're.notifica:notificare-support-lib-android:1.4.2'
+    implementation 're.notifica:notificare-support-lib-android:1.4.3'
     implementation 'org.altbeacon:android-beacon-library:2.13.1'
-    implementation 'com.google.firebase:firebase-messaging:12.0.1'
-    implementation 'com.google.android.gms:play-services-vision:12.0.1'
+    implementation 'com.google.firebase:firebase-messaging:15.0.0'
+    implementation 'com.google.android.gms:play-services-vision:15.0.0'
     implementation 'me.leolin:ShortcutBadger:1.1.19@aar'
     testImplementation 'junit:junit:4.12'
 }
