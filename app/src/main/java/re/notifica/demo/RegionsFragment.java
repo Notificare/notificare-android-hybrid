@@ -4,6 +4,7 @@ package re.notifica.demo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -28,6 +29,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -131,82 +133,89 @@ public class RegionsFragment extends Fragment implements OnMapReadyCallback {
 
     public void loadLocations() {
 
-        if (Notificare.shared().hasLocationPermissionGranted() && Notificare.shared().getCurrentLocation() != null) {
-
-            double lat = Notificare.shared().getCurrentLocation().getLatitude();
-            double lon = Notificare.shared().getCurrentLocation().getLongitude();
-
-            userLocation = map.addMarker(new MarkerOptions()
-                    .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("user_location",64,64)))
-                    .position(new LatLng(lat, lon))
-                    .title("My Location"));
-
-            // Updates the location and zoom of the MapView
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 15));
-
-            circlesList = new ArrayList<Circle>();
-            polygonsList = new ArrayList<Polygon>();
-            markersList = new ArrayList<Marker>();
-
-            Notificare.shared().doCloudRequest("GET", "/api/region", null, null, new NotificareCallback<JSONObject>() {
+        if (Notificare.shared().hasLocationPermissionGranted()) {
+            Notificare.shared().getCurrentLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
                 @Override
-                public void onSuccess(JSONObject jsonObject) {
+                public void onSuccess(Location currentLocation) {
+                    if (currentLocation != null) {
+                        double lat = currentLocation.getLatitude();
+                        double lon = currentLocation.getLongitude();
 
-                    JSONArray regions = null;
-                    try {
-                        regions = jsonObject.getJSONArray("regions");
-                        for (int i = 0; i < regions.length(); i++) {
+                        userLocation = map.addMarker(new MarkerOptions()
+                                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("user_location",64,64)))
+                                .position(new LatLng(lat, lon))
+                                .title("My Location"));
 
-                            JSONObject region = (JSONObject) regions.get(i);
+                        // Updates the location and zoom of the MapView
+                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 15));
 
-                            LatLng location = new LatLng((double) region.getJSONObject("geometry").getJSONArray("coordinates").get(1), (double) region.getJSONObject("geometry").getJSONArray("coordinates").get(0));
+                        circlesList = new ArrayList<Circle>();
+                        polygonsList = new ArrayList<Polygon>();
+                        markersList = new ArrayList<Marker>();
 
-                            if (!region.isNull("advancedGeometry")) {
+                        Notificare.shared().doCloudRequest("GET", "/api/region", null, null, new NotificareCallback<JSONObject>() {
+                            @Override
+                            public void onSuccess(JSONObject jsonObject) {
 
-                                JSONArray coordinates = (JSONArray) region.getJSONObject("advancedGeometry").getJSONArray("coordinates").get(0);
+                                JSONArray regions = null;
+                                try {
+                                    regions = jsonObject.getJSONArray("regions");
+                                    for (int i = 0; i < regions.length(); i++) {
 
-                                PolygonOptions poly = new PolygonOptions();
-                                poly.fillColor(R.color.colorPrimary);
-                                poly.strokeColor(0);
-                                poly.strokeWidth(0);
+                                        JSONObject region = (JSONObject) regions.get(i);
 
-                                for (int j = 0; j < coordinates.length(); j++) {
-                                    JSONArray c = coordinates.getJSONArray(j);
-                                    poly.add(new LatLng(c.getDouble(1), c.getDouble(0)));
+                                        LatLng location = new LatLng((double) region.getJSONObject("geometry").getJSONArray("coordinates").get(1), (double) region.getJSONObject("geometry").getJSONArray("coordinates").get(0));
+
+                                        if (!region.isNull("advancedGeometry")) {
+
+                                            JSONArray coordinates = (JSONArray) region.getJSONObject("advancedGeometry").getJSONArray("coordinates").get(0);
+
+                                            PolygonOptions poly = new PolygonOptions();
+                                            poly.fillColor(R.color.colorPrimary);
+                                            poly.strokeColor(0);
+                                            poly.strokeWidth(0);
+
+                                            for (int j = 0; j < coordinates.length(); j++) {
+                                                JSONArray c = coordinates.getJSONArray(j);
+                                                poly.add(new LatLng(c.getDouble(1), c.getDouble(0)));
+                                            }
+
+                                            Polygon polygon = map.addPolygon(poly);
+
+                                            polygonsList.add(polygon);
+
+                                        } else {
+                                            Circle circle = map.addCircle(new CircleOptions()
+                                                    .center(location)
+                                                    .radius(region.getDouble("distance"))
+                                                    .fillColor(R.color.colorPrimary)
+                                                    .strokeColor(0)
+                                                    .strokeWidth(0));
+                                            circlesList.add(circle);
+                                        }
+
+
+                                        Marker marker = map.addMarker(new MarkerOptions()
+                                                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",64,64)))
+                                                .position(location)
+                                                .title(region.getString("name")));
+                                        markersList.add(marker);
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
                                 }
 
-                                Polygon polygon = map.addPolygon(poly);
 
-                                polygonsList.add(polygon);
-
-                            } else {
-                                Circle circle = map.addCircle(new CircleOptions()
-                                        .center(location)
-                                        .radius(region.getDouble("distance"))
-                                        .fillColor(R.color.colorPrimary)
-                                        .strokeColor(0)
-                                        .strokeWidth(0));
-                                circlesList.add(circle);
                             }
 
+                            @Override
+                            public void onError(NotificareError notificareError) {
 
-                            Marker marker = map.addMarker(new MarkerOptions()
-                                    .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",64,64)))
-                                    .position(location)
-                                    .title(region.getString("name")));
-                            markersList.add(marker);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                                Log.i("HTTP ERROR", notificareError.getMessage());
+                            }
+                        });
+
                     }
-
-
-                }
-
-                @Override
-                public void onError(NotificareError notificareError) {
-
-                    Log.i("HTTP ERROR", notificareError.getMessage());
                 }
             });
 
