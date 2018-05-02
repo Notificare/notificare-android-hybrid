@@ -15,8 +15,8 @@ android {
         applicationId "re.notifica.demo"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 10023
-        versionName "1.0.23"
+        versionCode 10024
+        versionName "1.0.24"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [notificareAppId: "5489b42ff23e5815132b492a", notificareHost: "push.notifica.re"]
     }
@@ -60,8 +60,8 @@ repositories {
     jcenter()
     google()
     maven {
-        url "https://github.com/Notificare/notificare-mvn-repo/raw/master/releases"
-//        url "file:///Users/joris/Developer/Projects/notificare-mvn-repo/releases"
+//        url "https://github.com/Notificare/notificare-mvn-repo/raw/master/releases"
+        url "file:///Users/joris/Developer/Projects/notificare-mvn-repo/releases"
     }
     flatDir {
         dirs 'libs'
@@ -73,7 +73,7 @@ dependencies {
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    implementation 're.notifica:notificare-push-lib-android:1.14.0'
+    implementation 're.notifica:notificare-push-lib-android:1.14.1'
 //    implementation group: 'com.google.http-client', name: 'google-http-client-jackson2', version: '1.23.0'
 //    implementation group: 'com.google.oauth-client', name: 'google-oauth-client', version: '1.23.0'
 //    implementation 'com.google.android.gms:play-services-location:11.6.0'
