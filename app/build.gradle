@@ -54,6 +54,11 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
 }
 
 repositories {
@@ -81,7 +86,7 @@ dependencies {
     implementation 're.notifica:notificare-beacon:2.0.0'
     implementation 're.notifica:notificare-scannable:2.0.0'
     implementation 're.notifica:notificare-support-lib-android:1.4.3'
-    implementation 'com.google.firebase:firebase-messaging:15.0.0'
+    implementation 'com.google.firebase:firebase-core:16.0.0'
     implementation 'me.leolin:ShortcutBadger:1.1.19@aar'
     testImplementation 'junit:junit:4.12'
 }

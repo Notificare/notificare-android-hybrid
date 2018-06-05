@@ -1,10 +1,13 @@
 package re.notifica.demo;
 
 import android.app.Activity;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -25,11 +28,13 @@ import android.widget.TextView;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 import re.notifica.Notificare;
 import re.notifica.NotificareCallback;
 import re.notifica.NotificareError;
+import re.notifica.database.NotificareDatabase;
 import re.notifica.model.NotificareInboxItem;
 import re.notifica.model.NotificareNotification;
 import re.notifica.util.Log;
@@ -94,9 +99,13 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
         inboxListAdapter = new InboxListAdapter(getActivity(), R.layout.inbox_list_cell);
         listView.setAdapter(inboxListAdapter);
 
-        inboxListAdapter.clear();
         if (Notificare.shared().getInboxManager() != null) {
-            inboxListAdapter.addAll(Notificare.shared().getInboxManager().getItems());
+            LiveData<SortedSet<NotificareInboxItem>> temp = Notificare.shared().getInboxManager().getObservableItems();
+            temp.observe(this, notificareInboxItems -> {
+                Log.i(TAG, "inbox changed");
+                inboxListAdapter.clear();
+                inboxListAdapter.addAll(notificareInboxItems);
+            });
         }
 
         TextView emptyText = rootView.findViewById(R.id.empty_message);
@@ -135,10 +144,9 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 NotificareInboxItem item = inboxListAdapter.getItem(position);
                 if (item != null) {
-                    Notificare.shared().getInboxManager().markItem(item);
                     Notificare.shared().openInboxItem(getActivity(), item);
                 }
-                refreshInbox();
+//                refreshInbox();
             }
         });
 
@@ -167,21 +175,19 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
         // Handle action buttons
         switch(item.getItemId()) {
             case R.id.action_clear:
-                Notificare.shared().clearInbox(new NotificareCallback<Boolean>() {
-                    @Override
-                    public void onSuccess(Boolean aBoolean) {
-                        Log.d(TAG, "Inbox cleared");
-                        if (Notificare.shared().getInboxManager() != null) {
-                            Notificare.shared().getInboxManager().clearInbox();
+                if (Notificare.shared().getInboxManager() != null) {
+                    Notificare.shared().getInboxManager().clearInbox(new NotificareCallback<Integer>() {
+                        @Override
+                        public void onSuccess(Integer integer) {
+                            Log.i(TAG, "inbox cleared");
                         }
-                        inboxListAdapter.clear();
-                    }
 
-                    @Override
-                    public void onError(NotificareError notificareError) {
-                        Log.e(TAG, "Failed to clear inbox: " + notificareError.getMessage());
-                    }
-                });
+                        @Override
+                        public void onError(NotificareError notificareError) {
+                            Log.e(TAG, "Failed to clear inbox: " + notificareError.getMessage());
+                        }
+                    });
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -280,8 +286,7 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
                 case R.id.action_trash:
 
                     for (NotificareInboxItem itemToRemove : itemsToRemove) {
-                        Notificare.shared().getInboxManager().removeItem(itemToRemove);
-                        Notificare.shared().deleteInboxItem(itemToRemove.getItemId(), new NotificareCallback<Boolean>() {
+                        Notificare.shared().getInboxManager().removeItem(itemToRemove, new NotificareCallback<Boolean>() {
                             @Override
                             public void onSuccess(Boolean aBoolean) {
                                 //Log.d(TAG, "Removed inboxItem");
@@ -294,9 +299,9 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
                                 //Log.e(TAG, "Failed to remove inboxItem: " + notificareError.getMessage());
                             }
                         });
-                        int position = inboxListAdapter.getPosition(itemToRemove);
-                        listView.getChildAt(position).findViewById(R.id.inbox_delete).setVisibility(View.INVISIBLE);
-                        inboxListAdapter.remove(itemToRemove);
+//                        int position = inboxListAdapter.getPosition(itemToRemove);
+//                        listView.getChildAt(position).findViewById(R.id.inbox_delete).setVisibility(View.INVISIBLE);
+//                        inboxListAdapter.remove(itemToRemove);
                     }
 
                     itemsToRemove.clear();
