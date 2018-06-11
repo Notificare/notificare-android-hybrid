@@ -29,11 +29,10 @@ public class AppReceiver extends DefaultIntentReceiver {
         if (AppBaseApplication.getNotificationsEnabled()) {
             canShowNotification = true;
             Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                public void run() {
-                    int badgeCount = Notificare.shared().getInboxManager().getUnreadCount();
-                    ShortcutBadger.applyCount(Notificare.shared().getApplicationContext(), badgeCount);
-                }
+            handler.postDelayed(() -> {
+                int badgeCount = Notificare.shared().getInboxManager().getUnreadCount();
+                Log.i(TAG, "unread count = " + badgeCount);
+                ShortcutBadger.applyCount(Notificare.shared().getApplicationContext(), badgeCount);
             }, 1000);
         }
 
@@ -60,51 +59,38 @@ public class AppReceiver extends DefaultIntentReceiver {
 
     @Override
     public void onReady() {
-        Notificare.shared().enableNotifications();
+        if (Notificare.shared().isNotificationsEnabled()) {
+            Notificare.shared().enableNotifications();
+        }
         if (BuildConfig.ENABLE_BILLING) {
             Notificare.shared().enableBilling();
         }
     }
 
     @Override
-    public void onRegistrationFinished(String deviceId) {
-        Log.d(TAG, "Device was registered with GCM as device " + deviceId);
+    public void onDeviceRegistered() {
         // Register as a device for a test userID
-
-        Notificare.shared().registerDevice(deviceId, new NotificareCallback<String>() {
+        if (Notificare.shared().isLocationUpdatesEnabled()) {
+            Notificare.shared().enableLocationUpdates();
+            if (BuildConfig.ENABLE_BEACONS) {
+                Notificare.shared().enableBeacons(30000);
+            }
+        }
+        Notificare.shared().fetchDeviceTags(new NotificareCallback<List<String>>() {
 
             @Override
-            public void onSuccess(String result) {
-                if (Notificare.shared().isLocationUpdatesEnabled()) {
-                    Notificare.shared().enableLocationUpdates();
-                    if (BuildConfig.ENABLE_BEACONS) {
-                        Notificare.shared().enableBeacons(30000);
-                    }
-                }
-                Notificare.shared().fetchDeviceTags(new NotificareCallback<List<String>>() {
+            public void onError(NotificareError arg0) {
+                // TODO Auto-generated method stub
 
-                    @Override
-                    public void onError(NotificareError arg0) {
-                        // TODO Auto-generated method stub
-
-                    }
-
-                    @Override
-                    public void onSuccess(List<String> arg0) {
-
-
-                    }
-
-                });
             }
 
             @Override
-            public void onError(NotificareError error) {
-                Log.e(TAG, "Error registering device", error);
+            public void onSuccess(List<String> arg0) {
+
+
             }
 
         });
-
     }
 
     @Override

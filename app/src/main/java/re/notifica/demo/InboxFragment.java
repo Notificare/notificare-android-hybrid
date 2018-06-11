@@ -1,14 +1,12 @@
 package re.notifica.demo;
 
-import android.app.Activity;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateUtils;
@@ -34,7 +32,6 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 import re.notifica.Notificare;
 import re.notifica.NotificareCallback;
 import re.notifica.NotificareError;
-import re.notifica.database.NotificareDatabase;
 import re.notifica.model.NotificareInboxItem;
 import re.notifica.model.NotificareNotification;
 import re.notifica.util.Log;
@@ -43,7 +40,7 @@ import re.notifica.util.Log;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class InboxFragment extends Fragment implements Notificare.OnNotificationReceivedListener {
+public class InboxFragment extends Fragment {
 
     private static final String TAG = InboxFragment.class.getSimpleName();
 
@@ -55,10 +52,6 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
 
     private Typeface lightFont;
     private Typeface regularFont;
-
-    public InboxFragment() {
-        // Required empty public constructor
-    }
 
     /**
      * Use this factory method to create a new instance of
@@ -77,7 +70,7 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
@@ -104,7 +97,9 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
             temp.observe(this, notificareInboxItems -> {
                 Log.i(TAG, "inbox changed");
                 inboxListAdapter.clear();
-                inboxListAdapter.addAll(notificareInboxItems);
+                if (notificareInboxItems != null) {
+                    inboxListAdapter.addAll(notificareInboxItems);
+                }
             });
         }
 
@@ -195,25 +190,25 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
     }
 
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Notificare.shared().addNotificationReceivedListener(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Notificare.shared().removeNotificationReceivedListener(this);
-    }
-
-    @Override
-    public void onNotificationReceived(NotificareNotification notificareNotification) {
-        inboxListAdapter.clear();
-        if (Notificare.shared().getInboxManager() != null) {
-            inboxListAdapter.addAll(Notificare.shared().getInboxManager().getItems());
-        }
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        Notificare.shared().addNotificationReceivedListener(this);
+//    }
+//
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        Notificare.shared().removeNotificationReceivedListener(this);
+//    }
+//
+//    @Override
+//    public void onNotificationReceived(NotificareNotification notificareNotification) {
+//        inboxListAdapter.clear();
+//        if (Notificare.shared().getInboxManager() != null) {
+//            inboxListAdapter.addAll(Notificare.shared().getInboxManager().getItems());
+//        }
+//    }
 
 
     /**
@@ -221,10 +216,10 @@ public class InboxFragment extends Fragment implements Notificare.OnNotification
      */
     private class InboxListAdapter extends ArrayAdapter<NotificareInboxItem> {
 
-        private Activity context;
+        private FragmentActivity context;
         private int resource;
 
-        InboxListAdapter(Activity context, int resource) {
+        InboxListAdapter(@NonNull FragmentActivity context, int resource) {
             super(context, resource);
             this.context = context;
             this.resource = resource;

@@ -2,6 +2,7 @@ package re.notifica.demo;
 
 
 import android.annotation.SuppressLint;
+import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -25,16 +26,11 @@ import re.notifica.model.NotificareNotification;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MainFragment extends Fragment implements Notificare.OnNotificationReceivedListener {
+public class MainFragment extends Fragment {
 
     protected Config config;
     public WebView webView;
     private ProgressBar spinner;
-
-    public MainFragment() {
-        // Required empty public constructor
-    }
-
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -74,6 +70,27 @@ public class MainFragment extends Fragment implements Notificare.OnNotificationR
             webView.loadUrl(config.getProperty("url"));
         }
 
+
+        LiveData<Integer> unreadCount = Notificare.shared().getInboxManager().getObservableUnreadCount();
+        unreadCount.observe(this, count -> {
+            String scriptFile = AppBaseApplication.getCustomJSString();
+            String badge = "";
+            if (Notificare.shared().getInboxManager().getUnreadCount() > 0) {
+                int b = Notificare.shared().getInboxManager().getUnreadCount();
+                badge = Integer.toString(b);
+            }
+            String js = scriptFile.replace("%@", badge);
+
+            webView.loadUrl("javascript:(function() {" +
+                    "var parent = document.getElementsByTagName('head').item(0);" +
+                    "var script = document.createElement('script');" +
+                    "script.type = 'text/javascript';" +
+                    "script.innerHTML = " + js + "" +
+                    "parent.appendChild(script)" +
+                    "})()");
+
+        });
+
         webView.setWebViewClient(new CustomWebView((MainActivity) getActivity()) {
 
             @Override
@@ -83,36 +100,5 @@ public class MainFragment extends Fragment implements Notificare.OnNotificationR
             }
         });
         return rootView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Notificare.shared().addNotificationReceivedListener(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Notificare.shared().removeNotificationReceivedListener(this);
-    }
-    @Override
-    public void onNotificationReceived(NotificareNotification notificareNotification) {
-
-        String scriptFile = AppBaseApplication.getCustomJSString();
-        String badge = "";
-        if (Notificare.shared().getInboxManager().getUnreadCount() > 0) {
-            int b = Notificare.shared().getInboxManager().getUnreadCount();
-            badge = Integer.toString(b);
-        }
-        String js = scriptFile.replace("%@", badge);
-
-        webView.loadUrl("javascript:(function() {" +
-                "var parent = document.getElementsByTagName('head').item(0);" +
-                "var script = document.createElement('script');" +
-                "script.type = 'text/javascript';" +
-                "script.innerHTML = " + js + "" +
-                "parent.appendChild(script)" +
-                "})()");
     }
 }
