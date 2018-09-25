@@ -38,6 +38,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="@string/app_url_scheme" />
+                <data android:scheme="http" android:host="notificaredemo.page.link" />
+                <data android:scheme="https" android:host="notificaredemo.page.link" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -53,6 +55,7 @@
             android:name="re.notifica.ui.NotificationActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:hardwareAccelerated="true"
+            android:theme="@style/AppTheme.Translucent"
             android:parentActivityName="re.notifica.demo.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
