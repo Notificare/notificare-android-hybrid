@@ -10,16 +10,18 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:paddingTop="11dp"
-        android:paddingLeft="10dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
         android:textColor="@color/colorPrimary"
         android:text="" />
 
     <ImageView android:layout_width="10dip"
         android:layout_height="fill_parent"
         android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="10dp"
         android:id="@+id/item_icon"
-        android:src="@drawable/button_forward" />
+        android:src="@drawable/button_forward"
+        android:contentDescription="@string/forward" />
 
 </RelativeLayout>

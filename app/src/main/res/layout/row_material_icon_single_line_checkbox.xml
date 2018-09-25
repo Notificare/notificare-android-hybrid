@@ -13,20 +13,19 @@
         android:id="@+id/icon"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:scaleType="fitCenter" />
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/icon" />
 
     <TextView
         android:id="@+id/label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginRight="16dp"
         android:layout_marginStart="32dp"
         android:layout_weight="1"
         android:ellipsize="end"
         android:lines="1"
-        android:text="Lorem ipsum dolor sit amet"
+        android:text="@string/lorem_ipsum_dolor_sit_amet"
         android:textColor="@color/colorAccent"
         android:textSize="16sp" />
 
