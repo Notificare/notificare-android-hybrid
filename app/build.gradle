@@ -8,24 +8,30 @@ buildscript {
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion "27.0.3"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.2"
 
     defaultConfig {
         applicationId "re.notifica.demo"
         minSdkVersion 19
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 20000
         versionName "2.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [notificareAppId: "5489b42ff23e5815132b492a", notificareHost: "push.notifica.re"]
     }
     buildTypes {
+        def BOOLEAN = "boolean"
+        def TRUE = "true"
+        def FALSE = "false"
+        def ENABLE_BEACONS_DEBUG = "ENABLE_BEACONS_DEBUG"
         release {
+            buildConfigField BOOLEAN, ENABLE_BEACONS_DEBUG, FALSE
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
+            buildConfigField BOOLEAN, ENABLE_BEACONS_DEBUG, FALSE
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -33,22 +39,28 @@ android {
     flavorDimensions "api"
     productFlavors {
         def BOOLEAN = "boolean"
+        def STRING = "String"
         def TRUE = "true"
         def FALSE = "false"
         def ENABLE_BILLING = "ENABLE_BILLING"
         def ENABLE_BEACONS = "ENABLE_BEACONS"
         def ENABLE_TEST_CALLS = "ENABLE_TEST_CALLS"
+        def OVERRIDE_LANGUAGE = "OVERRIDE_LANGUAGE"
+        def PREFERRED_LANGUAGE = "PREFERRED_LANGUAGE"
         production {
             dimension "api"
             buildConfigField BOOLEAN, ENABLE_BEACONS, TRUE
             buildConfigField BOOLEAN, ENABLE_BILLING, FALSE
             buildConfigField BOOLEAN, ENABLE_TEST_CALLS, FALSE
+            buildConfigField BOOLEAN, OVERRIDE_LANGUAGE, FALSE
         }
         apiTest {
             dimension "api"
             buildConfigField BOOLEAN, ENABLE_BEACONS, TRUE
             buildConfigField BOOLEAN, ENABLE_BILLING, TRUE
             buildConfigField BOOLEAN, ENABLE_TEST_CALLS, TRUE
+            buildConfigField BOOLEAN, OVERRIDE_LANGUAGE, FALSE
+            buildConfigField STRING, PREFERRED_LANGUAGE, "\"pt-BR\""
             applicationId "re.notifica.demo.test"
             manifestPlaceholders = [ notificareAppId: "55aca82cf231d9e80ef851d2", notificareHost: "push-test.notifica.re" ]
         }
@@ -85,8 +97,9 @@ dependencies {
     implementation 're.notifica:notificare-location:2.0.0'
     implementation 're.notifica:notificare-beacon:2.0.0'
     implementation 're.notifica:notificare-scannable:2.0.0'
-    implementation 're.notifica:notificare-support-lib-android:1.4.3'
-    implementation 'com.google.firebase:firebase-core:16.0.0'
+    implementation 're.notifica:notificare-support-lib-android:1.5.0'
+    implementation 'com.google.firebase:firebase-core:16.0.3'
+    implementation 'com.google.firebase:firebase-dynamic-links:16.1.1'
     implementation 'me.leolin:ShortcutBadger:1.1.19@aar'
     testImplementation 'junit:junit:4.12'
 }
