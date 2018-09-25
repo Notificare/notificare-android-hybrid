@@ -6,8 +6,11 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.StrictMode;
 import android.util.Log;
 
+import org.altbeacon.beacon.logging.LogManager;
+import org.altbeacon.beacon.logging.Loggers;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -33,22 +36,47 @@ public class AppBaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        // Allow debug logging only if build is debug
         Notificare.shared().setDebugLogging(BuildConfig.DEBUG);
-        //Notificare.shared().setUseLegacyGCM();
+
+        // Enable beacons debugging
+        if (BuildConfig.ENABLE_BEACONS_DEBUG) {
+            Log.i(TAG, "enabling debugging for beacons");
+            LogManager.setLogger(Loggers.verboseLogger());
+        }
+
+        // REQUIRED
+        // Launch Notificare
         Notificare.shared().launch(this);
+
+        // REQUIRED
+        // Create a default notification channel
         Notificare.shared().createDefaultChannel();
+
+        // OPTIONAL
+        // Add a separate notification channel for passbook relevance notifications
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-            NotificationChannel passbookChannel = new NotificationChannel("passbook", "Passbook Channel", NotificationManager.IMPORTANCE_DEFAULT);
-            passbookChannel.setDescription("This is for passbook notifications");
-            notificationManager.createNotificationChannel(passbookChannel);
-            Notificare.shared().setPassbookChannel(passbookChannel.getId());
+            if (notificationManager != null) {
+                NotificationChannel passbookChannel = new NotificationChannel("passbook", "Passbook Channel", NotificationManager.IMPORTANCE_DEFAULT);
+                passbookChannel.setDescription("This is for passbook notifications");
+                notificationManager.createNotificationChannel(passbookChannel);
+                Notificare.shared().setPassbookChannel(passbookChannel.getId());
+            }
         }
+
+        // REQUIRED
         Notificare.shared().setIntentReceiver(AppReceiver.class);
         //Notificare.shared().setUserPreferencesResource(R.xml.preferences);
+
+        // RECOMMENDED
         Notificare.shared().setSmallIcon(R.drawable.ic_stat_notify_msg);
-        Notificare.shared().setAllowJavaScript(true);
-        Notificare.shared().setAllowOrientationChange(false);
+
+        // Orientation change in NotificationActivity is disallowed by default
+        //Notificare.shared().setAllowOrientationChange(true);
+
+        // OPTIONAL, false by default
         Notificare.shared().setPassbookRelevanceOngoing(true);
 
         // Crash logs are enabled by default.
@@ -60,6 +88,8 @@ public class AppBaseApplication extends Application {
         //Notificare.shared().setRelevanceText("Notificare demo: %s");
         //Notificare.shared().setRelevanceIcon(R.drawable.notificare_passbook_style);
 
+
+        // This app uses NotificareSupport lib, initialize it
         NotificareSupport.shared().launch(this);
 
         // Internet connection configs
@@ -82,32 +112,6 @@ public class AppBaseApplication extends Application {
         SharedPreferences sharedPreferences = getAppContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(PREF_KEY_ONBOARDING_STATUS, status);
-        editor.apply();
-    }
-
-    public static boolean getNotificationsEnabled() {
-        SharedPreferences sharedPreferences = getAppContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        return sharedPreferences.getBoolean(PREF_KEY_NOTIFICATIONS_ENABLED, true);
-    }
-
-    public static void setNotificationsEnabled(boolean enabled) {
-        SharedPreferences sharedPreferences = getAppContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-
-        editor.putBoolean(PREF_KEY_NOTIFICATIONS_ENABLED, enabled);
-        editor.apply();
-    }
-
-    public static boolean getLocationEnabled() {
-        SharedPreferences sharedPreferences = getAppContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        return sharedPreferences.getBoolean(PREF_KEY_LOCATION_ENABLED, false);
-    }
-
-    public static void setLocationEnabled(boolean enabled) {
-        SharedPreferences sharedPreferences = getAppContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-
-        editor.putBoolean(PREF_KEY_LOCATION_ENABLED, enabled);
         editor.apply();
     }
 

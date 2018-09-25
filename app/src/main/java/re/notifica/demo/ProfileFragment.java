@@ -644,7 +644,7 @@ public class ProfileFragment extends Fragment {
                         convertView = inflater.inflate(R.layout.row_user_profile, null);
                         holder.icon = (ImageView) convertView.findViewById(R.id.item_icon);
 
-                        String url = "http://gravatar.com/avatar/" + MainActivity.md5(itemHash.get("value").trim().toLowerCase()) + "?s=512&x=" + new Date().getTime();
+                        String url = "https://gravatar.com/avatar/" + MainActivity.md5(itemHash.get("value").trim().toLowerCase()) + "?s=512&x=" + new Date().getTime();
 
                         AssetLoader.loadImage(url, holder.icon);
                         break;
