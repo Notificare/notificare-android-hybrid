@@ -74,7 +74,7 @@ public class AppBaseApplication extends Application {
         Notificare.shared().setSmallIcon(R.drawable.ic_stat_notify_msg);
 
         // Orientation change in NotificationActivity is disallowed by default
-        //Notificare.shared().setAllowOrientationChange(true);
+        Notificare.shared().setAllowOrientationChange(true);
 
         // OPTIONAL, false by default
         Notificare.shared().setPassbookRelevanceOngoing(true);

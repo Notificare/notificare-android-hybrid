@@ -8,17 +8,13 @@ import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
-import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -97,49 +93,38 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
     }
 
     protected void handleIntent(Intent intent) {
+        Uri data = intent.getData();
+        if (data != null && intent.getAction() != null && intent.getAction().equals(NfcAdapter.ACTION_NDEF_DISCOVERED)) {
+            Notificare.shared().fetchScannable(data.toString(), new NotificareCallback<NotificareScannable>() {
 
-        FirebaseDynamicLinks.getInstance()
-            .getDynamicLink(intent)
-            .addOnSuccessListener(this, pendingDynamicLinkData -> {
-                // Get deep link from result (may be null if no link is found)
-                Uri data = null;
-                if (pendingDynamicLinkData != null) {
-                    data = pendingDynamicLinkData.getLink();
-                    Log.i(TAG, "deeplink: " + data.toString());
-                } else {
-                    data = intent.getData();
-                }
-                if (data != null && intent.getAction() != null && intent.getAction().equals(NfcAdapter.ACTION_NDEF_DISCOVERED)) {
-                    Notificare.shared().fetchScannable(data.toString(), new NotificareCallback<NotificareScannable>() {
-
-                        @Override
-                        public void onSuccess(NotificareScannable notificareScannable) {
-                            if (notificareScannable != null) {
-                                if (notificareScannable.getNotification() != null) {
-                                    Notificare.shared().openNotification(MainActivity.this, notificareScannable.getNotification());
-                                } else {
-                                    Toast.makeText(MainActivity.this, "scannable found", Toast.LENGTH_LONG).show();
-                                }
-                            }
+                @Override
+                public void onSuccess(NotificareScannable notificareScannable) {
+                    if (notificareScannable != null) {
+                        if (notificareScannable.getNotification() != null) {
+                            Notificare.shared().openNotification(MainActivity.this, notificareScannable.getNotification());
+                        } else {
+                            Toast.makeText(MainActivity.this, "scannable found", Toast.LENGTH_LONG).show();
                         }
-
-                        @Override
-                        public void onError(NotificareError notificareError) {
-                            Toast.makeText(MainActivity.this, "scannable not found", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                } else if (data != null) {
-                    Log.d(TAG, "uri is " + data.toString() + ", path is " + data.getPath());
-                    String base = data.getPath();
-                    if (data.getQuery() != null) {
-                        base = base.concat("?").concat(data.getQuery());
                     }
-                    manageFragments(base);
-                } else if (intent.hasCategory(Notification.INTENT_CATEGORY_NOTIFICATION_PREFERENCES)) {
-                    manageFragments("/settings");
                 }
-            })
-            .addOnFailureListener(this, e -> Log.w(TAG, "getDynamicLink:onFailure", e));
+
+                @Override
+                public void onError(NotificareError notificareError) {
+                    Toast.makeText(MainActivity.this, "scannable not found", Toast.LENGTH_LONG).show();
+                }
+            });
+        } else if (data != null) {
+            Log.d(TAG, "uri is " + data.toString() + ", path is " + data.getPath());
+            String base = data.getPath();
+            if (data.getQuery() != null) {
+                base = base.concat("?").concat(data.getQuery());
+            }
+            manageFragments(base);
+        } else if (intent.hasCategory(Notification.INTENT_CATEGORY_NOTIFICATION_PREFERENCES)) {
+            manageFragments("/settings");
+        } else {
+            handleNotificationOpenedIntent(intent);
+        }
     }
 
     @Override
