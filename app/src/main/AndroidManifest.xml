@@ -32,15 +32,12 @@
             android:name="re.notifica.demo.MainActivity"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="@string/app_url_scheme" />
-                <data android:scheme="http" android:host="notificaredemo.page.link" />
-                <data android:scheme="https" android:host="notificaredemo.page.link" />
             </intent-filter>
             <intent-filter>
                 <action android:name="re.notifica.intent.action.NotificationOpened" />

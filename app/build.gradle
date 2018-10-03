@@ -53,6 +53,7 @@ android {
             buildConfigField BOOLEAN, ENABLE_BILLING, FALSE
             buildConfigField BOOLEAN, ENABLE_TEST_CALLS, FALSE
             buildConfigField BOOLEAN, OVERRIDE_LANGUAGE, FALSE
+            buildConfigField STRING, PREFERRED_LANGUAGE, "\"pt-BR\""
         }
         apiTest {
             dimension "api"
