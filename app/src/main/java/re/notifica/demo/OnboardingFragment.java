@@ -16,6 +16,8 @@ import android.widget.TextView;
 
 import java.io.InputStream;
 
+import re.notifica.Notificare;
+
 
 public class OnboardingFragment extends Fragment {
 
@@ -31,6 +33,7 @@ public class OnboardingFragment extends Fragment {
         String file = getArguments().getString("file");
         String buttonLabel = getArguments().getString("buttonLabel");
         final String buttonAction = getArguments().getString("buttonAction");
+        Log.i(TAG, "button action = " + buttonAction);
         final int pos = getArguments().getInt("pos");
 
         TextView titleText = (TextView) rootView.findViewById(R.id.assetText);
@@ -47,6 +50,9 @@ public class OnboardingFragment extends Fragment {
 
                 ((OnboardingActivity) getActivity()).goToFragment(pos + 1);
 
+                if (buttonAction != null && buttonAction.equals("goToLocationServices")) {
+                    Notificare.shared().enableNotifications();
+                }
                 if (buttonAction != null && buttonAction.equals("goToApp")) {
                     ((OnboardingActivity) getActivity()).tryRequestLocationPermission();
                 }

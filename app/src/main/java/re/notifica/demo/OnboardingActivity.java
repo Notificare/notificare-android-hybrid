@@ -136,8 +136,6 @@ public class OnboardingActivity extends FragmentActivity implements Notificare.O
 
     private void finishOnBoarding(Boolean status){
 
-        AppBaseApplication.setLocationEnabled(status);
-
         if (status) {
             Notificare.shared().enableLocationUpdates();
 

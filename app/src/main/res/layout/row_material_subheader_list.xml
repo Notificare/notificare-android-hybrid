@@ -5,10 +5,10 @@
     android:layout_height="48dp"
     android:ellipsize="marquee"
     android:gravity="center_vertical"
-    android:lines="1"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-    android:text="Lorem ipsum dolor sit amet"
+    android:text="@string/lorem_ipsum_dolor_sit_amet"
     android:textColor="@color/colorPrimary"
     android:textSize="14sp"
-    app:extraTypeface="Main-Bold" />
+    app:extraTypeface="Main-Bold"
+    android:singleLine="true" />

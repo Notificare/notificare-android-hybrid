@@ -4,7 +4,8 @@
     android:layout_height="120dp"
     android:paddingTop="35dip"
     android:paddingBottom="10dip"
-    android:paddingLeft="10dip"
+    android:paddingStart="10dip"
+    android:paddingEnd="10dip"
     android:background="@drawable/cell_border_bottom">
 
     <TextView
@@ -14,6 +15,6 @@
         android:textSize="12sp"
         android:textColor="@color/colorPrimary"
         android:textAllCaps="true"
-        android:text="header" />
+        android:text="@string/header" />
 
 </RelativeLayout>

@@ -10,7 +10,8 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:paddingTop="9dp"
-        android:paddingLeft="10dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
         android:textColor="@color/colorPrimary"
         android:text="" />
 
@@ -18,11 +19,11 @@
         android:id="@+id/item_switch"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_marginTop="6dp"
         android:layout_marginBottom="6dp"
-        android:layout_marginRight="6dp"
-        android:textOn="On"
-        android:textOff="Off"/>
+        android:layout_marginEnd="6dp"
+        android:textOn="@string/on"
+        android:textOff="@string/off"/>
 
 </RelativeLayout>

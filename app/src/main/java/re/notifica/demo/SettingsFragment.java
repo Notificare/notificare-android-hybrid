@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -51,7 +52,7 @@ public class SettingsFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
@@ -117,7 +118,7 @@ public class SettingsFragment extends Fragment {
         items.add(new Section(getString(R.string.settings_section_title_general)));
         items.add(new Setting(SettingsAdapter.TYPE_NOTIFICATIONS));
 
-        if (AppBaseApplication.getNotificationsEnabled()) {
+        if (Notificare.shared().isNotificationsEnabled()) {
             items.add(mSettingDnd);
 
             if (AppBaseApplication.getDndEnabled()) {
@@ -233,33 +234,35 @@ public class SettingsFragment extends Fragment {
         }
 
 
+        @NonNull
         @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             if (viewType == TYPE_SECTION) {
                 View view = mLayoutInflater.inflate(R.layout.row_material_subheader_list, parent, false);
-                return new SettingsFragment.SettingsAdapter.SectionViewHolder(view);
+                return new SectionViewHolder(view);
             } else if (viewType == TYPE_NOTIFICATIONS) {
                 View view = mLayoutInflater.inflate(R.layout.row_material_three_lines_switch, parent, false);
-                return new SettingsFragment.SettingsAdapter.NotificationsViewHolder(view);
+                return new NotificationsViewHolder(view);
             } else if (viewType == TYPE_LOCATION) {
                 View view = mLayoutInflater.inflate(R.layout.row_material_three_lines_switch, parent, false);
-                return new SettingsFragment.SettingsAdapter.NotificationsViewHolder(view);
+                return new NotificationsViewHolder(view);
             } else if (viewType == TYPE_FEEDBACK || viewType == TYPE_APP_VERSION) {
                 View view = mLayoutInflater.inflate(R.layout.row_material_two_lines, parent, false);
-                return new SettingsFragment.SettingsAdapter.SettingViewHolder(view);
+                return new SettingViewHolder(view);
             } else if (viewType == TYPE_DND) {
                 View view = mLayoutInflater.inflate(R.layout.row_material_three_lines_switch, parent, false);
-                return new SettingsFragment.SettingsAdapter.NotificationsViewHolder(view);
+                return new NotificationsViewHolder(view);
             } else if (viewType == TYPE_DND_START || viewType == TYPE_DND_END) {
                 View view = mLayoutInflater.inflate(R.layout.row_material_two_lines, parent, false);
-                return new SettingsFragment.SettingsAdapter.DndViewHolder(view);
+                return new DndViewHolder(view);
+            } else {
+                View view = mLayoutInflater.inflate(R.layout.row_material_two_lines, parent, false);
+                return new SettingViewHolder(view);
             }
-
-            return null;
         }
 
         @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             int viewType = getItemViewType(position);
 
             if (viewType == TYPE_SECTION) {
@@ -268,22 +271,20 @@ public class SettingsFragment extends Fragment {
             } else if (viewType == TYPE_NOTIFICATIONS) {
                 ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).label.setText(R.string.settings_general_notifications_label);
                 ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).description.setText(R.string.settings_general_notifications_description);
-                ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).switchEditor.setChecked(AppBaseApplication.getNotificationsEnabled());
+                ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).switchEditor.setChecked(Notificare.shared().isNotificationsEnabled());
                 ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).switchEditor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) {
-                            AppBaseApplication.setNotificationsEnabled(true);
+                            Notificare.shared().enableNotifications();
                             add(2, mSettingDnd);
                         } else {
-                            AppBaseApplication.setNotificationsEnabled(false);
-
+                            Notificare.shared().disableNotifications();
                             if (AppBaseApplication.getDndEnabled()) {
                                 removeRange(2, 3);
                             } else {
                                 remove(2);
                             }
-
                             AppBaseApplication.resetDnd();
                         }
                     }
@@ -291,15 +292,13 @@ public class SettingsFragment extends Fragment {
             } else if (viewType == TYPE_LOCATION) {
                 ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).label.setText(R.string.settings_general_location_label);
                 ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).description.setText(R.string.settings_general_location_description);
-                ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).switchEditor.setChecked(AppBaseApplication.getLocationEnabled());
+                ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).switchEditor.setChecked(Notificare.shared().isLocationUpdatesEnabled());
                 ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).switchEditor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) {
-                            AppBaseApplication.setLocationEnabled(true);
                             Notificare.shared().enableLocationUpdates();
                         } else {
-                            AppBaseApplication.setLocationEnabled(false);
                             Notificare.shared().disableLocationUpdates();
                         }
                     }
@@ -486,11 +485,11 @@ public class SettingsFragment extends Fragment {
             public TextView description;
             public Switch switchEditor;
 
-            public NotificationsViewHolder(View itemView) {
+            NotificationsViewHolder(View itemView) {
                 super(itemView);
-                label = (TextView) itemView.findViewById(R.id.label);
-                description = (TextView) itemView.findViewById(R.id.description);
-                switchEditor = (Switch) itemView.findViewById(R.id.switch_editor);
+                label = itemView.findViewById(R.id.label);
+                description = itemView.findViewById(R.id.description);
+                switchEditor = itemView.findViewById(R.id.switch_editor);
             }
         }
 
@@ -498,10 +497,10 @@ public class SettingsFragment extends Fragment {
             public TextView label;
             public TextView description;
 
-            public TopicsViewHolder(View itemView) {
+            TopicsViewHolder(View itemView) {
                 super(itemView);
-                label = (TextView) itemView.findViewById(R.id.label);
-                description = (TextView) itemView.findViewById(R.id.description);
+                label = itemView.findViewById(R.id.label);
+                description = itemView.findViewById(R.id.description);
             }
         }
 
@@ -509,10 +508,10 @@ public class SettingsFragment extends Fragment {
             public TextView label;
             public TextView description;
 
-            public SettingViewHolder(View itemView) {
+            SettingViewHolder(View itemView) {
                 super(itemView);
-                label = (TextView) itemView.findViewById(R.id.label);
-                description = (TextView) itemView.findViewById(R.id.description);
+                label = itemView.findViewById(R.id.label);
+                description = itemView.findViewById(R.id.description);
             }
         }
 
@@ -520,10 +519,10 @@ public class SettingsFragment extends Fragment {
             public TextView label;
             public TextView description;
 
-            public DndViewHolder(View itemView) {
+            DndViewHolder(View itemView) {
                 super(itemView);
-                label = (TextView) itemView.findViewById(R.id.label);
-                description = (TextView) itemView.findViewById(R.id.description);
+                label = itemView.findViewById(R.id.label);
+                description = itemView.findViewById(R.id.description);
             }
         }
 

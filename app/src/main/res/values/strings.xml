@@ -105,5 +105,13 @@
 
     <string name="content_description_beacon_icon">beacon</string>
     <string name="title_empty_beacons">No beacons found</string>
+    <string name="lorem_ipsum_dolor_sit_amet">Lorem ipsum dolor sit amet</string>
+    <string name="header">header</string>
+    <string name="delete">delete</string>
+    <string name="icon">icon</string>
+    <string name="forward">forward</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
+    <string name="account">account</string>
 
 </resources>

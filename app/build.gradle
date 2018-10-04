@@ -15,17 +15,23 @@ android {
         applicationId "re.notifica.demo"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 10026
-        versionName "1.0.26"
+        versionCode 20000
+        versionName "2.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [notificareAppId: "5489b42ff23e5815132b492a", notificareHost: "push.notifica.re"]
     }
     buildTypes {
+        def BOOLEAN = "boolean"
+        def TRUE = "true"
+        def FALSE = "false"
+        def ENABLE_BEACONS_DEBUG = "ENABLE_BEACONS_DEBUG"
         release {
+            buildConfigField BOOLEAN, ENABLE_BEACONS_DEBUG, FALSE
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
+            buildConfigField BOOLEAN, ENABLE_BEACONS_DEBUG, FALSE
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -33,36 +39,51 @@ android {
     flavorDimensions "api"
     productFlavors {
         def BOOLEAN = "boolean"
+        def STRING = "String"
         def TRUE = "true"
         def FALSE = "false"
         def ENABLE_BILLING = "ENABLE_BILLING"
         def ENABLE_BEACONS = "ENABLE_BEACONS"
         def ENABLE_TEST_CALLS = "ENABLE_TEST_CALLS"
+        def OVERRIDE_LANGUAGE = "OVERRIDE_LANGUAGE"
+        def PREFERRED_LANGUAGE = "PREFERRED_LANGUAGE"
         production {
             dimension "api"
             buildConfigField BOOLEAN, ENABLE_BEACONS, TRUE
             buildConfigField BOOLEAN, ENABLE_BILLING, FALSE
             buildConfigField BOOLEAN, ENABLE_TEST_CALLS, FALSE
+            buildConfigField BOOLEAN, OVERRIDE_LANGUAGE, FALSE
+            buildConfigField STRING, PREFERRED_LANGUAGE, "\"pt-BR\""
         }
         apiTest {
             dimension "api"
             buildConfigField BOOLEAN, ENABLE_BEACONS, TRUE
             buildConfigField BOOLEAN, ENABLE_BILLING, TRUE
             buildConfigField BOOLEAN, ENABLE_TEST_CALLS, TRUE
+            buildConfigField BOOLEAN, OVERRIDE_LANGUAGE, FALSE
+            buildConfigField STRING, PREFERRED_LANGUAGE, "\"pt-BR\""
             applicationId "re.notifica.demo.test"
             manifestPlaceholders = [ notificareAppId: "55aca82cf231d9e80ef851d2", notificareHost: "push-test.notifica.re" ]
         }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
 }
 
 repositories {
     jcenter()
-    google()
     maven {
-        url "https://github.com/Notificare/notificare-mvn-repo/raw/master/releases"
-//        url "file:///Users/joris/Developer/Projects/notificare-mvn-repo/releases"
+//        url "https://github.com/Notificare/notificare-mvn-repo/raw/master/releases"
+        url "file:///Users/joris/Developer/Projects/notificare-mvn-repo/releases"
     }
+    maven {
+        url 'https://maven.google.com'
+    }
+
     flatDir {
         dirs 'libs'
     }
@@ -73,30 +94,22 @@ dependencies {
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    implementation 're.notifica:notificare-push-lib-android:1.15.0'
-//    implementation group: 'com.google.http-client', name: 'google-http-client-jackson2', version: '1.23.0'
-//    implementation group: 'com.google.oauth-client', name: 'google-oauth-client', version: '1.23.0'
-//    implementation 'com.google.android.gms:play-services-location:11.6.0'
-//    implementation 'com.google.android.gms:play-services-maps:11.6.0'
-//    implementation 'com.google.android.gms:play-services-gcm:11.6.0'
-//    implementation 'com.google.firebase:firebase-messaging:11.6.0'
-//    implementation 'com.android.support:appcompat-v7:27.0.1'
-//    implementation 'com.android.support:palette-v7:27.0.1'
-//    implementation 'com.android.support:design:27.0.1'
-//    implementation 'com.android.support:exifinterface:27.0.1'
-//    implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation 're.notifica:notificare-core:2.0.0'
+    implementation 're.notifica:notificare-location:2.0.0'
+    implementation 're.notifica:notificare-beacon:2.0.0'
+    implementation 're.notifica:notificare-scannable:2.0.0'
     implementation 're.notifica:notificare-support-lib-android:1.5.0'
-    implementation 'org.altbeacon:android-beacon-library:2.14'
     implementation 'com.google.firebase:firebase-core:16.0.4'
-    implementation 'com.google.android.gms:play-services-vision:16.2.0'
     implementation 'me.leolin:ShortcutBadger:1.1.19@aar'
     testImplementation 'junit:junit:4.12'
 }
 
 android {
     configurations.all {
-        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-        resolutionStrategy.force 'com.google.code.findbugs:jsr305:1.3.9'
+        resolutionStrategy {
+            cacheChangingModulesFor 0, 'seconds'
+            force 'com.google.code.findbugs:jsr305:1.3.9'
+        }
     }
 }
 

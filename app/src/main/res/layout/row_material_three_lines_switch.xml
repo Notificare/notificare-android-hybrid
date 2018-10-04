@@ -12,20 +12,17 @@
         android:id="@+id/switch_editor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentEnd="true" />
 
     <re.notifica.support.widget.ExtraTextView
         android:id="@+id/label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_toLeftOf="@id/switch_editor"
         android:layout_toStartOf="@id/switch_editor"
         android:ellipsize="end"
         android:lines="1"
-        android:text="Lorem ipsum dolor sit amet"
+        android:text="@string/lorem_ipsum_dolor_sit_amet"
         android:textColor="@color/colorAccent"
         android:textSize="16sp"
         app:extraTypeface="Main-Regular" />
@@ -36,12 +33,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/label"
         android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_toLeftOf="@id/switch_editor"
         android:layout_toStartOf="@id/switch_editor"
         android:ellipsize="end"
         android:lines="2"
-        android:text="Lorem ipsum dolor sit amet"
+        android:text="@string/lorem_ipsum_dolor_sit_amet"
         android:textSize="14sp"
         app:extraTypeface="Main-Regular" />
 

@@ -30,6 +30,7 @@ public class SplashActivity extends AppCompatActivity implements Notificare.OnNo
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
@@ -42,6 +43,7 @@ public class SplashActivity extends AppCompatActivity implements Notificare.OnNo
 
     @Override
     protected void onDestroy() {
+        Log.i(TAG, "onDestroy");
         super.onDestroy();
         Notificare.shared().removeNotificareReadyListener(this);
     }
@@ -49,7 +51,9 @@ public class SplashActivity extends AppCompatActivity implements Notificare.OnNo
     @Override
     public void onNotificareReady(NotificareApplicationInfo notificareApplicationInfo) {
 
-        if (AppBaseApplication.getNotificationsEnabled()) {
+        Log.i(TAG, "onNotificareReady");
+
+        if (Notificare.shared().isNotificationsEnabled()) {
             int badgeCount = Notificare.shared().getInboxManager().getUnreadCount();
             ShortcutBadger.applyCount(this.getApplicationContext(), badgeCount);
         }
@@ -59,12 +63,13 @@ public class SplashActivity extends AppCompatActivity implements Notificare.OnNo
 
     public void fetchConfig(){
 
+        Log.i(TAG, "fetchConfig");
         Notificare.shared().fetchAssets("CONFIG", new NotificareCallback<List<NotificareAsset>>() {
             @Override
             public void onSuccess(List<NotificareAsset> notificareAssets) {
 
                 for (NotificareAsset asset : notificareAssets) {
-
+                    Log.i(TAG, "attempting to load " + asset.getUrl());
                     AssetLoader.loadJSON(asset.getUrl(), new NotificareCallback<JSONObject>() {
                         @Override
                         public void onSuccess(JSONObject jsonObject) {
@@ -83,7 +88,7 @@ public class SplashActivity extends AppCompatActivity implements Notificare.OnNo
                     public void onSuccess(List<NotificareAsset> notificareAssets) {
 
                         for (NotificareAsset asset : notificareAssets) {
-
+                            Log.i(TAG, "attempting to load " + asset.getUrl());
                             AssetLoader.loadString(asset.getUrl(), new NotificareCallback<String>() {
 
                                 @Override
@@ -112,12 +117,14 @@ public class SplashActivity extends AppCompatActivity implements Notificare.OnNo
             @Override
             public void onError(NotificareError notificareError) {
 
+                Log.e(TAG, "onError: " + notificareError.getMessage());
                 fetchConfig();
             }
         });
     }
 
     public void fetchPassTemplate(){
+        Log.i(TAG, "fetchPassTemplate");
 
         final Config config = new Config(this);
         final JSONObject memberCardTemplate = config.getObject("memberCard");
@@ -140,17 +147,24 @@ public class SplashActivity extends AppCompatActivity implements Notificare.OnNo
                     e.printStackTrace();
                 }
 
+                Log.i(TAG, "onSuccess");
+
                 continueToApp();
             }
 
             @Override
             public void onError(NotificareError notificareError) {
+
+                Log.e(TAG, "onError: " + notificareError.getMessage());
+
                 continueToApp();
             }
         });
     }
 
     public void continueToApp(){
+        Log.i(TAG, "continueToApp");
+
         Intent intent;
 
         if (!NotificareSupport.shared().getInternetConnectionManager().isNetworkAvailable()) {

@@ -8,7 +8,8 @@
         android:layout_height="200dp"
         android:scaleType="fitCenter"
         android:id="@+id/item_icon"
-        android:src="@drawable/account" />
+        android:src="@drawable/account"
+        android:contentDescription="@string/account" />
 
 
 </RelativeLayout>

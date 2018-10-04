@@ -1,6 +1,7 @@
 package re.notifica.demo;
 
 import android.app.AlertDialog;
+import android.app.Notification;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,7 +46,6 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-
 
         manageFragments("");
 
@@ -112,15 +113,17 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
                     Toast.makeText(MainActivity.this, "scannable not found", Toast.LENGTH_LONG).show();
                 }
             });
-        } else {
-            if (data != null) {
-                Log.d(TAG, "uri is " + data.toString() + ", path is " + data.getPath());
-                String base = data.getPath();
-                if (data.getQuery() != null) {
-                    base = base.concat("?").concat(data.getQuery());
-                }
-                manageFragments(base);
+        } else if (data != null) {
+            Log.d(TAG, "uri is " + data.toString() + ", path is " + data.getPath());
+            String base = data.getPath();
+            if (data.getQuery() != null) {
+                base = base.concat("?").concat(data.getQuery());
             }
+            manageFragments(base);
+        } else if (intent.hasCategory(Notification.INTENT_CATEGORY_NOTIFICATION_PREFERENCES)) {
+            manageFragments("/settings");
+        } else {
+            handleNotificationOpenedIntent(intent);
         }
     }
 
@@ -149,7 +152,7 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
     @Override
     public void onNotificareReady(NotificareApplicationInfo notificareApplicationInfo) {
 
-        if (AppBaseApplication.getNotificationsEnabled()) {
+        if (Notificare.shared().isNotificationsEnabled()) {
             int badgeCount = Notificare.shared().getInboxManager().getUnreadCount();
             ShortcutBadger.applyCount(this.getApplicationContext(), badgeCount);
         }
@@ -179,7 +182,6 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
         } else {
             Log.i(TAG, "permission granted");
             Notificare.shared().enableLocationUpdates();
-            AppBaseApplication.setLocationEnabled(true);
             if (BuildConfig.ENABLE_BEACONS) {
                 Notificare.shared().enableBeacons(30000);
             }
@@ -193,7 +195,6 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
                 if (Notificare.shared().checkRequestLocationPermissionResult(permissions, grantResults)) {
                     Log.i(TAG, "permission granted");
                     Notificare.shared().enableLocationUpdates();
-                    AppBaseApplication.setLocationEnabled(true);
                     if (BuildConfig.ENABLE_BEACONS) {
                         Notificare.shared().enableBeacons(30000);
                     }
@@ -413,7 +414,7 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
             payload = new JSONObject(AppBaseApplication.getMemberCardTemplate());
             payload.put("passbook", payload.getString("_id"));
 
-            String url = "http://gravatar.com/avatar/" + md5(email.trim().toLowerCase()) + "?s=512";
+            String url = "https://gravatar.com/avatar/" + md5(email.trim().toLowerCase()) + "?s=512";
             payload.getJSONObject("data").put("thumbnail", url);
 
             primaryFields = payload.getJSONObject("data").getJSONArray("primaryFields");

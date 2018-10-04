@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -13,8 +14,12 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 import re.notifica.Notificare;
 import re.notifica.NotificareCallback;
 import re.notifica.NotificareError;
+import re.notifica.model.NotificareAction;
+import re.notifica.model.NotificareDevice;
 import re.notifica.model.NotificareNotification;
-import re.notifica.push.gcm.DefaultIntentReceiver;
+import re.notifica.model.NotificareRemoteMessage;
+import re.notifica.app.DefaultIntentReceiver;
+import re.notifica.model.NotificareSystemNotification;
 
 
 public class AppReceiver extends DefaultIntentReceiver {
@@ -23,23 +28,14 @@ public class AppReceiver extends DefaultIntentReceiver {
     private static final String TAG = AppReceiver.class.getSimpleName();
 
     @Override
-    protected void generateNotification(String intentAction, int icon, @Nullable NotificareNotification notification, @Nullable String inboxItemId, Bundle extras, Bitmap picture, Bitmap largeIcon) {
-        boolean canShowNotification = false;
-
-        if (AppBaseApplication.getNotificationsEnabled()) {
-            canShowNotification = true;
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                public void run() {
-                    int badgeCount = Notificare.shared().getInboxManager().getUnreadCount();
-                    ShortcutBadger.applyCount(Notificare.shared().getApplicationContext(), badgeCount);
-                }
-            }, 1000);
-        }
-
-        if (canShowNotification) {
-            super.generateNotification(intentAction, icon, notification, inboxItemId, extras, picture, largeIcon);
-        }
+    protected void generateNotification(String intentAction, int icon, @Nullable NotificareNotification notification, @NonNull NotificareRemoteMessage message, Bitmap picture, Bitmap largeIcon) {
+        super.generateNotification(intentAction, icon, notification, message, picture, largeIcon);
+        Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            int badgeCount = Notificare.shared().getInboxManager().getUnreadCount();
+            Log.i(TAG, "unread count = " + badgeCount);
+            ShortcutBadger.applyCount(Notificare.shared().getApplicationContext(), badgeCount);
+        }, 1000);
     }
 
     @Override
@@ -60,51 +56,70 @@ public class AppReceiver extends DefaultIntentReceiver {
 
     @Override
     public void onReady() {
-        Notificare.shared().enableNotifications();
+        // Check if notifications are enabled, by default they are not.
+        // Make sure to call enableNotifications() after on-boarding (or from your app settings view)
+        if (Notificare.shared().isNotificationsEnabled()) {
+            Notificare.shared().enableNotifications();
+        }
+        // Check if location updates are enabled, by default they are not.
+        // Make sure to call enableLocationUpdates() after on-boarding (or from your app settings view)
+        if (Notificare.shared().isLocationUpdatesEnabled()) {
+            Notificare.shared().enableLocationUpdates();
+            if (BuildConfig.ENABLE_BEACONS) {
+                Notificare.shared().enableBeacons(30000);
+            }
+        }
+        // Enable in-app billing
         if (BuildConfig.ENABLE_BILLING) {
             Notificare.shared().enableBilling();
+        }
+        // Override preferred language
+        if (BuildConfig.OVERRIDE_LANGUAGE) {
+            Notificare.shared().updatePreferredLanguage(BuildConfig.PREFERRED_LANGUAGE, new NotificareCallback<Boolean>() {
+                @Override
+                public void onSuccess(Boolean aBoolean) {
+
+                }
+
+                @Override
+                public void onError(NotificareError notificareError) {
+
+                }
+            });
+        } else {
+            Notificare.shared().updatePreferredLanguage(null, new NotificareCallback<Boolean>() {
+                @Override
+                public void onSuccess(Boolean aBoolean) {
+
+                }
+
+                @Override
+                public void onError(NotificareError notificareError) {
+
+                }
+            });
         }
     }
 
     @Override
-    public void onRegistrationFinished(String deviceId) {
-        Log.d(TAG, "Device was registered with GCM as device " + deviceId);
-        // Register as a device for a test userID
-
-        Notificare.shared().registerDevice(deviceId, new NotificareCallback<String>() {
+    public void onDeviceRegistered(NotificareDevice device) {
+        // Informational only, no need to take any action
+        Log.i(TAG, "Registered device " + device);
+        Notificare.shared().fetchDeviceTags(new NotificareCallback<List<String>>() {
 
             @Override
-            public void onSuccess(String result) {
-                if (Notificare.shared().isLocationUpdatesEnabled()) {
-                    Notificare.shared().enableLocationUpdates();
-                    if (BuildConfig.ENABLE_BEACONS) {
-                        Notificare.shared().enableBeacons(30000);
-                    }
-                }
-                Notificare.shared().fetchDeviceTags(new NotificareCallback<List<String>>() {
+            public void onError(NotificareError arg0) {
+                // TODO Auto-generated method stub
 
-                    @Override
-                    public void onError(NotificareError arg0) {
-                        // TODO Auto-generated method stub
-
-                    }
-
-                    @Override
-                    public void onSuccess(List<String> arg0) {
-
-
-                    }
-
-                });
             }
 
             @Override
-            public void onError(NotificareError error) {
-                Log.e(TAG, "Error registering device", error);
+            public void onSuccess(List<String> arg0) {
+
+
             }
 
         });
-
     }
 
     @Override
@@ -114,5 +129,13 @@ public class AppReceiver extends DefaultIntentReceiver {
         super.onActionReceived(target);
     }
 
-
+    @Override
+    public void onSystemNotificationReceived(NotificareSystemNotification notification) {
+        Log.i(TAG, "system notification received with type " + notification.getType());
+        if (notification.getExtra() != null) {
+            for (String key : notification.getExtra().keySet()) {
+                Log.i(TAG, key + ": " + notification.getExtra().get(key));
+            }
+        }
+    }
 }
