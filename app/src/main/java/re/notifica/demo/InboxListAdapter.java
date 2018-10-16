@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.Set;
 
 import re.notifica.model.NotificareInboxItem;
+import re.notifica.util.AssetLoader;
 import re.notifica.util.Log;
 
 public class InboxListAdapter extends ListAdapter<NotificareInboxItem, InboxListAdapter.InboxListViewHolder> {
@@ -81,24 +82,37 @@ public class InboxListAdapter extends ListAdapter<NotificareInboxItem, InboxList
     class InboxListViewHolder extends RecyclerView.ViewHolder {
 
         TextView dateView;
+        TextView titleView;
         TextView messageView;
         ImageView deleteIconView;
+        ImageView imageView;
 
         InboxListViewHolder(View itemView) {
             super(itemView);
             dateView = itemView.findViewById(R.id.inbox_date);
+            titleView = itemView.findViewById(R.id.inbox_title);
             messageView = itemView.findViewById(R.id.inbox_message);
             deleteIconView = itemView.findViewById(R.id.inbox_delete);
+            imageView = itemView.findViewById(R.id.inbox_image);
         }
 
         void bind(NotificareInboxItem item, int position, InboxItemClickListener itemClickListener, InboxItemSelectionListener itemSelectedListener) {
             dateView.setText(DateUtils.getRelativeTimeSpanString(item.getTimestamp().getTime(), new Date().getTime(), DateUtils.SECOND_IN_MILLIS));
-            messageView.setText(item.getNotification().getMessage());
+            titleView.setText(item.getTitle());
+            messageView.setText(item.getMessage());
             dateView.setTextColor(Color.BLACK);
+            titleView.setTextColor(Color.BLACK);
             messageView.setTextColor(Color.BLACK);
             if (item.getStatus()) {
                 dateView.setTextColor(Color.GRAY);
+                titleView.setTextColor(Color.GRAY);
                 messageView.setTextColor(Color.GRAY);
+                imageView.setImageAlpha(128);
+            }
+            if (item.getAttachment() != null && item.getAttachment().getUri() != null) {
+                AssetLoader.loadImage(item.getAttachment().getUri(), imageView);
+            } else {
+                imageView.setImageDrawable(null);
             }
             if (selectedItems.contains(item)) {
                 deleteIconView.setVisibility(View.VISIBLE);

@@ -108,6 +108,7 @@
     <string name="lorem_ipsum_dolor_sit_amet">Lorem ipsum dolor sit amet</string>
     <string name="header">header</string>
     <string name="delete">delete</string>
+    <string name="image">image</string>
     <string name="icon">icon</string>
     <string name="forward">forward</string>
     <string name="on">On</string>
