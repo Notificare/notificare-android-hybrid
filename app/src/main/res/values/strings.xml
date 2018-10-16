@@ -35,6 +35,7 @@
 
     <string name="title_inbox">Inbox</string>
     <string name="title_empty_inbox">No messages found</string>
+    <string name="title_mark">Mark All</string>
     <string name="title_delete">Delete</string>
     <string name="title_clear">Clear All</string>
 

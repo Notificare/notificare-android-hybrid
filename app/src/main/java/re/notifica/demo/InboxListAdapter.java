@@ -112,28 +112,31 @@ public class InboxListAdapter extends ListAdapter<NotificareInboxItem, InboxList
             if (item.getAttachment() != null && item.getAttachment().getUri() != null) {
                 AssetLoader.loadImage(item.getAttachment().getUri(), imageView);
             } else {
-                imageView.setImageDrawable(null);
+                imageView.setImageResource(R.drawable.no_attachment);
             }
             if (selectedItems.contains(item)) {
-                deleteIconView.setVisibility(View.VISIBLE);
+                //deleteIconView.setVisibility(View.VISIBLE);
+                itemView.setSelected(true);
             } else {
-                deleteIconView.setVisibility(View.GONE);
+                //deleteIconView.setVisibility(View.GONE);
+                itemView.setSelected(false);
             }
             itemView.setOnClickListener(v -> {
                 itemClickListener.onItemCLick(item, position);
             });
 
             itemView.setOnLongClickListener(v -> {
-                if (deleteIconView.getVisibility() == View.VISIBLE) {
-                    deleteIconView.setVisibility(View.GONE);
+                if (v.isSelected()) {
+//                    deleteIconView.setVisibility(View.GONE);
+                    v.setSelected(false);
                     selectedItems.remove(item);
                     itemSelectedListener.onItemSelected(item, false);
                 } else {
-                    deleteIconView.setVisibility(View.VISIBLE);
+//                    deleteIconView.setVisibility(View.VISIBLE);
+                    v.setSelected(true);
                     selectedItems.add(item);
                     itemSelectedListener.onItemSelected(item, true);
                 }
-                v.setSelected(true);
                 return true;
             });
         }

@@ -1,5 +1,7 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/action_clear"
-          android:icon="@drawable/trash_icon"
+        app:showAsAction="ifRoom|withText"
+          android:icon="@drawable/ic_delete_sweep_white_24dp"
           android:title="@string/title_clear"/>
 </menu>

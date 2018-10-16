@@ -1,7 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/action_mark"
+        android:icon="@drawable/ic_drafts_white_24dp"
+        android:title="@string/title_mark"
+        app:showAsAction="ifRoom|withText" />
     <item android:id="@+id/action_trash"
-          android:icon="@drawable/trash_icon"
-          android:title="@string/title_delete"
+        android:icon="@drawable/ic_delete_white_24dp"
+        android:title="@string/title_delete"
         app:showAsAction="ifRoom|withText" />
 </menu>

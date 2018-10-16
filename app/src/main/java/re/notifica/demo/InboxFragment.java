@@ -37,7 +37,7 @@ public class InboxFragment extends Fragment implements InboxListAdapter.InboxIte
     private static final String TAG = InboxFragment.class.getSimpleName();
 
     private RecyclerView listView;
-    private Set<NotificareInboxItem> itemsToRemove;
+    private Set<NotificareInboxItem> selectedItems;
     private InboxListAdapter inboxAdapter;
     protected ArrayAdapter<NotificareInboxItem> inboxListAdapter;
     private ActionMode mActionMode;
@@ -82,8 +82,7 @@ public class InboxFragment extends Fragment implements InboxListAdapter.InboxIte
         lightFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Lato-Light.ttf");
         regularFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Lato-Regular.ttf");
 
-        itemsToRemove = new HashSet<>();
-//        inboxListAdapter = new InboxListAdapter(getActivity(), R.layout.inbox_list_cell);
+        selectedItems = new HashSet<>();
 
         inboxAdapter = new InboxListAdapter(this, this);
         listView.setAdapter(inboxAdapter);
@@ -102,39 +101,6 @@ public class InboxFragment extends Fragment implements InboxListAdapter.InboxIte
                 }
             });
         }
-
-//        listView.setEmptyView(emptyText);
-//        listView.setOnItemLongClickListener((parent, view, position, id) -> {
-//
-//            if (view.findViewById(R.id.inbox_delete).getVisibility() == View.VISIBLE) {
-//                //uncheck
-//                view.findViewById(R.id.inbox_delete).setVisibility(View.INVISIBLE);
-//                itemsToRemove.remove(inboxListAdapter.getItem(position));
-//
-//            } else {
-//                //check
-//                itemsToRemove.add(inboxListAdapter.getItem(position));
-//                view.findViewById(R.id.inbox_delete).setVisibility(View.VISIBLE);
-//            }
-//
-//            if (mActionMode != null) {
-//                return true;
-//            }
-//
-//            // Start the CAB using the ActionMode.Callback defined above
-//            mActionMode = getActivity().startActionMode(mActionModeCallback);
-//
-//            view.setSelected(true);
-//            return true;
-//        });
-//
-//
-//        listView.setOnItemClickListener((parent, view, position, id) -> {
-//            NotificareInboxItem item = inboxListAdapter.getItem(position);
-//            if (item != null) {
-//                Notificare.shared().openInboxItem(getActivity(), item);
-//            }
-//        });
 
         return rootView;
     }
@@ -184,13 +150,18 @@ public class InboxFragment extends Fragment implements InboxListAdapter.InboxIte
     public void onItemSelected(NotificareInboxItem item, boolean selected) {
         if (item != null) {
             if (selected) {
-                itemsToRemove.add(item);
+                selectedItems.add(item);
             } else {
-                itemsToRemove.remove(item);
+                selectedItems.remove(item);
             }
         }
-        if (mActionMode == null) {
-            mActionMode = getActivity().startActionMode(mActionModeCallback);
+        if (selectedItems.size() > 0) {
+            if (mActionMode == null) {
+                mActionMode = getActivity().startActionMode(mActionModeCallback);
+            }
+            mActionMode.setTitle(String.valueOf(selectedItems.size()));
+        } else if (mActionMode != null) {
+            mActionMode.finish();
         }
     }
 
@@ -221,8 +192,8 @@ public class InboxFragment extends Fragment implements InboxListAdapter.InboxIte
                 case R.id.action_trash:
 
                     spinner.setVisibility(View.VISIBLE);
-                    for (NotificareInboxItem itemToRemove : itemsToRemove) {
-                        Notificare.shared().getInboxManager().removeItem(itemToRemove, new NotificareCallback<Boolean>() {
+                    for (NotificareInboxItem selectedItem : selectedItems) {
+                        Notificare.shared().getInboxManager().removeItem(selectedItem, new NotificareCallback<Boolean>() {
                             @Override
                             public void onSuccess(Boolean aBoolean) {
                                 //Log.d(TAG, "Removed inboxItem");
@@ -239,6 +210,25 @@ public class InboxFragment extends Fragment implements InboxListAdapter.InboxIte
 
                     mode.finish(); // Action picked, so close the CAB
                     return true;
+                case R.id.action_mark:
+
+                    spinner.setVisibility(View.VISIBLE);
+                    for (NotificareInboxItem selectedItem : selectedItems) {
+                        Notificare.shared().getInboxManager().markItem(selectedItem, new NotificareCallback<Boolean>() {
+                            @Override
+                            public void onSuccess(Boolean aBoolean) {
+                                spinner.setVisibility(View.GONE);
+                            }
+
+                            @Override
+                            public void onError(NotificareError notificareError) {
+                                spinner.setVisibility(View.GONE);
+                            }
+                        });
+                    }
+
+                    mode.finish(); // Action picked, so close the CAB
+                    return true;
                 default:
                     return false;
             }
@@ -248,7 +238,7 @@ public class InboxFragment extends Fragment implements InboxListAdapter.InboxIte
         @Override
         public void onDestroyActionMode(ActionMode mode) {
             inboxAdapter.clearSelection();
-            itemsToRemove.clear();
+            selectedItems.clear();
             mActionMode = null;
         }
     };
