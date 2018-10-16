@@ -16,10 +16,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -272,51 +270,42 @@ public class SettingsFragment extends Fragment {
                 ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).label.setText(R.string.settings_general_notifications_label);
                 ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).description.setText(R.string.settings_general_notifications_description);
                 ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).switchEditor.setChecked(Notificare.shared().isNotificationsEnabled());
-                ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).switchEditor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (isChecked) {
-                            Notificare.shared().enableNotifications();
-                            add(2, mSettingDnd);
+                ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).switchEditor.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    if (isChecked) {
+                        Notificare.shared().enableNotifications();
+                        add(2, mSettingDnd);
+                    } else {
+                        Notificare.shared().disableNotifications();
+                        if (AppBaseApplication.getDndEnabled()) {
+                            removeRange(2, 3);
                         } else {
-                            Notificare.shared().disableNotifications();
-                            if (AppBaseApplication.getDndEnabled()) {
-                                removeRange(2, 3);
-                            } else {
-                                remove(2);
-                            }
-                            AppBaseApplication.resetDnd();
+                            remove(2);
                         }
+                        AppBaseApplication.resetDnd();
                     }
                 });
             } else if (viewType == TYPE_LOCATION) {
                 ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).label.setText(R.string.settings_general_location_label);
                 ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).description.setText(R.string.settings_general_location_description);
                 ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).switchEditor.setChecked(Notificare.shared().isLocationUpdatesEnabled());
-                ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).switchEditor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (isChecked) {
-                            Notificare.shared().enableLocationUpdates();
-                        } else {
-                            Notificare.shared().disableLocationUpdates();
-                        }
+                ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).switchEditor.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    if (isChecked) {
+                        Notificare.shared().enableLocationUpdates();
+                    } else {
+                        Notificare.shared().disableLocationUpdates();
                     }
                 });
             } else if (viewType == TYPE_FEEDBACK) {
                 ((SettingsFragment.SettingsAdapter.SettingViewHolder) holder).label.setText(R.string.settings_others_feedback_label);
                 ((SettingsFragment.SettingsAdapter.SettingViewHolder) holder).description.setText(R.string.settings_others_feedback_description);
                 holder.itemView.setClickable(true);
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(Intent.ACTION_SENDTO);
-                        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{config.getProperty("email")});
-                        intent.putExtra(Intent.EXTRA_SUBJECT, "Android Demo App");
-                        intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.your_message));
-                        intent.setData(Uri.parse("mailto:"));
-                        startActivity(intent);
-                    }
+                holder.itemView.setOnClickListener(v -> {
+                    Intent intent = new Intent(Intent.ACTION_SENDTO);
+                    intent.putExtra(Intent.EXTRA_EMAIL, new String[]{config.getProperty("email")});
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "Android Demo App");
+                    intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.your_message));
+                    intent.setData(Uri.parse("mailto:"));
+                    startActivity(intent);
                 });
             } else if (viewType == TYPE_APP_VERSION) {
                 ((SettingsFragment.SettingsAdapter.SettingViewHolder) holder).label.setText(R.string.settings_others_app_version_label);
@@ -326,76 +315,67 @@ public class SettingsFragment extends Fragment {
                 ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).label.setText(R.string.settings_general_dnd_label);
                 ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).description.setText(R.string.settings_general_dnd_description);
                 ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).switchEditor.setChecked(AppBaseApplication.getDndEnabled());
-                ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).switchEditor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (isChecked) {
-                            AppBaseApplication.setDndEnabled(true);
-                            addAll(3, Arrays.asList(mSettingDndStart, mSettingDndEnd));
-                        } else {
-                            final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), getString(R.string.app_name), getString(R.string.settings_general_dnd_updating_message), true, false);
-                            Notificare.shared().clearDoNotDisturb(new NotificareCallback<Boolean>() {
-                                @Override
-                                public void onSuccess(Boolean aBoolean) {
-                                    progressDialog.dismiss();
-                                    mSettingDndStart.setData(null); // reset cached values
-                                    mSettingDndEnd.setData(null); // reset cached values
-                                    AppBaseApplication.setDndEnabled(false);
-                                    removeRange(3, 2);
-                                }
+                ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).switchEditor.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    if (isChecked) {
+                        AppBaseApplication.setDndEnabled(true);
+                        addAll(3, Arrays.asList(mSettingDndStart, mSettingDndEnd));
+                    } else {
+                        final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), getString(R.string.app_name), getString(R.string.settings_general_dnd_updating_message), true, false);
+                        Notificare.shared().clearDoNotDisturb(new NotificareCallback<Boolean>() {
+                            @Override
+                            public void onSuccess(Boolean aBoolean) {
+                                progressDialog.dismiss();
+                                mSettingDndStart.setData(null); // reset cached values
+                                mSettingDndEnd.setData(null); // reset cached values
+                                AppBaseApplication.setDndEnabled(false);
+                                removeRange(3, 2);
+                            }
 
-                                @Override
-                                public void onError(NotificareError notificareError) {
-                                    progressDialog.dismiss();
-                                }
-                            });
-                        }
+                            @Override
+                            public void onError(NotificareError notificareError) {
+                                progressDialog.dismiss();
+                            }
+                        });
                     }
                 });
             } else if (viewType == TYPE_DND_START) {
                 NotificareTimeOfDay timeOfDay = (NotificareTimeOfDay) ((SettingsFragment.Setting) mData.get(position)).getData();
                 ((SettingsFragment.SettingsAdapter.DndViewHolder) holder).label.setText(R.string.settings_general_dnd_start_label);
                 ((SettingsFragment.SettingsAdapter.DndViewHolder) holder).description.setText(timeOfDay == null ? null : String.format(Locale.getDefault(), "%02d:%02d", timeOfDay.getHour(), timeOfDay.getMinute()));
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        NotificareTimeOfDay timeOfDay = (NotificareTimeOfDay) mSettingDndStart.getData();
+                holder.itemView.setOnClickListener(v -> {
+                    NotificareTimeOfDay timeOfDay1 = (NotificareTimeOfDay) mSettingDndStart.getData();
 
-                        int hour = timeOfDay == null ? 0 : timeOfDay.getHour();
-                        int minute = timeOfDay == null ? 0 : timeOfDay.getMinute();
-                        TimePickerDialog.OnTimeSetListener listener = new TimePickerDialog.OnTimeSetListener() {
-                            @Override
-                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                                mSettingDndStart.setData(new NotificareTimeOfDay(hourOfDay, minute));
-                                notifyItemRangeChanged(3, 2);
+                    int hour = timeOfDay1 == null ? 0 : timeOfDay1.getHour();
+                    int minute = timeOfDay1 == null ? 0 : timeOfDay1.getMinute();
+                    TimePickerDialog.OnTimeSetListener listener = (view, hourOfDay, minute1) -> {
+                        mSettingDndStart.setData(new NotificareTimeOfDay(hourOfDay, minute1));
+                        notifyItemRangeChanged(3, 2);
 
-                                if (mSettingDndStart.getData() != null && mSettingDndEnd.getData() != null) {
-                                    final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), getString(R.string.app_name), getString(R.string.settings_general_dnd_updating_message), true, false);
-                                    Notificare.shared().updateDoNotDisturb(
-                                            new NotificareTimeOfDayRange(
-                                                    (NotificareTimeOfDay) mSettingDndStart.getData(),
-                                                    (NotificareTimeOfDay) mSettingDndEnd.getData()),
-                                            new NotificareCallback<Boolean>() {
-                                                @Override
-                                                public void onSuccess(Boolean aBoolean) {
-                                                    progressDialog.dismiss();
-                                                    AppBaseApplication.setDndRange(new NotificareTimeOfDayRange((NotificareTimeOfDay) mSettingDndStart.getData(), (NotificareTimeOfDay) mSettingDndEnd.getData()));
-                                                }
+                        if (mSettingDndStart.getData() != null && mSettingDndEnd.getData() != null) {
+                            final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), getString(R.string.app_name), getString(R.string.settings_general_dnd_updating_message), true, false);
+                            Notificare.shared().updateDoNotDisturb(
+                                    new NotificareTimeOfDayRange(
+                                            (NotificareTimeOfDay) mSettingDndStart.getData(),
+                                            (NotificareTimeOfDay) mSettingDndEnd.getData()),
+                                    new NotificareCallback<Boolean>() {
+                                        @Override
+                                        public void onSuccess(Boolean aBoolean) {
+                                            progressDialog.dismiss();
+                                            AppBaseApplication.setDndRange(new NotificareTimeOfDayRange((NotificareTimeOfDay) mSettingDndStart.getData(), (NotificareTimeOfDay) mSettingDndEnd.getData()));
+                                        }
 
-                                                @Override
-                                                public void onError(NotificareError notificareError) {
-                                                    progressDialog.dismiss();
-                                                    // todo show error
-                                                }
-                                            });
-                                }
-                            }
-                        };
+                                        @Override
+                                        public void onError(NotificareError notificareError) {
+                                            progressDialog.dismiss();
+                                            // todo show error
+                                        }
+                                    });
+                        }
+                    };
 
-                        TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), listener, hour, minute, true);
-                        timePickerDialog.show();
+                    TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), listener, hour, minute, true);
+                    timePickerDialog.show();
 
-                    }
                 });
             } else if (viewType == TYPE_DND_END) {
                 NotificareTimeOfDay timeOfDay = (NotificareTimeOfDay) ((SettingsFragment.Setting) mData.get(position)).getData();
@@ -411,46 +391,40 @@ public class SettingsFragment extends Fragment {
                     ((SettingsFragment.SettingsAdapter.DndViewHolder) holder).description.setText(null);
                 }
 
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        NotificareTimeOfDay timeOfDay = (NotificareTimeOfDay) mSettingDndEnd.getData();
+                holder.itemView.setOnClickListener(v -> {
+                    NotificareTimeOfDay timeOfDay12 = (NotificareTimeOfDay) mSettingDndEnd.getData();
 
-                        int hour = timeOfDay == null ? 0 : timeOfDay.getHour();
-                        int minute = timeOfDay == null ? 0 : timeOfDay.getMinute();
-                        TimePickerDialog.OnTimeSetListener listener = new TimePickerDialog.OnTimeSetListener() {
-                            @Override
-                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                                mSettingDndEnd.setData(new NotificareTimeOfDay(hourOfDay, minute));
-                                notifyItemChanged(4);
+                    int hour = timeOfDay12 == null ? 0 : timeOfDay12.getHour();
+                    int minute = timeOfDay12 == null ? 0 : timeOfDay12.getMinute();
+                    TimePickerDialog.OnTimeSetListener listener = (view, hourOfDay, minute12) -> {
+                        mSettingDndEnd.setData(new NotificareTimeOfDay(hourOfDay, minute12));
+                        notifyItemChanged(4);
 
-                                if (mSettingDndStart.getData() != null && mSettingDndEnd.getData() != null) {
-                                    final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), getString(R.string.app_name), getString(R.string.settings_general_dnd_updating_message), true, false);
-                                    Notificare.shared().updateDoNotDisturb(
-                                            new NotificareTimeOfDayRange(
-                                                    (NotificareTimeOfDay) mSettingDndStart.getData(),
-                                                    (NotificareTimeOfDay) mSettingDndEnd.getData()),
-                                            new NotificareCallback<Boolean>() {
-                                                @Override
-                                                public void onSuccess(Boolean aBoolean) {
-                                                    progressDialog.dismiss();
-                                                    AppBaseApplication.setDndRange(new NotificareTimeOfDayRange((NotificareTimeOfDay) mSettingDndStart.getData(), (NotificareTimeOfDay) mSettingDndEnd.getData()));
-                                                }
+                        if (mSettingDndStart.getData() != null && mSettingDndEnd.getData() != null) {
+                            final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), getString(R.string.app_name), getString(R.string.settings_general_dnd_updating_message), true, false);
+                            Notificare.shared().updateDoNotDisturb(
+                                    new NotificareTimeOfDayRange(
+                                            (NotificareTimeOfDay) mSettingDndStart.getData(),
+                                            (NotificareTimeOfDay) mSettingDndEnd.getData()),
+                                    new NotificareCallback<Boolean>() {
+                                        @Override
+                                        public void onSuccess(Boolean aBoolean) {
+                                            progressDialog.dismiss();
+                                            AppBaseApplication.setDndRange(new NotificareTimeOfDayRange((NotificareTimeOfDay) mSettingDndStart.getData(), (NotificareTimeOfDay) mSettingDndEnd.getData()));
+                                        }
 
-                                                @Override
-                                                public void onError(NotificareError notificareError) {
-                                                    progressDialog.dismiss();
-                                                    // todo show error
-                                                }
-                                            });
-                                }
-                            }
-                        };
+                                        @Override
+                                        public void onError(NotificareError notificareError) {
+                                            progressDialog.dismiss();
+                                            // todo show error
+                                        }
+                                    });
+                        }
+                    };
 
-                        TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), listener, hour, minute, true);
-                        timePickerDialog.show();
+                    TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), listener, hour, minute, true);
+                    timePickerDialog.show();
 
-                    }
                 });
             }
         }

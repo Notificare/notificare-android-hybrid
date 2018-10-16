@@ -24,7 +24,7 @@ public class CustomWebView extends WebViewClient {
     protected Config config;
 
     public CustomWebView(MainActivity activity) {
-        mActivityRef = new WeakReference<MainActivity>(activity);
+        mActivityRef = new WeakReference<>(activity);
         config = new Config(mActivityRef.get());
     }
 

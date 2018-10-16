@@ -3,9 +3,9 @@ package re.notifica.demo;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -32,7 +32,7 @@ public class SignInFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
@@ -63,168 +63,141 @@ public class SignInFragment extends Fragment {
             getFragmentManager().popBackStack();
         }
 
-        rootView.findViewById(R.id.buttonSignup).setOnClickListener(new View.OnClickListener(){
+        rootView.findViewById(R.id.buttonSignup).setOnClickListener(view -> ((MainActivity)getActivity()).manageFragments("/signup"));
 
-            @Override
-            public void onClick(View view) {
-                ((MainActivity)getActivity()).manageFragments("/signup");
-            }
-        });
+        rootView.findViewById(R.id.buttonLostPass).setOnClickListener(view -> ((MainActivity)getActivity()).manageFragments("/lostpass"));
 
-        rootView.findViewById(R.id.buttonLostPass).setOnClickListener(new View.OnClickListener(){
+        rootView.findViewById(R.id.buttonSignin).setOnClickListener(view -> {
+            //signIn();
 
-            @Override
-            public void onClick(View view) {
-                ((MainActivity)getActivity()).manageFragments("/lostpass");
-            }
-        });
+            String email = emailField.getText().toString();
+            String password = passwordField.getText().toString();
 
-        rootView.findViewById(R.id.buttonSignin).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //signIn();
-
-                String email = emailField.getText().toString();
-                String password = passwordField.getText().toString();
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
 
-                if (TextUtils.isEmpty(email) && TextUtils.isEmpty(password)) {
+            if (TextUtils.isEmpty(email) && TextUtils.isEmpty(password)) {
 
-                    builder.setMessage(R.string.error_sign_in)
-                            .setTitle(R.string.app_name)
-                            .setCancelable(false)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    //do things
-                                }
-                            });
-                    AlertDialog dialogInfo = builder.create();
-                    dialogInfo.show();
+                builder.setMessage(R.string.error_sign_in)
+                        .setTitle(R.string.app_name)
+                        .setCancelable(false)
+                        .setPositiveButton("OK", (dialog, id) -> {
+                            //do things
+                        });
+                AlertDialog dialogInfo = builder.create();
+                dialogInfo.show();
 
-                } else if (password.length() < 5) {
+            } else if (password.length() < 5) {
 
-                    builder.setMessage(R.string.error_pass_too_short)
-                            .setTitle(R.string.app_name)
-                            .setCancelable(false)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    //do things
-                                }
-                            });
-                    AlertDialog dialogInfo = builder.create();
-                    dialogInfo.show();
+                builder.setMessage(R.string.error_pass_too_short)
+                        .setTitle(R.string.app_name)
+                        .setCancelable(false)
+                        .setPositiveButton("OK", (dialog, id) -> {
+                            //do things
+                        });
+                AlertDialog dialogInfo = builder.create();
+                dialogInfo.show();
 
-                } else if (!email.contains("@")) {
-                    builder.setMessage(R.string.error_invalid_email)
-                            .setTitle(R.string.app_name)
-                            .setCancelable(false)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    //do things
-                                }
-                            });
-                    AlertDialog dialogInfo = builder.create();
-                    dialogInfo.show();
+            } else if (!email.contains("@")) {
+                builder.setMessage(R.string.error_invalid_email)
+                        .setTitle(R.string.app_name)
+                        .setCancelable(false)
+                        .setPositiveButton("OK", (dialog, id) -> {
+                            //do things
+                        });
+                AlertDialog dialogInfo = builder.create();
+                dialogInfo.show();
 
-                } else {
+            } else {
 
-                    final ProgressDialog dialog = ProgressDialog.show(getActivity(), "", getString(R.string.loader), true);
+                final ProgressDialog dialog = ProgressDialog.show(getActivity(), "", getString(R.string.loader), true);
 
 
-                    Notificare.shared().userLogin(email, password, new NotificareCallback<Boolean>() {
+                Notificare.shared().userLogin(email, password, new NotificareCallback<Boolean>() {
 
-                        @Override
-                        public void onError(NotificareError error) {
-                            dialog.dismiss();
-                            if (getActivity() != null) {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                builder.setMessage(R.string.error_sign_in)
-                                        .setTitle(R.string.app_name)
-                                        .setCancelable(false)
-                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int id) {
+                    @Override
+                    public void onError(NotificareError error) {
+                        dialog.dismiss();
+                        if (getActivity() != null) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                            builder.setMessage(R.string.error_sign_in)
+                                    .setTitle(R.string.app_name)
+                                    .setCancelable(false)
+                                    .setPositiveButton("OK", (dialog1, id) -> {
+                                        //do things
+                                    });
+                            AlertDialog dialogInfo = builder.create();
+                            dialogInfo.show();
+                        }
+                        passwordField.setText(null);
+                    }
+
+                    @Override
+                    public void onSuccess(Boolean result) {
+
+                        Notificare.shared().fetchUserDetails(new NotificareCallback<NotificareUser>() {
+
+                            @Override
+                            public void onError(NotificareError error) {
+                                dialog.dismiss();
+                                if (getActivity() != null) {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                    builder.setMessage(R.string.error_sign_in)
+                                            .setTitle(R.string.app_name)
+                                            .setCancelable(false)
+                                            .setPositiveButton("OK", (dialog12, id) -> {
                                                 //do things
-                                            }
-                                        });
-                                AlertDialog dialogInfo = builder.create();
-                                dialogInfo.show();
+                                            });
+                                    AlertDialog dialogInfo = builder.create();
+                                    dialogInfo.show();
+                                }
+                                passwordField.setText(null);
                             }
-                            passwordField.setText(null);
-                        }
 
-                        @Override
-                        public void onSuccess(Boolean result) {
+                            @Override
+                            public void onSuccess(NotificareUser user) {
 
-                            Notificare.shared().fetchUserDetails(new NotificareCallback<NotificareUser>() {
+                                emailField.setText(null);
+                                passwordField.setText(null);
 
-                                @Override
-                                public void onError(NotificareError error) {
+
+                                if (user != null && (user.getAccessToken() == null || user.getAccessToken().isEmpty())) {
+
+                                    Notificare.shared().generateAccessToken(new NotificareCallback<NotificareUser>() {
+                                        @Override
+                                        public void onSuccess(NotificareUser notificareUser) {
+                                            finishSignIn(notificareUser);
+                                            dialog.dismiss();
+                                        }
+
+                                        @Override
+                                        public void onError(NotificareError notificareError) {
+                                            if (getActivity() != null) {
+                                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                                builder.setMessage(R.string.error_sign_in)
+                                                        .setTitle(R.string.app_name)
+                                                        .setCancelable(false)
+                                                        .setPositiveButton("OK", (dialog13, id) -> {
+                                                            //do things
+                                                        });
+                                                AlertDialog dialogInfo = builder.create();
+                                                dialogInfo.show();
+                                            }
+                                        }
+                                    });
+
+                                } else {
+                                    finishSignIn(user);
                                     dialog.dismiss();
-                                    if (getActivity() != null) {
-                                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                        builder.setMessage(R.string.error_sign_in)
-                                                .setTitle(R.string.app_name)
-                                                .setCancelable(false)
-                                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                                    public void onClick(DialogInterface dialog, int id) {
-                                                        //do things
-                                                    }
-                                                });
-                                        AlertDialog dialogInfo = builder.create();
-                                        dialogInfo.show();
-                                    }
-                                    passwordField.setText(null);
                                 }
 
-                                @Override
-                                public void onSuccess(NotificareUser user) {
+                            }
 
-                                    emailField.setText(null);
-                                    passwordField.setText(null);
+                        });
 
+                    }
 
-                                    if (user != null && (user.getAccessToken() == null || user.getAccessToken().isEmpty())) {
-
-                                        Notificare.shared().generateAccessToken(new NotificareCallback<NotificareUser>() {
-                                            @Override
-                                            public void onSuccess(NotificareUser notificareUser) {
-                                                finishSignIn(notificareUser);
-                                                dialog.dismiss();
-                                            }
-
-                                            @Override
-                                            public void onError(NotificareError notificareError) {
-                                                if (getActivity() != null) {
-                                                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                                    builder.setMessage(R.string.error_sign_in)
-                                                            .setTitle(R.string.app_name)
-                                                            .setCancelable(false)
-                                                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                                                public void onClick(DialogInterface dialog, int id) {
-                                                                    //do things
-                                                                }
-                                                            });
-                                                    AlertDialog dialogInfo = builder.create();
-                                                    dialogInfo.show();
-                                                }
-                                            }
-                                        });
-
-                                    } else {
-                                        finishSignIn(user);
-                                        dialog.dismiss();
-                                    }
-
-                                }
-
-                            });
-
-                        }
-
-                    });
-                }
+                });
             }
         });
 

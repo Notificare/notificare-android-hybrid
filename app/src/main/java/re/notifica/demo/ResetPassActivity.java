@@ -2,13 +2,11 @@ package re.notifica.demo;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -62,12 +60,7 @@ public class ResetPassActivity extends AppCompatActivity {
             finish();
         }
 
-        findViewById(R.id.buttonResetPass).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                resetPassword();
-            }
-        });
+        findViewById(R.id.buttonResetPass).setOnClickListener(view -> resetPassword());
     }
 
     public void resetPassword() {
@@ -80,10 +73,8 @@ public class ResetPassActivity extends AppCompatActivity {
             builder.setMessage(R.string.error_reset_pass)
                     .setTitle(R.string.app_name)
                     .setCancelable(false)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            //do things
-                        }
+                    .setPositiveButton("OK", (dialog, id) -> {
+                        //do things
                     });
             builder.create();
             builder.show();
@@ -93,11 +84,9 @@ public class ResetPassActivity extends AppCompatActivity {
             builder.setMessage(R.string.error_pass_not_match)
                     .setTitle(R.string.app_name)
                     .setCancelable(false)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            //do things
-                            confirmPasswordField.setText("");
-                        }
+                    .setPositiveButton("OK", (dialog, id) -> {
+                        //do things
+                        confirmPasswordField.setText("");
                     });
             builder.create();
             builder.show();
@@ -107,12 +96,10 @@ public class ResetPassActivity extends AppCompatActivity {
             builder.setMessage(R.string.error_pass_too_short)
                     .setTitle(R.string.app_name)
                     .setCancelable(false)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            //do things
-                            confirmPasswordField.setText("");
-                            passwordField.setText("");
-                        }
+                    .setPositiveButton("OK", (dialog, id) -> {
+                        //do things
+                        confirmPasswordField.setText("");
+                        passwordField.setText("");
                     });
             builder.create();
             builder.show();
@@ -130,11 +117,9 @@ public class ResetPassActivity extends AppCompatActivity {
                     builder.setMessage(arg0.getMessage())
                             .setTitle(R.string.app_name)
                             .setCancelable(false)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    confirmPasswordField.setText("");
-                                    passwordField.setText("");
-                                }
+                            .setPositiveButton("OK", (dialog, id) -> {
+                                confirmPasswordField.setText("");
+                                passwordField.setText("");
                             });
                     builder.create();
                     builder.show();
@@ -147,11 +132,7 @@ public class ResetPassActivity extends AppCompatActivity {
                     builder.setMessage(R.string.success_reset_pass)
                             .setTitle(R.string.app_name)
                             .setCancelable(false)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    finish();
-                                }
-                            });
+                            .setPositiveButton("OK", (dialog, id) -> finish());
                     builder.create();
                     builder.show();
                 }

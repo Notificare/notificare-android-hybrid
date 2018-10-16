@@ -146,8 +146,6 @@
             android:name="re.notifica.metadata.UrlSchemes"
             android:resource="@array/url_schemes" />
 
-        <uses-library android:name="org.apache.http.legacy" android:required="false" />
-
     </application>
 
 </manifest>

@@ -1,10 +1,12 @@
 package re.notifica.demo;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,7 +26,7 @@ public class OnboardingFragment extends Fragment {
     protected static final String TAG = OnboardingFragment.class.getSimpleName();
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate( R.layout.fragment_onboarding, container, false);
 
         Typeface regularFont = Typeface.createFromAsset(getContext().getAssets(), "fonts/Lato-Regular.ttf");
@@ -36,35 +38,33 @@ public class OnboardingFragment extends Fragment {
         Log.i(TAG, "button action = " + buttonAction);
         final int pos = getArguments().getInt("pos");
 
-        TextView titleText = (TextView) rootView.findViewById(R.id.assetText);
+        TextView titleText = rootView.findViewById(R.id.assetText);
         titleText.setTypeface(regularFont);
         titleText.setText(title);
 
-        Button button = (Button) rootView.findViewById(R.id.assetButton);
+        Button button = rootView.findViewById(R.id.assetButton);
         button.setTypeface(regularFont);
         button.setText(buttonLabel);
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        button.setOnClickListener(view -> {
 
-                ((OnboardingActivity) getActivity()).goToFragment(pos + 1);
+            ((OnboardingActivity) getActivity()).goToFragment(pos + 1);
 
-                if (buttonAction != null && buttonAction.equals("goToLocationServices")) {
-                    Notificare.shared().enableNotifications();
-                }
-                if (buttonAction != null && buttonAction.equals("goToApp")) {
-                    ((OnboardingActivity) getActivity()).tryRequestLocationPermission();
-                }
-
+            if (buttonAction != null && buttonAction.equals("goToLocationServices")) {
+                Notificare.shared().enableNotifications();
             }
+            if (buttonAction != null && buttonAction.equals("goToApp")) {
+                ((OnboardingActivity) getActivity()).tryRequestLocationPermission();
+            }
+
         });
 
-        new DownloadImageTask((ImageView) rootView.findViewById(R.id.assetImage)).execute(file);
+        new DownloadImageTask(rootView.findViewById(R.id.assetImage)).execute(file);
 
         return rootView;
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
 

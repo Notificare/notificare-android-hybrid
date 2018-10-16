@@ -2,7 +2,6 @@ package re.notifica.demo;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
@@ -34,11 +33,7 @@ public class ValidateActivity extends AppCompatActivity {
             builder.setMessage(R.string.error_validate_token)
                     .setTitle(R.string.app_name)
                     .setCancelable(false)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            finish();
-                        }
-                    });
+                    .setPositiveButton("OK", (dialog, id) -> finish());
             builder.create();
             builder.show();
 
@@ -50,11 +45,7 @@ public class ValidateActivity extends AppCompatActivity {
                     builder.setMessage(arg0.getMessage())
                             .setTitle(R.string.app_name)
                             .setCancelable(false)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    finish();
-                                }
-                            });
+                            .setPositiveButton("OK", (dialog, id) -> finish());
                    builder.create();
                    builder.show();
                 }
@@ -65,11 +56,7 @@ public class ValidateActivity extends AppCompatActivity {
                     builder.setMessage(R.string.success_validate_account)
                             .setTitle(R.string.app_name)
                             .setCancelable(false)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    finish();
-                                }
-                            });
+                            .setPositiveButton("OK", (dialog, id) -> finish());
                     builder.create();
                     builder.show();
                 }

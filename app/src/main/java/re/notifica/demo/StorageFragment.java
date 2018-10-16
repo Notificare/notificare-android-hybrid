@@ -64,7 +64,7 @@ public class StorageFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
@@ -76,8 +76,8 @@ public class StorageFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_storage, container, false);
 
-        GridView listView = (GridView) rootView.findViewById(R.id.gridView);
-        emptyView = (TextView) rootView.findViewById(R.id.emptyMessage);
+        GridView listView = rootView.findViewById(R.id.gridView);
+        emptyView = rootView.findViewById(R.id.emptyMessage);
         emptyView.setText(getString(R.string.title_intro_assets));
 
         mAdapter = new AssetsAdapter(getActivity());
@@ -158,7 +158,7 @@ public class StorageFragment extends Fragment {
         private LayoutInflater mInflater;
 
         AssetsAdapter(Context context) {
-            this(context, new ArrayList<NotificareAsset>());
+            this(context, new ArrayList<>());
         }
 
         AssetsAdapter(Context context, List<NotificareAsset> items) {
@@ -224,32 +224,29 @@ public class StorageFragment extends Fragment {
             convertView.setTag(notificareAsset);
 
             if (mHasStoragePermission) {
-                convertView.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        NotificareAsset asset = (NotificareAsset) v.getTag();
+                convertView.setOnLongClickListener(v -> {
+                    NotificareAsset asset = (NotificareAsset) v.getTag();
 
-                        if (asset.getKey() != null) {
-                            String url = Notificare.shared().getPushApiBaseUrl() + "/asset/file/" + asset.getKey();
+                    if (asset.getKey() != null) {
+                        String url = Notificare.shared().getPushApiBaseUrl() + "/asset/file/" + asset.getKey();
 
-                            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-                            request.setTitle(asset.getTitle());
-                            if (Build.VERSION.SDK_INT < 24) {
-                                //noinspection deprecation
-                                request.setDescription(Html.fromHtml(asset.getDescription()));
-                            } else {
-                                request.setDescription(Html.fromHtml(asset.getDescription(), Html.FROM_HTML_MODE_LEGACY));
-                            }
-                            request.allowScanningByMediaScanner();
-                            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, asset.getOriginalFileName());
-
-                            DownloadManager manager = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
-                            manager.enqueue(request);
+                        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+                        request.setTitle(asset.getTitle());
+                        if (Build.VERSION.SDK_INT < 24) {
+                            //noinspection deprecation
+                            request.setDescription(Html.fromHtml(asset.getDescription()));
+                        } else {
+                            request.setDescription(Html.fromHtml(asset.getDescription(), Html.FROM_HTML_MODE_LEGACY));
                         }
+                        request.allowScanningByMediaScanner();
+                        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, asset.getOriginalFileName());
 
-                        return true;
+                        DownloadManager manager = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
+                        manager.enqueue(request);
                     }
+
+                    return true;
                 });
             } else {
                 convertView.setLongClickable(false);

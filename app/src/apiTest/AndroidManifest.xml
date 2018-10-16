@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="re.notifica.demo">
 
+    <uses-permission android:name="com.android.vending.BILLING" />
+
     <application android:name="re.notifica.demo.AppBaseApplication"
         android:allowBackup="false"
         android:allowClearUserData="true"

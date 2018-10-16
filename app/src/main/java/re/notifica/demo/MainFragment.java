@@ -75,9 +75,8 @@ public class MainFragment extends Fragment {
         unreadCount.observe(this, count -> {
             String scriptFile = AppBaseApplication.getCustomJSString();
             String badge = "";
-            if (Notificare.shared().getInboxManager().getUnreadCount() > 0) {
-                int b = Notificare.shared().getInboxManager().getUnreadCount();
-                badge = Integer.toString(b);
+            if (count > 0) {
+                badge = Integer.toString(count);
             }
             String js = scriptFile.replace("%@", badge);
 

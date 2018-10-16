@@ -2,7 +2,6 @@ package re.notifica.demo;
 
 import android.app.AlertDialog;
 import android.app.Notification;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
@@ -14,7 +13,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,12 +27,15 @@ import re.notifica.Notificare;
 import re.notifica.NotificareCallback;
 import re.notifica.NotificareError;
 import re.notifica.beacon.BeaconRangingListener;
+import re.notifica.billing.BillingManager;
+import re.notifica.billing.BillingResult;
+import re.notifica.billing.Purchase;
 import re.notifica.model.NotificareApplicationInfo;
 import re.notifica.model.NotificareBeacon;
 import re.notifica.model.NotificareScannable;
 import re.notifica.support.v7.app.ActionBarBaseActivity;
 
-public class MainActivity extends ActionBarBaseActivity implements Notificare.OnNotificareReadyListener, BeaconRangingListener {
+public class MainActivity extends ActionBarBaseActivity implements Notificare.OnNotificareReadyListener, Notificare.OnBillingReadyListener, BillingManager.OnRefreshFinishedListener, BillingManager.OnPurchaseFinishedListener, BeaconRangingListener {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private static final int SCANNABLE_REQUEST_CODE = 9001;
@@ -87,7 +88,7 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
             } else {
                 Log.w(TAG, "error result: " + resultCode);
             }
-        } else {
+        } else if (!(Notificare.shared().getBillingManager() != null && Notificare.shared().getBillingManager().handleActivityResult(requestCode, resultCode, data))) {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
@@ -133,6 +134,7 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
         if (Notificare.shared().getBeaconClient() != null) {
             Notificare.shared().getBeaconClient().addRangingListener(this);
         }
+        Notificare.shared().addBillingReadyListener(this);
     }
 
     @Override
@@ -141,6 +143,7 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
         if (Notificare.shared().getBeaconClient() != null) {
             Notificare.shared().getBeaconClient().removeRangingListener(this);
         }
+        Notificare.shared().removeBillingReadyListener(this);
     }
 
     @Override
@@ -159,6 +162,26 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
         askLocationPermission();
     }
 
+    @Override
+    public void onBillingReady() {
+        Notificare.shared().getBillingManager().refresh(this);
+    }
+
+    @Override
+    public void onRefreshFinished() {
+        Log.i(TAG, "billing refresh finished");
+    }
+
+    @Override
+    public void onRefreshFailed(NotificareError notificareError) {
+        Log.e(TAG, "billing refresh failed: " + notificareError.getLocalizedMessage());
+    }
+
+    @Override
+    public void onPurchaseFinished(BillingResult billingResult, Purchase purchase) {
+        Log.i(TAG, "purchase finished: " + billingResult.getMessage());
+    }
+
     public void askLocationPermission() {
         if (!Notificare.shared().hasLocationPermissionGranted()) {
             Log.i(TAG, "permission not granted");
@@ -168,11 +191,7 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
                     builder.setMessage(R.string.alert_location_permission_rationale)
                             .setTitle(R.string.app_name)
                             .setCancelable(true)
-                            .setPositiveButton(R.string.button_location_permission_rationale_ok, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    Notificare.shared().requestLocationPermission(MainActivity.this, LOCATION_PERMISSION_REQUEST_CODE);
-                                }
-                            })
+                            .setPositiveButton(R.string.button_location_permission_rationale_ok, (dialog, id) -> Notificare.shared().requestLocationPermission(MainActivity.this, LOCATION_PERMISSION_REQUEST_CODE))
                             .create()
                             .show();
                 }
@@ -313,28 +332,19 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
                         .setCancelable(false)
                         .setView(input)
                         .setCancelable(true)
-                        .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                            }
+                        .setNegativeButton(android.R.string.cancel, (dialogInterface, i) -> {
                         })
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-
-                                Notificare.shared().getEventLogger().logCustomEvent(input.getText().toString(), new NotificareCallback<Boolean>() {
-                                    @Override
-                                    public void onSuccess(Boolean aBoolean) {
-                                        Log.i(TAG, "Event sent");
-                                    }
-
-                                    @Override
-                                    public void onError(NotificareError notificareError) {
-                                        Log.e(TAG, "Error sending event");
-                                    }
-                                });
-
+                        .setPositiveButton(android.R.string.ok, (dialog, id) -> Notificare.shared().getEventLogger().logCustomEvent(input.getText().toString(), new NotificareCallback<Boolean>() {
+                            @Override
+                            public void onSuccess(Boolean aBoolean) {
+                                Log.i(TAG, "Event sent");
                             }
-                        });
+
+                            @Override
+                            public void onError(NotificareError notificareError) {
+                                Log.e(TAG, "Error sending event");
+                            }
+                        }));
                 builder.create();
                 builder.show();
 
@@ -486,15 +496,6 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
 
     @Override
     public void onRangingBeacons(final List<NotificareBeacon> list) {
-        runOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-
-                Log.d("MAIN ACTIVITY", list.toString());
-
-            }
-
-        });
+        runOnUiThread(() -> Log.d("MAIN ACTIVITY", list.toString()));
     }
 }

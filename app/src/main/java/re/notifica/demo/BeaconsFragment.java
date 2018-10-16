@@ -36,8 +36,7 @@ public class BeaconsFragment extends Fragment implements BeaconRangingListener {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if (actionBar != null) {
@@ -79,18 +78,13 @@ public class BeaconsFragment extends Fragment implements BeaconRangingListener {
     @Override
     public void onRangingBeacons(final List<NotificareBeacon> list) {
 
-        getActivity().runOnUiThread(new Runnable() {
+        getActivity().runOnUiThread(() -> {
 
-            @Override
-            public void run() {
-
-                beaconListAdapter.clear();
-                for (NotificareBeacon beacon : list) {
-                    Log.d("Received Beacons", beacon.getName());
-                    beaconListAdapter.add(beacon);
-                }
+            beaconListAdapter.clear();
+            for (NotificareBeacon beacon : list) {
+                Log.d("Received Beacons", beacon.getName());
+                beaconListAdapter.add(beacon);
             }
-
         });
 
     }

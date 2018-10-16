@@ -3,9 +3,9 @@ package re.notifica.demo;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -39,7 +39,7 @@ public class SignUpFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
@@ -68,12 +68,7 @@ public class SignUpFragment extends Fragment {
         confirmPasswordField.setTypeface(lightFont);
         signupButton.setTypeface(lightFont);
 
-        rootView.findViewById(R.id.buttonSignup).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                doSignUp();
-            }
-        });
+        rootView.findViewById(R.id.buttonSignup).setOnClickListener(view -> doSignUp());
 
 
         return rootView;
@@ -94,10 +89,8 @@ public class SignUpFragment extends Fragment {
             builder.setMessage(R.string.error_sign_up)
                     .setTitle(R.string.app_name)
                     .setCancelable(false)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            //do things
-                        }
+                    .setPositiveButton("OK", (dialog, id) -> {
+                        //do things
                     });
             AlertDialog dialogInfo = builder.create();
             dialogInfo.show();
@@ -107,11 +100,7 @@ public class SignUpFragment extends Fragment {
             builder.setMessage(R.string.error_pass_not_match)
                     .setTitle(R.string.app_name)
                     .setCancelable(false)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            confirmPasswordField.setText("");
-                        }
-                    });
+                    .setPositiveButton("OK", (dialog, id) -> confirmPasswordField.setText(""));
             AlertDialog dialogInfo = builder.create();
             dialogInfo.show();
 
@@ -120,11 +109,9 @@ public class SignUpFragment extends Fragment {
             builder.setMessage(R.string.error_pass_too_short)
                     .setTitle(R.string.app_name)
                     .setCancelable(false)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            passwordField.setText("");
-                            confirmPasswordField.setText("");
-                        }
+                    .setPositiveButton("OK", (dialog, id) -> {
+                        passwordField.setText("");
+                        confirmPasswordField.setText("");
                     });
             AlertDialog dialogInfo = builder.create();
             dialogInfo.show();
@@ -134,11 +121,9 @@ public class SignUpFragment extends Fragment {
             builder.setMessage(R.string.error_invalid_email)
                     .setTitle(R.string.app_name)
                     .setCancelable(false)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            //do things
-                            emailField.setText("");
-                        }
+                    .setPositiveButton("OK", (dialog, id) -> {
+                        //do things
+                        emailField.setText("");
                     });
             AlertDialog dialogInfo = builder.create();
             dialogInfo.show();
@@ -155,11 +140,9 @@ public class SignUpFragment extends Fragment {
                     builder.setMessage(arg0.getMessage())
                             .setTitle(R.string.app_name)
                             .setCancelable(false)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    //do things
-                                    emailField.setText("");
-                                }
+                            .setPositiveButton("OK", (dialog, id) -> {
+                                //do things
+                                emailField.setText("");
                             });
                     builder.create();
                     builder.show();
@@ -172,11 +155,7 @@ public class SignUpFragment extends Fragment {
                     builder.setMessage(R.string.success_account_created)
                             .setTitle(R.string.app_name)
                             .setCancelable(false)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    getFragmentManager().popBackStack();
-                                }
-                            });
+                            .setPositiveButton("OK", (dialog, id) -> getFragmentManager().popBackStack());
                     builder.create();
                     builder.show();
 

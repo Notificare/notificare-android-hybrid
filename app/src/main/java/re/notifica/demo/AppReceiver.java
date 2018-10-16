@@ -1,11 +1,8 @@
 package re.notifica.demo;
 
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.List;
@@ -14,22 +11,20 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 import re.notifica.Notificare;
 import re.notifica.NotificareCallback;
 import re.notifica.NotificareError;
-import re.notifica.model.NotificareAction;
+import re.notifica.app.DefaultIntentReceiver;
 import re.notifica.model.NotificareDevice;
 import re.notifica.model.NotificareNotification;
 import re.notifica.model.NotificareRemoteMessage;
-import re.notifica.app.DefaultIntentReceiver;
 import re.notifica.model.NotificareSystemNotification;
 
 
 public class AppReceiver extends DefaultIntentReceiver {
 
-    public static final String PREFS_NAME = "AppPrefsFile";
     private static final String TAG = AppReceiver.class.getSimpleName();
 
     @Override
-    protected void generateNotification(String intentAction, int icon, @Nullable NotificareNotification notification, @NonNull NotificareRemoteMessage message, Bitmap picture, Bitmap largeIcon) {
-        super.generateNotification(intentAction, icon, notification, message, picture, largeIcon);
+    public void onNotificationReceived(NotificareRemoteMessage message) {
+        super.onNotificationReceived(message);
         Handler handler = new Handler();
         handler.postDelayed(() -> {
             int badgeCount = Notificare.shared().getInboxManager().getUnreadCount();
@@ -73,38 +68,6 @@ public class AppReceiver extends DefaultIntentReceiver {
         if (BuildConfig.ENABLE_BILLING) {
             Notificare.shared().enableBilling();
         }
-        // Override preferred language
-        if (BuildConfig.OVERRIDE_LANGUAGE) {
-            Notificare.shared().updatePreferredLanguage(BuildConfig.PREFERRED_LANGUAGE, new NotificareCallback<Boolean>() {
-                @Override
-                public void onSuccess(Boolean aBoolean) {
-
-                }
-
-                @Override
-                public void onError(NotificareError notificareError) {
-
-                }
-            });
-        } else {
-            Notificare.shared().updatePreferredLanguage(null, new NotificareCallback<Boolean>() {
-                @Override
-                public void onSuccess(Boolean aBoolean) {
-
-                }
-
-                @Override
-                public void onError(NotificareError notificareError) {
-
-                }
-            });
-        }
-    }
-
-    @Override
-    public void onDeviceRegistered(NotificareDevice device) {
-        // Informational only, no need to take any action
-        Log.i(TAG, "Registered device " + device);
         Notificare.shared().fetchDeviceTags(new NotificareCallback<List<String>>() {
 
             @Override
@@ -118,8 +81,13 @@ public class AppReceiver extends DefaultIntentReceiver {
 
 
             }
-
         });
+    }
+
+    @Override
+    public void onDeviceRegistered(NotificareDevice device) {
+        // Informational only, no need to take any action
+        Log.i(TAG, "Registered device " + device);
     }
 
     @Override
