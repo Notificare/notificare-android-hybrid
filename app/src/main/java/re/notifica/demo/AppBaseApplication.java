@@ -39,6 +39,13 @@ public class AppBaseApplication extends Application {
 
         // Allow debug logging only if build is debug
         Notificare.shared().setDebugLogging(BuildConfig.DEBUG);
+        if (BuildConfig.ENABLE_STRICT_MODE && BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            StrictMode.enableDefaults();
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                    .detectNonSdkApiUsage()
+                    .penaltyLog()
+                    .build());
+        }
 
         // Enable beacons debugging
         if (BuildConfig.ENABLE_BEACONS_DEBUG) {
