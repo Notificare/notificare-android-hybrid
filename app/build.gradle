@@ -15,8 +15,8 @@ android {
         applicationId "re.notifica.demo"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 20003
-        versionName "2.0.3"
+        versionCode 20005
+        versionName "2.0.5"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [notificareAppId: "5489b42ff23e5815132b492a", notificareHost: "push.notifica.re"]
     }
@@ -59,7 +59,7 @@ android {
         }
         apiTest {
             dimension "api"
-            buildConfigField BOOLEAN, ENABLE_BEACONS, FALSE
+            buildConfigField BOOLEAN, ENABLE_BEACONS, TRUE
             buildConfigField BOOLEAN, ENABLE_BILLING, TRUE
             buildConfigField BOOLEAN, ENABLE_TEST_CALLS, TRUE
             buildConfigField BOOLEAN, ENABLE_STRICT_MODE, FALSE
@@ -96,12 +96,12 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation 're.notifica:notificare-core:2.0.2'
-    implementation 're.notifica:notificare-location:2.0.2'
-    implementation 're.notifica:notificare-beacon:2.0.2'
-    implementation 're.notifica:notificare-scannable:2.0.2'
+    implementation 're.notifica:notificare-core:2.0.5'
+    implementation 're.notifica:notificare-location:2.0.5'
+    implementation 're.notifica:notificare-beacon:2.0.5'
+    implementation 're.notifica:notificare-scannable:2.0.5'
     implementation 're.notifica:notificare-support-lib-android:1.5.0'
-    implementation 'com.google.firebase:firebase-core:16.0.4'
+//    implementation 'com.google.firebase:firebase-core:16.0.5'
     implementation 'me.leolin:ShortcutBadger:1.1.19@aar'
     testImplementation 'junit:junit:4.12'
 }
