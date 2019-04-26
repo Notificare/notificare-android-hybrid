@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.StrictMode;
 import android.util.Log;
+import android.webkit.WebView;
 
 import org.altbeacon.beacon.logging.LogManager;
 import org.altbeacon.beacon.logging.Loggers;
@@ -37,6 +38,9 @@ public class AppBaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            WebView.setWebContentsDebuggingEnabled(true);
+        }
         // Allow debug logging only if build is debug
         Notificare.shared().setDebugLogging(BuildConfig.DEBUG);
         if (BuildConfig.ENABLE_STRICT_MODE && BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -85,6 +89,7 @@ public class AppBaseApplication extends Application {
 
         // OPTIONAL, false by default
         Notificare.shared().setPassbookRelevanceOngoing(true);
+        Notificare.shared().setPassbookLegacyMode(false);
 
         // Crash logs are enabled by default.
         // However, you opt-out by using the following instruction
