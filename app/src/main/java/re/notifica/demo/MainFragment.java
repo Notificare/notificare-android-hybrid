@@ -2,12 +2,12 @@ package re.notifica.demo;
 
 
 import android.annotation.SuppressLint;
-import android.arch.lifecycle.LiveData;
-import android.content.Context;
+import androidx.lifecycle.LiveData;
+
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +20,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import re.notifica.Notificare;
-import re.notifica.model.NotificareNotification;
 
 
 /**
