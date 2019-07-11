@@ -74,6 +74,10 @@ public class AppBaseApplication extends Application {
                 passbookChannel.setDescription("This is for passbook notifications");
                 notificationManager.createNotificationChannel(passbookChannel);
                 Notificare.shared().setPassbookChannel(passbookChannel.getId());
+
+                NotificationChannel importantChannel = new NotificationChannel("important", "Important Messages", NotificationManager.IMPORTANCE_HIGH);
+                importantChannel.setDescription("This is for important notifications");
+                notificationManager.createNotificationChannel(importantChannel);
             }
         }
 

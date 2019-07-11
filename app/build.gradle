@@ -15,8 +15,8 @@ android {
         applicationId "re.notifica.demo"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 20005
-        versionName "2.0.5"
+        versionCode 20007
+        versionName "2.0.7"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [notificareAppId: "5489b42ff23e5815132b492a", notificareHost: "push.notifica.re"]
     }
@@ -80,8 +80,8 @@ android {
 repositories {
     jcenter()
     maven {
-//        url "https://github.com/Notificare/notificare-mvn-repo/raw/master/releases"
-        url "file:///Users/joris/Developer/Projects/notificare-mvn-repo/releases"
+        url "https://github.com/Notificare/notificare-mvn-repo/raw/master/releases"
+//        url "file:///Users/joris/Developer/Projects/notificare-mvn-repo/releases"
     }
     maven {
         url 'https://maven.google.com'
@@ -96,10 +96,10 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation 're.notifica:notificare-core:2.0.6'
-    implementation 're.notifica:notificare-location:2.0.6'
-    implementation 're.notifica:notificare-beacon:2.0.6'
-    implementation 're.notifica:notificare-scannable:2.0.6'
+    implementation 're.notifica:notificare-core:2.0.7'
+    implementation 're.notifica:notificare-location:2.0.7'
+    implementation 're.notifica:notificare-beacon:2.0.7'
+    implementation 're.notifica:notificare-scannable:2.0.7'
     implementation 're.notifica:notificare-support-lib-android:1.5.0'
 //    implementation 'com.google.firebase:firebase-core:16.0.5'
     implementation 'me.leolin:ShortcutBadger:1.1.19@aar'

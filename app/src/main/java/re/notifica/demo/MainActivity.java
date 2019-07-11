@@ -7,8 +7,10 @@ import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -32,21 +34,24 @@ import re.notifica.billing.BillingResult;
 import re.notifica.billing.Purchase;
 import re.notifica.model.NotificareApplicationInfo;
 import re.notifica.model.NotificareBeacon;
+import re.notifica.model.NotificareNotification;
 import re.notifica.model.NotificareScannable;
 import re.notifica.support.v7.app.ActionBarBaseActivity;
 
-public class MainActivity extends ActionBarBaseActivity implements Notificare.OnNotificareReadyListener, Notificare.OnBillingReadyListener, BillingManager.OnRefreshFinishedListener, BillingManager.OnPurchaseFinishedListener, BeaconRangingListener {
+public class MainActivity extends ActionBarBaseActivity implements Notificare.OnNotificareReadyListener, Notificare.OnBillingReadyListener, BillingManager.OnRefreshFinishedListener, BillingManager.OnPurchaseFinishedListener, Notificare.OnNotificationReceivedListener, BeaconRangingListener {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private static final int SCANNABLE_REQUEST_CODE = 9001;
     protected static final String TAG = MainActivity.class.getSimpleName();
     private AlertDialog.Builder builder;
+    private View contentFrame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+        contentFrame = findViewById(R.id.content_frame);
 
         manageFragments("");
 
@@ -135,6 +140,7 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
             Notificare.shared().getBeaconClient().addRangingListener(this);
         }
         Notificare.shared().addBillingReadyListener(this);
+        Notificare.shared().addNotificationReceivedListener(this);
     }
 
     @Override
@@ -144,6 +150,7 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
             Notificare.shared().getBeaconClient().removeRangingListener(this);
         }
         Notificare.shared().removeBillingReadyListener(this);
+        Notificare.shared().removeNotificationReceivedListener(this);
     }
 
     @Override
@@ -180,6 +187,15 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
     @Override
     public void onPurchaseFinished(BillingResult billingResult, Purchase purchase) {
         Log.i(TAG, "purchase finished: " + billingResult.getMessage());
+    }
+
+    @Override
+    public void onNotificationReceived(NotificareNotification notificareNotification) {
+        Snackbar notificationSnackbar = Snackbar.make(contentFrame, notificareNotification.getMessage(), Snackbar.LENGTH_LONG);
+        notificationSnackbar.setAction("Open", v -> {
+            Notificare.shared().openNotification(this, notificareNotification);
+        });
+        notificationSnackbar.show();
     }
 
     public void askLocationPermission() {
