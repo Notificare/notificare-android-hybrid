@@ -8,13 +8,13 @@ buildscript {
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion "android-Q"
-    buildToolsVersion "29.0.0-rc3"
+    compileSdkVersion 29
+    buildToolsVersion "29.0.1"
 
     defaultConfig {
         applicationId "re.notifica.demo"
         minSdkVersion 19
-        targetSdkVersion "Q"
+        targetSdkVersion 29
         versionCode 20100
         versionName "2.1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -94,8 +94,8 @@ repositories {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestImplementation 'androidx.test:runner:1.1.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 're.notifica:notificare-core:2.1.0'
     implementation 're.notifica:notificare-location:2.1.0'
     implementation 're.notifica:notificare-beacon:2.1.0'
