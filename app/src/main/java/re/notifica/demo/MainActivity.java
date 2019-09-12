@@ -9,10 +9,12 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,10 +34,12 @@ import re.notifica.billing.BillingResult;
 import re.notifica.billing.Purchase;
 import re.notifica.model.NotificareApplicationInfo;
 import re.notifica.model.NotificareBeacon;
+import re.notifica.model.NotificareInboxItem;
+import re.notifica.model.NotificareNotification;
 import re.notifica.model.NotificareScannable;
 import re.notifica.support.v7.app.ActionBarBaseActivity;
 
-public class MainActivity extends ActionBarBaseActivity implements Notificare.OnNotificareReadyListener, Notificare.OnBillingReadyListener, BillingManager.OnRefreshFinishedListener, BillingManager.OnPurchaseFinishedListener, BeaconRangingListener {
+public class MainActivity extends ActionBarBaseActivity implements Notificare.OnNotificareReadyListener, Notificare.OnBillingReadyListener, Notificare.OnNotificareNotificationListener, BillingManager.OnRefreshFinishedListener, BillingManager.OnPurchaseFinishedListener, BeaconRangingListener {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private static final int SCANNABLE_REQUEST_CODE = 9001;
@@ -134,6 +138,7 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
         if (Notificare.shared().getBeaconClient() != null) {
             Notificare.shared().getBeaconClient().addRangingListener(this);
         }
+        Notificare.shared().addNotificareNotificationListener(this);
         Notificare.shared().addBillingReadyListener(this);
     }
 
@@ -143,6 +148,7 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
         if (Notificare.shared().getBeaconClient() != null) {
             Notificare.shared().getBeaconClient().removeRangingListener(this);
         }
+        Notificare.shared().removeNotificareNotificationListener(this);
         Notificare.shared().removeBillingReadyListener(this);
     }
 
@@ -159,7 +165,24 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
             int badgeCount = Notificare.shared().getInboxManager().getUnreadCount();
             ShortcutBadger.applyCount(this.getApplicationContext(), badgeCount);
         }
-        askLocationPermission();
+        askBackgroundLocationPermission();
+    }
+
+    @Override
+    public void onNotificareNotification(NotificareNotification notificareNotification, NotificareInboxItem notificareInboxItem, Boolean shouldPresent) {
+        Log.i(TAG, "foreground notification received");
+        if (shouldPresent) {
+            Log.i(TAG, "should present incoming notification");
+            Snackbar notificationSnackbar = Snackbar.make(findViewById(R.id.content_frame), notificareNotification.getMessage(), Snackbar.LENGTH_INDEFINITE);
+            notificationSnackbar.setAction(R.string.open, view -> {
+                if (notificareInboxItem != null && Notificare.shared().getInboxManager() != null) {
+                    Notificare.shared().openInboxItem(this, notificareInboxItem);
+                } else {
+                    Notificare.shared().openNotification(this, notificareNotification);
+                }
+            });
+            notificationSnackbar.show();
+        }
     }
 
     @Override
@@ -182,7 +205,32 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
         Log.i(TAG, "purchase finished: " + billingResult.getMessage());
     }
 
-    public void askLocationPermission() {
+    public void askForegroundLocationPermission() {
+        if (!Notificare.shared().hasForegroundLocationPermissionGranted()) {
+            Log.i(TAG, "permission not granted");
+            if (Notificare.shared().didRequestLocationPermission()) {
+                if (Notificare.shared().shouldShowForegroundRequestPermissionRationale(this)) {
+                    // Here we should show a dialog explaining location updates
+                    builder.setMessage(R.string.alert_location_permission_rationale)
+                            .setTitle(R.string.app_name)
+                            .setCancelable(true)
+                            .setPositiveButton(R.string.button_location_permission_rationale_ok, (dialog, id) -> Notificare.shared().requestLocationPermission(MainActivity.this, LOCATION_PERMISSION_REQUEST_CODE))
+                            .create()
+                            .show();
+                }
+            } else {
+                Notificare.shared().requestLocationPermission(this, LOCATION_PERMISSION_REQUEST_CODE);
+            }
+        } else {
+            Log.i(TAG, "foreground location permission granted, we can update location");
+            Notificare.shared().enableLocationUpdates();
+            if (BuildConfig.ENABLE_BEACONS) {
+                Notificare.shared().enableBeacons(30000);
+            }
+        }
+    }
+
+    public void askBackgroundLocationPermission() {
         if (!Notificare.shared().hasLocationPermissionGranted()) {
             Log.i(TAG, "permission not granted");
             if (Notificare.shared().didRequestLocationPermission()) {
@@ -199,7 +247,7 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
                 Notificare.shared().requestLocationPermission(this, LOCATION_PERMISSION_REQUEST_CODE);
             }
         } else {
-            Log.i(TAG, "permission granted");
+            Log.i(TAG, "background location permission granted, we can update location");
             Notificare.shared().enableLocationUpdates();
             if (BuildConfig.ENABLE_BEACONS) {
                 Notificare.shared().enableBeacons(30000);
@@ -212,7 +260,13 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
         switch (requestCode) {
             case LOCATION_PERMISSION_REQUEST_CODE:
                 if (Notificare.shared().checkRequestLocationPermissionResult(permissions, grantResults)) {
-                    Log.i(TAG, "permission granted");
+                    Log.i(TAG, "background location permission granted");
+                    Notificare.shared().enableLocationUpdates();
+                    if (BuildConfig.ENABLE_BEACONS) {
+                        Notificare.shared().enableBeacons(30000);
+                    }
+                } else if (Notificare.shared().checkRequestForegroundLocationPermissionResult(permissions, grantResults)) {
+                    Log.i(TAG, "foreground locations permission granted");
                     Notificare.shared().enableLocationUpdates();
                     if (BuildConfig.ENABLE_BEACONS) {
                         Notificare.shared().enableBeacons(30000);

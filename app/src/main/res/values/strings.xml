@@ -114,6 +114,7 @@
     <string name="forward">forward</string>
     <string name="on">On</string>
     <string name="off">Off</string>
+    <string name="open">Open</string>
     <string name="account">account</string>
 
 </resources>

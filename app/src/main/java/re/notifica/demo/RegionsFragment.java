@@ -130,7 +130,7 @@ public class RegionsFragment extends Fragment implements OnMapReadyCallback {
 
     public void loadLocations() {
 
-        if (Notificare.shared().hasLocationPermissionGranted()) {
+        if (Notificare.shared().hasForegroundLocationPermissionGranted()) {
             Notificare.shared().getCurrentLocation().addOnSuccessListener(currentLocation -> {
                 if (currentLocation != null) {
                     double lat = currentLocation.getLatitude();
@@ -206,7 +206,7 @@ public class RegionsFragment extends Fragment implements OnMapReadyCallback {
                         @Override
                         public void onError(NotificareError notificareError) {
 
-                            Log.i("HTTP eror", notificareError.getMessage());
+                            Log.i("HTTP error", notificareError.getMessage());
                         }
                     });
 
@@ -214,7 +214,7 @@ public class RegionsFragment extends Fragment implements OnMapReadyCallback {
             });
 
         } else {
-            ((MainActivity)getActivity()).askLocationPermission();
+            ((MainActivity)getActivity()).askForegroundLocationPermission();
         }
 
     }

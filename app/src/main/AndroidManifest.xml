@@ -32,6 +32,7 @@
             android:name="re.notifica.demo.MainActivity"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/app_name"
+            android:screenOrientation="sensorPortrait"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -55,7 +56,6 @@
             android:screenOrientation="portrait" />
         <activity
             android:name="re.notifica.ui.NotificationActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
             android:hardwareAccelerated="true"
             android:theme="@style/AppTheme.Translucent"
             android:parentActivityName="re.notifica.demo.MainActivity">
@@ -141,7 +141,7 @@
         <!-- API key for Google Maps -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyCdpGKp0md3zVCvTaXwS0mHN6Nny25Nc-s" />
+            android:value="AIzaSyBZtwDbI4ns0GMQ9W4vFQTbWjt1xXMY3WY" />
         <meta-data
             android:name="re.notifica.metadata.UrlSchemes"
             android:resource="@array/url_schemes" />
