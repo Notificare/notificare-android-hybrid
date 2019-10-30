@@ -64,18 +64,6 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
 
         Log.i(TAG, "Intent: " + getIntent().getData());
         handleIntent(getIntent());
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(Notificare.shared().getApplicationContext());
-        String notificationChannel = Notificare.shared().getDefaultChannel();
-        re.notifica.util.Log.d(TAG, "Sending notification to channel " + notificationChannel);
-        PendingIntent broadcast = PendingIntent.getBroadcast(Notificare.shared().getApplicationContext(), Notificare.shared().getNotificationSequence(), new Intent(Notificare.shared().getApplicationContext(), Notificare.shared().getIntentReceiver()), PendingIntent.FLAG_CANCEL_CURRENT);
-        NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(Notificare.shared().getApplicationContext(), notificationChannel)
-                        .setAutoCancel(Notificare.shared().getAutoCancel())
-                        .setSmallIcon(R.drawable.ic_stat_notify_msg)
-                        .setContentText("test")
-                        .setContentIntent(broadcast);
-
-        notificationManager.notify(5, builder.build());
     }
 
     @Override

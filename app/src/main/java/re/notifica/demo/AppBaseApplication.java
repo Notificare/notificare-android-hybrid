@@ -10,8 +10,8 @@ import android.os.StrictMode;
 import android.util.Log;
 import android.webkit.WebView;
 
-import org.altbeacon.beacon.logging.LogManager;
-import org.altbeacon.beacon.logging.Loggers;
+//import org.altbeacon.beacon.logging.LogManager;
+//import org.altbeacon.beacon.logging.Loggers;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -54,7 +54,7 @@ public class AppBaseApplication extends Application {
         // Enable beacons debugging
         if (BuildConfig.ENABLE_BEACONS_DEBUG) {
             Log.i(TAG, "enabling debugging for beacons");
-            LogManager.setLogger(Loggers.verboseLogger());
+            //LogManager.setLogger(Loggers.verboseLogger());
         }
 
         // REQUIRED
