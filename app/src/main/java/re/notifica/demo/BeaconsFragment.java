@@ -22,6 +22,7 @@ import java.util.List;
 import re.notifica.Notificare;
 import re.notifica.beacon.BeaconRangingListener;
 import re.notifica.model.NotificareBeacon;
+import re.notifica.support.NotificareSupport;
 
 
 /**
@@ -52,6 +53,7 @@ public class BeaconsFragment extends Fragment implements BeaconRangingListener {
         listView.setAdapter(beaconListAdapter);
 
         TextView emptyText = rootView.findViewById(R.id.empty_message);
+        emptyText.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaThin"));
         listView.setEmptyView(emptyText);
 
         return rootView;

@@ -39,6 +39,7 @@ import re.notifica.NotificareError;
 import re.notifica.model.NotificareUser;
 import re.notifica.model.NotificareUserPreference;
 import re.notifica.model.NotificareUserPreferenceOption;
+import re.notifica.support.NotificareSupport;
 import re.notifica.util.AssetLoader;
 
 
@@ -496,10 +497,6 @@ public class ProfileFragment extends Fragment {
         private static final int TYPE_CHOICE = 4;
         private static final int TYPE_SELECT = 5;
 
-        private Typeface lightFont;
-        private Typeface regularFont;
-        private Typeface hairlineFont;
-
         UserProfileAdapter(Activity activity, List<Map<String, String>> userProfileList, List<NotificareUserPreference> prefs) {
             this.activity = activity;
             this.data = userProfileList;
@@ -519,9 +516,6 @@ public class ProfileFragment extends Fragment {
 
             inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-            lightFont = Typeface.createFromAsset(activity.getAssets(), "fonts/Lato-Light.ttf");
-            regularFont = Typeface.createFromAsset(activity.getAssets(), "fonts/Lato-Regular.ttf");
-            hairlineFont = Typeface.createFromAsset(activity.getAssets(), "fonts/Lato-Hairline.ttf");
         }
 
 
@@ -593,18 +587,18 @@ public class ProfileFragment extends Fragment {
                         convertView = inflater.inflate(R.layout.row_header, null);
                         holder.name = convertView.findViewById(R.id.item_label);
                         holder.name.setText(itemHash.get("label"));
-                        holder.name.setTypeface(regularFont);
+                        holder.name.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaRegular"));
                         break;
                     case TYPE_SIMPLE:
                         convertView = inflater.inflate(R.layout.row_user_profile_simple, null);
                         holder.label = convertView.findViewById(R.id.item_label);
                         holder.label.setText(itemHash.get("label"));
-                        holder.label.setTypeface(regularFont);
+                        holder.label.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaRegular"));
 
                         if (itemHash.get("value") != null && !itemHash.get("value").isEmpty()) {
                             holder.name = convertView.findViewById(R.id.item_name);
                             holder.name.setText(itemHash.get("value"));
-                            holder.name.setTypeface(lightFont);
+                            holder.name.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaThin"));
                         }
 
                         break;
@@ -653,7 +647,7 @@ public class ProfileFragment extends Fragment {
                             }
 
                         });
-                        holder.name.setTypeface(regularFont);
+                        holder.name.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaRegular"));
                         break;
 
                     case TYPE_CHOICE:
@@ -662,15 +656,15 @@ public class ProfileFragment extends Fragment {
                         holder.name = convertView.findViewById(R.id.item_name);
                         holder.label.setText(itemHash.get("label"));
                         holder.name.setText(itemHash.get("name"));
-                        holder.label.setTypeface(regularFont);
-                        holder.name.setTypeface(lightFont);
+                        holder.label.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaRegular"));
+                        holder.name.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaThin"));
                         break;
 
                     case TYPE_SELECT:
                         convertView = inflater.inflate(R.layout.row_segment_select, null);
                         holder.name = convertView.findViewById(R.id.item_label);
                         holder.name.setText(itemHash.get("label"));
-                        holder.name.setTypeface(regularFont);
+                        holder.name.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaRegular"));
                         break;
                 }
                 if (convertView != null) {

@@ -30,6 +30,7 @@ import re.notifica.NotificareCallback;
 import re.notifica.NotificareError;
 import re.notifica.model.NotificareTimeOfDay;
 import re.notifica.model.NotificareTimeOfDayRange;
+import re.notifica.support.NotificareSupport;
 import re.notifica.support.recyclerview.decorators.ConditionalDividerItemDecoration;
 
 
@@ -451,6 +452,7 @@ public class SettingsFragment extends Fragment {
             SectionViewHolder(View itemView) {
                 super(itemView);
                 name = (TextView) itemView;
+                name.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaBold"));
             }
         }
 
@@ -464,6 +466,9 @@ public class SettingsFragment extends Fragment {
                 label = itemView.findViewById(R.id.label);
                 description = itemView.findViewById(R.id.description);
                 switchEditor = itemView.findViewById(R.id.switch_editor);
+
+                label.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaBold"));
+                description.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaRegular"));
             }
         }
 
@@ -475,6 +480,8 @@ public class SettingsFragment extends Fragment {
                 super(itemView);
                 label = itemView.findViewById(R.id.label);
                 description = itemView.findViewById(R.id.description);
+                label.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaBold"));
+                description.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaRegular"));
             }
         }
 
@@ -486,6 +493,9 @@ public class SettingsFragment extends Fragment {
                 super(itemView);
                 label = itemView.findViewById(R.id.label);
                 description = itemView.findViewById(R.id.description);
+
+                label.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaBold"));
+                description.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaRegular"));
             }
         }
 
@@ -497,6 +507,9 @@ public class SettingsFragment extends Fragment {
                 super(itemView);
                 label = itemView.findViewById(R.id.label);
                 description = itemView.findViewById(R.id.description);
+
+                label.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaBold"));
+                description.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaRegular"));
             }
         }
 

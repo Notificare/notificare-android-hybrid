@@ -19,6 +19,7 @@ import android.widget.EditText;
 import re.notifica.Notificare;
 import re.notifica.NotificareCallback;
 import re.notifica.NotificareError;
+import re.notifica.support.NotificareSupport;
 
 
 /**
@@ -60,13 +61,11 @@ public class SignUpFragment extends Fragment {
 
         builder = new AlertDialog.Builder(getActivity());
 
-        Typeface lightFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Lato-Light.ttf");
-        Typeface regularFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Lato-Regular.ttf");
-        emailField.setTypeface(lightFont);
-        passwordField.setTypeface(lightFont);
-        nameField.setTypeface(lightFont);
-        confirmPasswordField.setTypeface(lightFont);
-        signupButton.setTypeface(lightFont);
+        emailField.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaRegular"));
+        passwordField.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaRegular"));
+        nameField.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaRegular"));
+        confirmPasswordField.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaRegular"));
+        signupButton.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaBold"));
 
         rootView.findViewById(R.id.buttonSignup).setOnClickListener(view -> doSignUp());
 
