@@ -6,6 +6,8 @@ import androidx.collection.ArraySet;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.graphics.Typeface;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +18,7 @@ import java.util.Date;
 import java.util.Set;
 
 import re.notifica.model.NotificareInboxItem;
+import re.notifica.support.NotificareSupport;
 import re.notifica.util.AssetLoader;
 import re.notifica.util.Log;
 
@@ -94,6 +97,10 @@ public class InboxListAdapter extends ListAdapter<NotificareInboxItem, InboxList
             messageView = itemView.findViewById(R.id.inbox_message);
             deleteIconView = itemView.findViewById(R.id.inbox_delete);
             imageView = itemView.findViewById(R.id.inbox_image);
+
+            titleView.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaBold"));
+            messageView.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaRegular"));
+            dateView.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaThin"));
         }
 
         void bind(NotificareInboxItem item, int position, InboxItemClickListener itemClickListener, InboxItemSelectionListener itemSelectedListener) {

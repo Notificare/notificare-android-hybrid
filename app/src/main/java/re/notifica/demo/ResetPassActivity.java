@@ -16,6 +16,7 @@ import java.util.List;
 import re.notifica.Notificare;
 import re.notifica.NotificareCallback;
 import re.notifica.NotificareError;
+import re.notifica.support.NotificareSupport;
 
 public class ResetPassActivity extends AppCompatActivity {
 
@@ -32,15 +33,12 @@ public class ResetPassActivity extends AppCompatActivity {
 
         builder = new AlertDialog.Builder(this);
 
-        Typeface lightFont = Typeface.createFromAsset(this.getAssets(), "fonts/Lato-Light.ttf");
-        Typeface regularFont = Typeface.createFromAsset(this.getAssets(), "fonts/Lato-Regular.ttf");
-
         Button resetButton = findViewById(R.id.buttonResetPass);
         passwordField = findViewById(R.id.pass);
         confirmPasswordField = findViewById(R.id.confirmPass);
-        passwordField.setTypeface(lightFont);
-        confirmPasswordField.setTypeface(lightFont);
-        resetButton.setTypeface(lightFont);
+        passwordField.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaRegular"));
+        confirmPasswordField.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaRegular"));
+        resetButton.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaBold"));
 
 
         Uri data = getIntent().getData();

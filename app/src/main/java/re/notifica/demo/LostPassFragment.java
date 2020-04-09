@@ -19,6 +19,7 @@ import android.widget.EditText;
 import re.notifica.Notificare;
 import re.notifica.NotificareCallback;
 import re.notifica.NotificareError;
+import re.notifica.support.NotificareSupport;
 
 
 /**
@@ -49,12 +50,10 @@ public class LostPassFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_lost_pass, container, false);
 
         Button lostPassButton = rootView.findViewById(R.id.buttonLostPass);
-        Typeface lightFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Lato-Light.ttf");
-        Typeface regularFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Lato-Regular.ttf");
         builder = new AlertDialog.Builder(getActivity());
         emailField = rootView.findViewById(R.id.emailField);
-        emailField.setTypeface(lightFont);
-        lostPassButton.setTypeface(lightFont);
+        emailField.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaRegular"));
+        lostPassButton.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaBold"));
         rootView.findViewById(R.id.buttonLostPass).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

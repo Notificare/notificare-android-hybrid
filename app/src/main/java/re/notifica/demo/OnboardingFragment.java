@@ -19,6 +19,7 @@ import android.widget.TextView;
 import java.io.InputStream;
 
 import re.notifica.Notificare;
+import re.notifica.support.NotificareSupport;
 
 
 public class OnboardingFragment extends Fragment {
@@ -29,8 +30,6 @@ public class OnboardingFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate( R.layout.fragment_onboarding, container, false);
 
-        Typeface regularFont = Typeface.createFromAsset(getContext().getAssets(), "fonts/Lato-Regular.ttf");
-
         String title = getArguments().getString("title");
         String file = getArguments().getString("file");
         String buttonLabel = getArguments().getString("buttonLabel");
@@ -39,11 +38,11 @@ public class OnboardingFragment extends Fragment {
         final int pos = getArguments().getInt("pos");
 
         TextView titleText = rootView.findViewById(R.id.assetText);
-        titleText.setTypeface(regularFont);
+        titleText.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaRegular"));
         titleText.setText(title);
 
         Button button = rootView.findViewById(R.id.assetButton);
-        button.setTypeface(regularFont);
+        button.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaBold"));
         button.setText(buttonLabel);
 
         button.setOnClickListener(view -> {
