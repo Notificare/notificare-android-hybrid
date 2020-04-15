@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.graphics.Typeface;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,7 +52,7 @@ public class InboxListAdapter extends ListAdapter<NotificareInboxItem, InboxList
     }
 
     interface InboxItemClickListener {
-        void onItemCLick(NotificareInboxItem item, int position);
+        void onItemClick(NotificareInboxItem item, int position);
     }
 
     interface InboxItemSelectionListener {
@@ -129,7 +128,7 @@ public class InboxListAdapter extends ListAdapter<NotificareInboxItem, InboxList
                 itemView.setSelected(false);
             }
             itemView.setOnClickListener(v -> {
-                itemClickListener.onItemCLick(item, position);
+                itemClickListener.onItemClick(item, position);
             });
 
             itemView.setOnLongClickListener(v -> {

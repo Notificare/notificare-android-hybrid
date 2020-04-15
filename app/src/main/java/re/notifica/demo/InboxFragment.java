@@ -139,7 +139,7 @@ public class InboxFragment extends Fragment implements InboxListAdapter.InboxIte
     }
 
     @Override
-    public void onItemCLick(NotificareInboxItem item, int position) {
+    public void onItemClick(NotificareInboxItem item, int position) {
         if (item != null) {
             Notificare.shared().openInboxItem(getActivity(), item);
         }

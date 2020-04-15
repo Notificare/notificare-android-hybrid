@@ -9,14 +9,14 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+    buildToolsVersion "29.0.3"
 
     defaultConfig {
         applicationId "re.notifica.demo"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 20202
-        versionName "2.2.2"
+        versionCode 20203
+        versionName "2.2.3"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [notificareAppId: "5489b42ff23e5815132b492a", notificareHost: "push.notifica.re"]
     }
@@ -96,11 +96,11 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    implementation 're.notifica:notificare-core:2.2.1'
-    implementation 're.notifica:notificare-location:2.2.1'
-    implementation 're.notifica:notificare-beacon:2.2.1'
-    implementation 're.notifica:notificare-scannable:2.2.1'
-    implementation 're.notifica:notificare-support-lib-android:1.5.0'
+    implementation 're.notifica:notificare-core:2.2.2'
+    implementation 're.notifica:notificare-location:2.2.2'
+    implementation 're.notifica:notificare-beacon:2.2.2'
+    implementation 're.notifica:notificare-scannable:2.2.2'
+    implementation 're.notifica:notificare-support-lib-android:2.0.0'
 //    implementation 'com.google.firebase:firebase-core:16.0.5'
     implementation 'me.leolin:ShortcutBadger:1.1.22@aar'
     testImplementation 'junit:junit:4.12'
