@@ -100,7 +100,7 @@ dependencies {
     implementation 're.notifica:notificare-location:2.3.0'
     implementation 're.notifica:notificare-beacon:2.3.0'
     implementation 're.notifica:notificare-scannable:2.3.0'
-    implementation 're.notifica:notificare-support-lib-android:1.5.0'
+    implementation 're.notifica:notificare-support-lib-android:2.0.0'
 //    implementation 'com.google.firebase:firebase-core:16.0.5'
     implementation 'me.leolin:ShortcutBadger:1.1.22@aar'
     testImplementation 'junit:junit:4.12'
