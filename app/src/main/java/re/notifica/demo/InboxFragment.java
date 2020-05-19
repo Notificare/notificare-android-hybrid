@@ -26,6 +26,7 @@ import re.notifica.Notificare;
 import re.notifica.NotificareCallback;
 import re.notifica.NotificareError;
 import re.notifica.model.NotificareInboxItem;
+import re.notifica.support.NotificareSupport;
 import re.notifica.util.Log;
 
 
@@ -79,15 +80,13 @@ public class InboxFragment extends Fragment implements InboxListAdapter.InboxIte
 
         spinner = rootView.findViewById(R.id.progressBar);
 
-        lightFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Lato-Light.ttf");
-        regularFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Lato-Regular.ttf");
-
         selectedItems = new HashSet<>();
 
         inboxAdapter = new InboxListAdapter(this, this);
         listView.setAdapter(inboxAdapter);
 
         TextView emptyText = rootView.findViewById(R.id.empty_message);
+        emptyText.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaThin"));
 
         if (Notificare.shared().getInboxManager() != null) {
             Notificare.shared().getInboxManager().getObservableItems().observe(this, notificareInboxItems -> {
@@ -140,7 +139,7 @@ public class InboxFragment extends Fragment implements InboxListAdapter.InboxIte
     }
 
     @Override
-    public void onItemCLick(NotificareInboxItem item, int position) {
+    public void onItemClick(NotificareInboxItem item, int position) {
         if (item != null) {
             Notificare.shared().openInboxItem(getActivity(), item);
         }

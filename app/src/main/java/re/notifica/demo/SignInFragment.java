@@ -20,6 +20,7 @@ import re.notifica.Notificare;
 import re.notifica.NotificareCallback;
 import re.notifica.NotificareError;
 import re.notifica.model.NotificareUser;
+import re.notifica.support.NotificareSupport;
 
 
 /**
@@ -44,20 +45,17 @@ public class SignInFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_sign_in, container, false);
 
-        Typeface lightFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Lato-Light.ttf");
-        Typeface regularFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Lato-Regular.ttf");
-
         Button lostPassButton = rootView.findViewById(R.id.buttonLostPass);
         Button signUpButton = rootView.findViewById(R.id.buttonSignup);
         Button signInButton = rootView.findViewById(R.id.buttonSignin);
         final EditText emailField = rootView.findViewById(R.id.email);
         final EditText passwordField = rootView.findViewById(R.id.pass);
 
-        emailField.setTypeface(lightFont);
-        passwordField.setTypeface(lightFont);
-        signInButton.setTypeface(lightFont);
-        signUpButton.setTypeface(lightFont);
-        lostPassButton.setTypeface(lightFont);
+        emailField.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaRegular"));
+        passwordField.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaRegular"));
+        signInButton.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaBold"));
+        signUpButton.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaBold"));
+        lostPassButton.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaThin"));
 
         if (Notificare.shared().isLoggedIn()) {
             getFragmentManager().popBackStack();

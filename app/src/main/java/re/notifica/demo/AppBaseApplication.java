@@ -108,6 +108,10 @@ public class AppBaseApplication extends Application {
         // This app uses NotificareSupport lib, initialize it
         NotificareSupport.shared().launch(this);
 
+        NotificareSupport.shared().getTypefaceCache().putFromAssets("ProximaNovaRegular", "fonts/ProximaNovaRegular.otf");
+        NotificareSupport.shared().getTypefaceCache().putFromAssets("ProximaNovaBold", "fonts/ProximaNovaBold.otf");
+        NotificareSupport.shared().getTypefaceCache().putFromAssets("ProximaNovaThin", "fonts/ProximaNovaThin.otf");
+
         // Internet connection configs
         NotificareSupport.shared().setInternetConnectionActivityTheme(R.style.AppTheme);
         NotificareSupport.shared().setInternetConnectionActivityLayout(R.layout.activity_no_internet);

@@ -36,6 +36,7 @@ import re.notifica.Notificare;
 import re.notifica.NotificareCallback;
 import re.notifica.NotificareError;
 import re.notifica.model.NotificareAsset;
+import re.notifica.support.NotificareSupport;
 import re.notifica.util.AssetLoader;
 
 
@@ -79,6 +80,7 @@ public class StorageFragment extends Fragment {
         GridView listView = rootView.findViewById(R.id.gridView);
         emptyView = rootView.findViewById(R.id.emptyMessage);
         emptyView.setText(getString(R.string.title_intro_assets));
+        emptyView.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaThin"));
 
         mAdapter = new AssetsAdapter(getActivity());
         listView.setAdapter(mAdapter);

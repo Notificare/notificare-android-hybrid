@@ -22,6 +22,7 @@ import java.util.List;
 import re.notifica.Notificare;
 import re.notifica.beacon.BeaconRangingListener;
 import re.notifica.model.NotificareBeacon;
+import re.notifica.support.NotificareSupport;
 
 
 /**
@@ -52,6 +53,7 @@ public class BeaconsFragment extends Fragment implements BeaconRangingListener {
         listView.setAdapter(beaconListAdapter);
 
         TextView emptyText = rootView.findViewById(R.id.empty_message);
+        emptyText.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaThin"));
         listView.setEmptyView(emptyText);
 
         return rootView;
@@ -110,15 +112,10 @@ public class BeaconsFragment extends Fragment implements BeaconRangingListener {
                 rowView = inflater.inflate(resource, null, true);
             }
 
-            Typeface hairlineTypeface = Typeface.createFromAsset(context.getAssets(), "fonts/Lato-Hairline.ttf");
-            Typeface myTypeface = Typeface.createFromAsset(context.getAssets(), "fonts/Lato-Regular.ttf");
-            Typeface lightTypeface = Typeface.createFromAsset(context.getAssets(), "fonts/Lato-Light.ttf");
-
-
             TextView nameView = rowView.findViewById(R.id.name);
-            nameView.setTypeface(myTypeface);
+            nameView.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaBold"));
             TextView messageView = rowView.findViewById(R.id.message);
-            messageView.setTypeface(lightTypeface);
+            messageView.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaThin"));
             ImageView iconView = rowView.findViewById(R.id.icon);
             NotificareBeacon beacon = getItem(position);
             if (beacon != null) {
