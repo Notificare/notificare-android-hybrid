@@ -46,3 +46,6 @@ app/src/apiTest/assets/notificareconfig.properties
 
 # Firebase
 app/google-services.json
+
+# HMS
+app/agconnect-services.json

@@ -131,88 +131,85 @@ public class RegionsFragment extends Fragment implements OnMapReadyCallback {
     public void loadLocations() {
 
         if (Notificare.shared().hasForegroundLocationPermissionGranted()) {
-            Notificare.shared().getCurrentLocation().addOnSuccessListener(currentLocation -> {
-                if (currentLocation != null) {
-                    double lat = currentLocation.getLatitude();
-                    double lon = currentLocation.getLongitude();
+            if (Notificare.shared().getLastKnownLocation() != null) {
+                double lat = Notificare.shared().getLastKnownLocation().getLatitude();
+                double lon = Notificare.shared().getLastKnownLocation().getLongitude();
 
-                    userLocation = map.addMarker(new MarkerOptions()
-                            .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("user_location",64,64)))
-                            .position(new LatLng(lat, lon))
-                            .title("My Location"));
+                userLocation = map.addMarker(new MarkerOptions()
+                        .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("user_location",64,64)))
+                        .position(new LatLng(lat, lon))
+                        .title("My Location"));
 
-                    // Updates the location and zoom of the MapView
-                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 15));
+                // Updates the location and zoom of the MapView
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 15));
 
-                    circlesList = new ArrayList<>();
-                    polygonsList = new ArrayList<>();
-                    markersList = new ArrayList<>();
+                circlesList = new ArrayList<>();
+                polygonsList = new ArrayList<>();
+                markersList = new ArrayList<>();
 
-                    Notificare.shared().doCloudRequest("GET", "/api/region", null, null, new NotificareCallback<JSONObject>() {
-                        @Override
-                        public void onSuccess(JSONObject jsonObject) {
+                Notificare.shared().doCloudRequest("GET", "/api/region", null, null, new NotificareCallback<JSONObject>() {
+                    @Override
+                    public void onSuccess(JSONObject jsonObject) {
 
-                            JSONArray regions;
-                            try {
-                                regions = jsonObject.getJSONArray("regions");
-                                for (int i = 0; i < regions.length(); i++) {
+                        JSONArray regions;
+                        try {
+                            regions = jsonObject.getJSONArray("regions");
+                            for (int i = 0; i < regions.length(); i++) {
 
-                                    JSONObject region = (JSONObject) regions.get(i);
+                                JSONObject region = (JSONObject) regions.get(i);
 
-                                    LatLng location = new LatLng(region.getJSONObject("geometry").getJSONArray("coordinates").getDouble(1), region.getJSONObject("geometry").getJSONArray("coordinates").getDouble(0));
+                                LatLng location = new LatLng(region.getJSONObject("geometry").getJSONArray("coordinates").getDouble(1), region.getJSONObject("geometry").getJSONArray("coordinates").getDouble(0));
 
-                                    if (!region.isNull("advancedGeometry")) {
+                                if (!region.isNull("advancedGeometry")) {
 
-                                        JSONArray coordinates = region.getJSONObject("advancedGeometry").getJSONArray("coordinates").getJSONArray(0);
+                                    JSONArray coordinates = region.getJSONObject("advancedGeometry").getJSONArray("coordinates").getJSONArray(0);
 
-                                        PolygonOptions poly = new PolygonOptions();
-                                        poly.fillColor(R.color.colorPrimary);
-                                        poly.strokeColor(0);
-                                        poly.strokeWidth(0);
+                                    PolygonOptions poly = new PolygonOptions();
+                                    poly.fillColor(R.color.colorPrimary);
+                                    poly.strokeColor(0);
+                                    poly.strokeWidth(0);
 
-                                        for (int j = 0; j < coordinates.length(); j++) {
-                                            JSONArray c = coordinates.getJSONArray(j);
-                                            poly.add(new LatLng(c.getDouble(1), c.getDouble(0)));
-                                        }
-
-                                        Polygon polygon = map.addPolygon(poly);
-
-                                        polygonsList.add(polygon);
-
-                                    } else {
-                                        Circle circle = map.addCircle(new CircleOptions()
-                                                .center(location)
-                                                .radius(region.getDouble("distance"))
-                                                .fillColor(R.color.colorPrimary)
-                                                .strokeColor(0)
-                                                .strokeWidth(0));
-                                        circlesList.add(circle);
+                                    for (int j = 0; j < coordinates.length(); j++) {
+                                        JSONArray c = coordinates.getJSONArray(j);
+                                        poly.add(new LatLng(c.getDouble(1), c.getDouble(0)));
                                     }
 
+                                    Polygon polygon = map.addPolygon(poly);
 
-                                    Marker marker = map.addMarker(new MarkerOptions()
-                                            .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",64,64)))
-                                            .position(location)
-                                            .title(region.getString("name")));
-                                    markersList.add(marker);
+                                    polygonsList.add(polygon);
+
+                                } else {
+                                    Circle circle = map.addCircle(new CircleOptions()
+                                            .center(location)
+                                            .radius(region.getDouble("distance"))
+                                            .fillColor(R.color.colorPrimary)
+                                            .strokeColor(0)
+                                            .strokeWidth(0));
+                                    circlesList.add(circle);
                                 }
-                            } catch (JSONException e) {
-                                Log.e(TAG, "JSON parse error: " + e.getMessage());
+
+
+                                Marker marker = map.addMarker(new MarkerOptions()
+                                        .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("map_marker",64,64)))
+                                        .position(location)
+                                        .title(region.getString("name")));
+                                markersList.add(marker);
                             }
-
-
+                        } catch (JSONException e) {
+                            Log.e(TAG, "JSON parse error: " + e.getMessage());
                         }
 
-                        @Override
-                        public void onError(NotificareError notificareError) {
 
-                            Log.i("HTTP error", notificareError.getMessage());
-                        }
-                    });
+                    }
 
-                }
-            });
+                    @Override
+                    public void onError(NotificareError notificareError) {
 
+                        Log.i("HTTP error", notificareError.getMessage());
+                    }
+                });
+
+            }
         } else {
             ((MainActivity)getActivity()).askForegroundLocationPermission();
         }

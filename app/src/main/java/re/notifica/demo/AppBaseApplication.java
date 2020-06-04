@@ -1,6 +1,5 @@
 package re.notifica.demo;
 
-import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -10,8 +9,8 @@ import android.os.StrictMode;
 import android.util.Log;
 import android.webkit.WebView;
 
-//import org.altbeacon.beacon.logging.LogManager;
-//import org.altbeacon.beacon.logging.Loggers;
+import androidx.multidex.MultiDexApplication;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,8 +18,11 @@ import re.notifica.Notificare;
 import re.notifica.model.NotificareTimeOfDayRange;
 import re.notifica.support.NotificareSupport;
 
+//import org.altbeacon.beacon.logging.LogManager;
+//import org.altbeacon.beacon.logging.Loggers;
 
-public class AppBaseApplication extends Application {
+
+public class AppBaseApplication extends MultiDexApplication {
 
     private static final String TAG = AppBaseApplication.class.getSimpleName();
     private static final String PREFS_NAME = "hybrid_preferences";

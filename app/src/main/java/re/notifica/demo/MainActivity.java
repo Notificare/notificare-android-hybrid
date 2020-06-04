@@ -7,19 +7,18 @@ import android.content.Intent;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.material.snackbar.Snackbar;
+import com.huawei.hms.nearby.Nearby;
+import com.huawei.hms.nearby.message.Message;
+import com.huawei.hms.nearby.message.MessageHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,7 +41,6 @@ import re.notifica.model.NotificareBeacon;
 import re.notifica.model.NotificareInboxItem;
 import re.notifica.model.NotificareNotification;
 import re.notifica.model.NotificareScannable;
-import re.notifica.support.NotificareSupport;
 import re.notifica.support.v7.app.ActionBarBaseActivity;
 
 public class MainActivity extends ActionBarBaseActivity implements Notificare.OnNotificareReadyListener, Notificare.OnBillingReadyListener, Notificare.OnNotificareNotificationListener, BillingManager.OnRefreshFinishedListener, BillingManager.OnPurchaseFinishedListener, BeaconRangingListener {
@@ -66,6 +64,26 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
 
         Log.i(TAG, "Intent: " + getIntent().getData());
         handleIntent(getIntent());
+
+
+//        MessageHandler messageHandler = new MessageHandler() {
+//            @Override
+//            public void onFound(Message message) {
+//                Log.i(TAG, " onFound " + new String(message.getContent()));
+//            }
+//            @Override
+//            public void onLost(Message message) {
+//                Log.i(TAG, " onLost " + new String(message.getContent()));
+//            }
+//        };
+//        PendingIntent pendingIntent = PendingIntent.getService(this, 0, new Intent(this, BackgroundGetIntentService.class), PendingIntent.FLAG_UPDATE_CURRENT);
+//        Nearby.getMessageEngine(this).get(pendingIntent).addOnCompleteListener(task -> {
+//            if (task.isSuccessful()) {
+//                Log.i(TAG, "success");
+//            } else {
+//                Log.i(TAG, task.getException().getMessage());
+//            }
+//        });
     }
 
     @Override

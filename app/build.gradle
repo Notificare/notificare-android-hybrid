@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         jcenter()
+        google()
     }
 
 }
@@ -13,12 +14,13 @@ android {
 
     defaultConfig {
         applicationId "re.notifica.demo"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 29
         versionCode 20300
         versionName "2.3.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [notificareAppId: "5489b42ff23e5815132b492a", notificareHost: "push.notifica.re"]
+        multiDexEnabled true
     }
     buildTypes {
         def BOOLEAN = "boolean"
@@ -79,12 +81,10 @@ android {
 
 repositories {
     jcenter()
+    google()
     maven {
 //        url "https://github.com/Notificare/notificare-mvn-repo/raw/master/releases"
         url "file:///Users/joris/Developer/Projects/notificare-mvn-repo/releases"
-    }
-    maven {
-        url 'https://maven.google.com'
     }
 
     flatDir {
@@ -96,12 +96,15 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
     implementation 're.notifica:notificare-core:2.3.0'
+    implementation 're.notifica:notificare-core-hms:2.3.0'
     implementation 're.notifica:notificare-location:2.3.0'
+    implementation 're.notifica:notificare-location-hms:2.3.0'
     implementation 're.notifica:notificare-beacon:2.3.0'
     implementation 're.notifica:notificare-scannable:2.3.0'
     implementation 're.notifica:notificare-support-lib-android:2.0.0'
-//    implementation 'com.google.firebase:firebase-core:16.0.5'
+    implementation 'com.huawei.hms:nearby:4.0.4.300'
     implementation 'me.leolin:ShortcutBadger:1.1.22@aar'
     testImplementation 'junit:junit:4.12'
 }
@@ -116,3 +119,4 @@ android {
 }
 
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.huawei.agconnect'
