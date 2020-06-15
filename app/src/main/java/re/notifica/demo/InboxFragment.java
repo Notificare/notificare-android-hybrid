@@ -89,7 +89,7 @@ public class InboxFragment extends Fragment implements InboxListAdapter.InboxIte
         emptyText.setTypeface(NotificareSupport.shared().getTypefaceCache().get("ProximaNovaThin"));
 
         if (Notificare.shared().getInboxManager() != null) {
-            Notificare.shared().getInboxManager().getObservableItems().observe(this, notificareInboxItems -> {
+            Notificare.shared().getInboxManager().getObservableItems().observe(getViewLifecycleOwner(), notificareInboxItems -> {
                 if (notificareInboxItems != null) {
                     if (notificareInboxItems.size() == 0) {
                         emptyText.setVisibility(View.VISIBLE);
@@ -105,7 +105,7 @@ public class InboxFragment extends Fragment implements InboxListAdapter.InboxIte
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         mOptionsMenu = menu;
         inflater.inflate(R.menu.inbox, menu);
