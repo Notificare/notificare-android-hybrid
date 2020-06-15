@@ -2,7 +2,6 @@ package re.notifica.demo;
 
 import android.app.AlertDialog;
 import android.app.Notification;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
@@ -14,11 +13,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.material.snackbar.Snackbar;
-import com.huawei.hms.nearby.Nearby;
-import com.huawei.hms.nearby.message.Message;
-import com.huawei.hms.nearby.message.MessageHandler;
+import com.huawei.hms.api.ConnectionResult;
+import com.huawei.hms.api.HuaweiApiAvailability;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,6 +27,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
+import re.notifica.CommonStatusCodes;
 import re.notifica.Notificare;
 import re.notifica.NotificareCallback;
 import re.notifica.NotificareError;
@@ -64,26 +63,6 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
 
         Log.i(TAG, "Intent: " + getIntent().getData());
         handleIntent(getIntent());
-
-
-//        MessageHandler messageHandler = new MessageHandler() {
-//            @Override
-//            public void onFound(Message message) {
-//                Log.i(TAG, " onFound " + new String(message.getContent()));
-//            }
-//            @Override
-//            public void onLost(Message message) {
-//                Log.i(TAG, " onLost " + new String(message.getContent()));
-//            }
-//        };
-//        PendingIntent pendingIntent = PendingIntent.getService(this, 0, new Intent(this, BackgroundGetIntentService.class), PendingIntent.FLAG_UPDATE_CURRENT);
-//        Nearby.getMessageEngine(this).get(pendingIntent).addOnCompleteListener(task -> {
-//            if (task.isSuccessful()) {
-//                Log.i(TAG, "success");
-//            } else {
-//                Log.i(TAG, task.getException().getMessage());
-//            }
-//        });
     }
 
     @Override
@@ -189,7 +168,7 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
             int badgeCount = Notificare.shared().getInboxManager().getUnreadCount();
             ShortcutBadger.applyCount(this.getApplicationContext(), badgeCount);
         }
-        askBackgroundLocationPermission();
+        //askBackgroundLocationPermission();
     }
 
     @Override
@@ -341,14 +320,25 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
                 break;
             case "/regions":
 
-                getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.fragment_enter,
-                                R.anim.fragment_exit,
-                                R.anim.fragment_pop_enter,
-                                R.anim.fragment_pop_exit)
-                        .replace(R.id.content_frame, new RegionsFragment())
-                        .addToBackStack(tag)
-                        .commit();
+                if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this) == com.google.android.gms.common.ConnectionResult.SUCCESS) {
+                    getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.fragment_enter,
+                                    R.anim.fragment_exit,
+                                    R.anim.fragment_pop_enter,
+                                    R.anim.fragment_pop_exit)
+                            .replace(R.id.content_frame, new RegionsFragment())
+                            .addToBackStack(tag)
+                            .commit();
+                } else if (HuaweiApiAvailability.getInstance().isHuaweiMobileServicesAvailable(this) == ConnectionResult.SUCCESS) {
+                    getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.fragment_enter,
+                                    R.anim.fragment_exit,
+                                    R.anim.fragment_pop_enter,
+                                    R.anim.fragment_pop_exit)
+                            .replace(R.id.content_frame, new RegionsHmsFragment())
+                            .addToBackStack(tag)
+                            .commit();
+                }
 
                 break;
             case "/signup":

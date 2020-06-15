@@ -68,11 +68,6 @@
                 android:value="re.notifica.demo.MainActivity" />
         </activity>
         <activity
-            android:name="re.notifica.ui.ScannableActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:hardwareAccelerated="true">
-        </activity>
-        <activity
             android:name="re.notifica.ui.PassbookActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:hardwareAccelerated="true"
@@ -125,7 +120,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="push.notifica.re"
+                    android:host="${notificareHost}"
                     android:pathPrefix="/oauth/validate/${notificareAppId}"
                     android:scheme="https" />
             </intent-filter>
@@ -144,13 +139,12 @@
 
         <!-- API key for Google Maps -->
         <meta-data
-            android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyBZtwDbI4ns0GMQ9W4vFQTbWjt1xXMY3WY" />
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${googleApiKey}" />
         <meta-data
             android:name="re.notifica.metadata.UrlSchemes"
             android:resource="@array/url_schemes" />
 
-        <service android:name=".BackgroundGetIntentService" />
     </application>
 
 </manifest>

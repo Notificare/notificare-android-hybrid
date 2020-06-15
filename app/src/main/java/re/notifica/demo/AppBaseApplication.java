@@ -11,6 +11,9 @@ import android.webkit.WebView;
 
 import androidx.multidex.MultiDexApplication;
 
+import com.huawei.hms.analytics.HiAnalytics;
+import com.huawei.hms.analytics.HiAnalyticsInstance;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -59,6 +62,7 @@ public class AppBaseApplication extends MultiDexApplication {
             //LogManager.setLogger(Loggers.verboseLogger());
         }
 
+        HiAnalyticsInstance instance = HiAnalytics.getInstance(this);
         // REQUIRED
         // Launch Notificare
         Notificare.shared().launch(this);

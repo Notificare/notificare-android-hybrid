@@ -19,7 +19,7 @@ android {
         versionCode 20300
         versionName "2.3.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        manifestPlaceholders = [notificareAppId: "5489b42ff23e5815132b492a", notificareHost: "push.notifica.re"]
+        manifestPlaceholders = [notificareAppId: "5489b42ff23e5815132b492a", notificareHost: "push.notifica.re", googleApiKey: "AIzaSyBZtwDbI4ns0GMQ9W4vFQTbWjt1xXMY3WY"]
         multiDexEnabled true
     }
     buildTypes {
@@ -68,7 +68,7 @@ android {
             buildConfigField BOOLEAN, OVERRIDE_LANGUAGE, FALSE
             buildConfigField STRING, PREFERRED_LANGUAGE, "\"pt-BR\""
             applicationId "re.notifica.demo.test"
-            manifestPlaceholders = [ notificareAppId: "55aca82cf231d9e80ef851d2", notificareHost: "push-test.notifica.re" ]
+            manifestPlaceholders = [ notificareAppId: "55aca82cf231d9e80ef851d2", notificareHost: "push-test.notifica.re", googleApiKey: "AIzaSyBZtwDbI4ns0GMQ9W4vFQTbWjt1xXMY3WY" ]
         }
     }
 
@@ -97,14 +97,15 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 're.notifica:notificare-core:2.3.0'
-    implementation 're.notifica:notificare-core-hms:2.3.0'
-    implementation 're.notifica:notificare-location:2.3.0'
-    implementation 're.notifica:notificare-location-hms:2.3.0'
-    implementation 're.notifica:notificare-beacon:2.3.0'
-    implementation 're.notifica:notificare-scannable:2.3.0'
+    implementation 're.notifica:notificare-core:2.4.0-beta-1'
+    implementation 're.notifica:notificare-core-hms:2.4.0-beta-1'
+    implementation 're.notifica:notificare-location:2.4.0-beta-1'
+    implementation 're.notifica:notificare-location-hms:2.4.0-beta-1'
+    implementation 're.notifica:notificare-beacon:2.4.0-beta-1'
+    implementation 're.notifica:notificare-scannable:2.4.0-beta-1'
+    implementation 're.notifica:notificare-scannable-hms:2.4.0-beta-1'
     implementation 're.notifica:notificare-support-lib-android:2.0.0'
-    implementation 'com.huawei.hms:nearby:4.0.4.300'
+    implementation 'com.huawei.hms:hianalytics:5.0.0.301'
     implementation 'me.leolin:ShortcutBadger:1.1.22@aar'
     testImplementation 'junit:junit:4.12'
 }
