@@ -97,25 +97,22 @@ public class OnboardingActivity extends FragmentActivity implements Notificare.O
 
     public void tryRequestLocationPermission() {
         if (isNotificareReady) {
-            if (!Notificare.shared().hasLocationPermissionGranted()) {
+            if (!Notificare.shared().hasForegroundLocationPermissionGranted()) {
                 Log.i(TAG, "permission not granted");
-                if (Notificare.shared().didRequestLocationPermission()) {
-                    if (Notificare.shared().shouldShowRequestPermissionRationale(OnboardingActivity.this)) {
-                        // Here we should show a dialog explaining location updates
-                        new AlertDialog.Builder(OnboardingActivity.this)
-                                .setTitle(R.string.app_name)
-                                .setMessage(R.string.alert_location_permission_rationale)
+                if (Notificare.shared().shouldShowForegroundRequestPermissionRationale(this)) {
+                    // Here we should show a dialog explaining location updates
+                    new AlertDialog.Builder(this)
+                            .setTitle(R.string.app_name)
+                            .setMessage(R.string.alert_location_permission_rationale)
 
-                                .setCancelable(true)
-                                .setPositiveButton(R.string.button_location_permission_rationale_ok, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        Notificare.shared().requestLocationPermission(OnboardingActivity.this, LOCATION_PERMISSION_REQUEST_CODE);
-                                    }
-                                })
-                                .show();
-                    }
+                            .setCancelable(true)
+                            .setNegativeButton(R.string.button_location_permission_rationale_cancel, (dialog, id) -> {
+                                Log.i(TAG, "foreground location not agreed");
+                            })
+                            .setPositiveButton(R.string.button_location_permission_rationale_ok, (dialog, id) -> Notificare.shared().requestForegroundLocationPermission(this, LOCATION_PERMISSION_REQUEST_CODE))
+                            .show();
                 } else {
-                    Notificare.shared().requestLocationPermission(OnboardingActivity.this, LOCATION_PERMISSION_REQUEST_CODE);
+                    Notificare.shared().requestForegroundLocationPermission(this, LOCATION_PERMISSION_REQUEST_CODE);
                 }
             } else {
                 finishOnBoarding(true);
@@ -128,7 +125,7 @@ public class OnboardingActivity extends FragmentActivity implements Notificare.O
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case LOCATION_PERMISSION_REQUEST_CODE:
-                finishOnBoarding(Notificare.shared().checkRequestLocationPermissionResult(permissions, grantResults));
+                finishOnBoarding(Notificare.shared().checkRequestForegroundLocationPermissionResult(permissions, grantResults));
                 break;
         }
     }
@@ -154,7 +151,7 @@ public class OnboardingActivity extends FragmentActivity implements Notificare.O
 
     private class OnboardingPagerAdapter extends FragmentStatePagerAdapter {
         OnboardingPagerAdapter(FragmentManager fm) {
-            super(fm);
+            super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         }
 
         @Override

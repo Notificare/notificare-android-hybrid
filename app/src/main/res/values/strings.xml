@@ -40,7 +40,9 @@
     <string name="title_clear">Clear All</string>
 
     <string name="button_location_permission_rationale_ok">Accept</string>
-    <string name="alert_location_permission_rationale">We will would like to make use of your location to present relevant information about offers around you or when you visit our stores.</string>
+    <string name="button_location_permission_rationale_cancel">No thanks</string>
+    <string name="alert_location_permission_rationale">We would like to make use of your location to present relevant information about offers around you or when you visit our stores.</string>
+    <string name="alert_background_location_permission_rationale">We would like to make use of your location at all times to present relevant information about offers around you or when you visit our stores, even if you are not actively using the app.</string>
 
     <string name="your_subject">Write a subject</string>
     <string name="your_message">Write a message</string>

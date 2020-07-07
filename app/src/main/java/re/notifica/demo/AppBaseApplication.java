@@ -71,6 +71,9 @@ public class AppBaseApplication extends MultiDexApplication {
         // Create a default notification channel
         Notificare.shared().createDefaultChannel();
 
+//        Notificare.shared().setNotificationActivityShowProgress(false);
+//        Notificare.shared().setNotificationActivityShowToasts(false);
+
         // OPTIONAL
         // Add a separate notification channel for passbook relevance notifications
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

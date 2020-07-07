@@ -4,15 +4,21 @@ package re.notifica.demo;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +34,10 @@ import java.util.Locale;
 import re.notifica.Notificare;
 import re.notifica.NotificareCallback;
 import re.notifica.NotificareError;
+import re.notifica.billing.BillingManager;
+import re.notifica.billing.NotificareBillingResult;
+import re.notifica.billing.NotificarePurchase;
+import re.notifica.model.NotificareProduct;
 import re.notifica.model.NotificareTimeOfDay;
 import re.notifica.model.NotificareTimeOfDayRange;
 import re.notifica.support.NotificareSupport;
@@ -39,6 +49,9 @@ import re.notifica.support.recyclerview.decorators.ConditionalDividerItemDecorat
  */
 public class SettingsFragment extends Fragment {
 
+    private static final String TAG = SettingsFragment.class.getSimpleName();
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private static final int BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE = 2;
 
     private SettingsAdapter mAdapter;
     private Setting mSettingDnd;
@@ -66,10 +79,10 @@ public class SettingsFragment extends Fragment {
 
         RecyclerView recyclerView = rootView.findViewById(R.id.list);
 
-        mAdapter = new SettingsAdapter(getActivity());
+        mAdapter = new SettingsAdapter(getContext());
         recyclerView.setAdapter(mAdapter);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         configListDecorations(recyclerView);
 
 
@@ -102,8 +115,72 @@ public class SettingsFragment extends Fragment {
         return rootView;
     }
 
+    public void requestLocationPermission() {
+        if (Notificare.shared().shouldShowForegroundRequestPermissionRationale(this)) {
+            // Here we should show a dialog explaining location updates
+            new AlertDialog.Builder(getContext())
+                    .setTitle(R.string.app_name)
+                    .setMessage(R.string.alert_location_permission_rationale)
+                    .setCancelable(true)
+                    .setNegativeButton(R.string.button_location_permission_rationale_cancel, (dialog, id) -> {
+                        Log.i(TAG, "foreground location not agreed");
+                    })
+                    .setPositiveButton(R.string.button_location_permission_rationale_ok, (dialog, id) -> Notificare.shared().requestForegroundLocationPermission(this, LOCATION_PERMISSION_REQUEST_CODE))
+                    .show();
+        } else {
+            Notificare.shared().requestForegroundLocationPermission(this, LOCATION_PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    public void requestBackgroundLocationPermission() {
+        if (Notificare.shared().shouldShowBackgroundRequestPermissionRationale(this)) {
+            // Here we should show a dialog explaining location updates
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+                    .setTitle(R.string.app_name)
+                    .setMessage(R.string.alert_background_location_permission_rationale)
+                    .setCancelable(true)
+                    .setNegativeButton(R.string.button_location_permission_rationale_cancel, (dialog, id) -> {
+                        Log.i(TAG, "background location not agreed");
+                    });
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                builder.setPositiveButton(getContext().getPackageManager().getBackgroundPermissionOptionLabel(), (dialog, id) -> Notificare.shared().requestBackgroundLocationPermission(this, BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE));
+            } else {
+                builder.setPositiveButton(R.string.button_location_permission_rationale_ok, (dialog, id) -> Notificare.shared().requestBackgroundLocationPermission(this, BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE));
+            }
+            builder.show();
+        } else {
+            Notificare.shared().requestBackgroundLocationPermission(this, BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case LOCATION_PERMISSION_REQUEST_CODE:
+                if (Notificare.shared().checkRequestForegroundLocationPermissionResult(permissions, grantResults)) {
+                    Log.i(TAG, "foreground locations permission granted");
+                    Notificare.shared().enableLocationUpdates();
+                    if (BuildConfig.ENABLE_BEACONS) {
+                        Notificare.shared().enableBeacons(30000);
+                    }
+                    requestBackgroundLocationPermission();
+                }
+                break;
+            case BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE:
+                if (Notificare.shared().checkRequestBackgroundLocationPermissionResult(permissions, grantResults)) {
+                    android.util.Log.i(TAG, "background location permission granted");
+                    Notificare.shared().enableLocationUpdates();
+                    if (BuildConfig.ENABLE_BEACONS) {
+                        Notificare.shared().enableBeacons(30000);
+                    }
+                }
+                break;
+        }
+    }
+
     private void configListDecorations(RecyclerView recyclerView) {
-        ConditionalDividerItemDecoration conditionalDivider = new ConditionalDividerItemDecoration(getActivity(), null, false, false);
+        ConditionalDividerItemDecoration conditionalDivider = new ConditionalDividerItemDecoration(getContext(), null, false, false);
         conditionalDivider.addViewTypeConfiguration(new ConditionalDividerItemDecoration.ViewTypeConfiguration(SettingsAdapter.SectionViewHolder.class));
         conditionalDivider.addViewTypeConfiguration(new ConditionalDividerItemDecoration.ViewTypeConfiguration(SettingsAdapter.NotificationsViewHolder.class, true, 0, 0));
         conditionalDivider.addViewTypeConfiguration(new ConditionalDividerItemDecoration.ViewTypeConfiguration(SettingsAdapter.DndViewHolder.class, false, 0, 0));
@@ -200,7 +277,7 @@ public class SettingsFragment extends Fragment {
         SettingsAdapter(Context context, List<Object> items) {
             mLayoutInflater = LayoutInflater.from(context);
             mData = items == null ? new ArrayList<>() : items;
-            config = new Config(getActivity());
+            config = new Config(getContext());
         }
 
 
@@ -291,9 +368,23 @@ public class SettingsFragment extends Fragment {
                 ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).switchEditor.setChecked(Notificare.shared().isLocationUpdatesEnabled());
                 ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).switchEditor.setOnCheckedChangeListener((buttonView, isChecked) -> {
                     if (isChecked) {
-                        Notificare.shared().enableLocationUpdates();
+                        // Check if we have any permissions
+                        if (!Notificare.shared().hasForegroundLocationPermissionGranted()) {
+                            requestLocationPermission();
+                        } else {
+                            Notificare.shared().enableLocationUpdates();
+                            if (BuildConfig.ENABLE_BEACONS) {
+                                Notificare.shared().enableBeacons(30000);
+                            }
+                            if (!Notificare.shared().hasBackgroundLocationPermissionGranted()) {
+                                requestBackgroundLocationPermission();
+                            }
+                        }
                     } else {
                         Notificare.shared().disableLocationUpdates();
+                        if (BuildConfig.ENABLE_BEACONS) {
+                            Notificare.shared().disableBeacons();
+                        }
                     }
                 });
             } else if (viewType == TYPE_FEEDBACK) {
@@ -307,6 +398,23 @@ public class SettingsFragment extends Fragment {
                     intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.your_message));
                     intent.setData(Uri.parse("mailto:"));
                     startActivity(intent);
+
+//                    /*
+//                     * Test unlaunch
+//                     */
+//                    Notificare.shared().unlaunch();
+
+//                    /*
+//                     * Test buying a consumable
+//                     */
+//                    if (Notificare.shared().getBillingManager() != null) {
+//                        NotificareProduct testProduct = Notificare.shared().getBillingManager().getProduct("re.notifica.test.app.consumable");
+//                        if (testProduct != null) {
+//                            Notificare.shared().getBillingManager().launchPurchaseFlow(getActivity(), testProduct, (notificareBillingResult, notificarePurchase) -> {
+//                                Log.i(TAG, "Billing Result: " + notificareBillingResult.getMessage() + " for " + notificarePurchase.getProductId());
+//                            });
+//                        }
+//                    }
                 });
             } else if (viewType == TYPE_APP_VERSION) {
                 ((SettingsFragment.SettingsAdapter.SettingViewHolder) holder).label.setText(R.string.settings_others_app_version_label);
@@ -321,7 +429,7 @@ public class SettingsFragment extends Fragment {
                         AppBaseApplication.setDndEnabled(true);
                         addAll(3, Arrays.asList(mSettingDndStart, mSettingDndEnd));
                     } else {
-                        final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), getString(R.string.app_name), getString(R.string.settings_general_dnd_updating_message), true, false);
+                        final ProgressDialog progressDialog = ProgressDialog.show(getContext(), getString(R.string.app_name), getString(R.string.settings_general_dnd_updating_message), true, false);
                         Notificare.shared().clearDoNotDisturb(new NotificareCallback<Boolean>() {
                             @Override
                             public void onSuccess(Boolean aBoolean) {
@@ -353,7 +461,7 @@ public class SettingsFragment extends Fragment {
                         notifyItemRangeChanged(3, 2);
 
                         if (mSettingDndStart.getData() != null && mSettingDndEnd.getData() != null) {
-                            final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), getString(R.string.app_name), getString(R.string.settings_general_dnd_updating_message), true, false);
+                            final ProgressDialog progressDialog = ProgressDialog.show(getContext(), getString(R.string.app_name), getString(R.string.settings_general_dnd_updating_message), true, false);
                             Notificare.shared().updateDoNotDisturb(
                                     new NotificareTimeOfDayRange(
                                             (NotificareTimeOfDay) mSettingDndStart.getData(),
@@ -374,7 +482,7 @@ public class SettingsFragment extends Fragment {
                         }
                     };
 
-                    TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), listener, hour, minute, true);
+                    TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), listener, hour, minute, true);
                     timePickerDialog.show();
 
                 });
@@ -402,7 +510,7 @@ public class SettingsFragment extends Fragment {
                         notifyItemChanged(4);
 
                         if (mSettingDndStart.getData() != null && mSettingDndEnd.getData() != null) {
-                            final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), getString(R.string.app_name), getString(R.string.settings_general_dnd_updating_message), true, false);
+                            final ProgressDialog progressDialog = ProgressDialog.show(getContext(), getString(R.string.app_name), getString(R.string.settings_general_dnd_updating_message), true, false);
                             Notificare.shared().updateDoNotDisturb(
                                     new NotificareTimeOfDayRange(
                                             (NotificareTimeOfDay) mSettingDndStart.getData(),
@@ -423,7 +531,7 @@ public class SettingsFragment extends Fragment {
                         }
                     };
 
-                    TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), listener, hour, minute, true);
+                    TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), listener, hour, minute, true);
                     timePickerDialog.show();
 
                 });

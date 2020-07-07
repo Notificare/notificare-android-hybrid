@@ -3,8 +3,10 @@ package re.notifica.demo;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -13,10 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.material.snackbar.Snackbar;
-import com.huawei.hms.api.ConnectionResult;
-import com.huawei.hms.api.HuaweiApiAvailability;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,21 +32,22 @@ import re.notifica.NotificareCallback;
 import re.notifica.NotificareError;
 import re.notifica.beacon.BeaconRangingListener;
 import re.notifica.billing.BillingManager;
-import re.notifica.billing.BillingResult;
-import re.notifica.billing.Purchase;
+import re.notifica.billing.NotificareBillingResult;
+import re.notifica.billing.NotificarePurchase;
 import re.notifica.model.NotificareApplicationInfo;
 import re.notifica.model.NotificareBeacon;
 import re.notifica.model.NotificareInboxItem;
 import re.notifica.model.NotificareNotification;
 import re.notifica.model.NotificareScannable;
+import re.notifica.service.ServiceManager;
 import re.notifica.support.v7.app.ActionBarBaseActivity;
 
 public class MainActivity extends ActionBarBaseActivity implements Notificare.OnNotificareReadyListener, Notificare.OnBillingReadyListener, Notificare.OnNotificareNotificationListener, BillingManager.OnRefreshFinishedListener, BillingManager.OnPurchaseFinishedListener, BeaconRangingListener {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private static final int BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE = 2;
     private static final int SCANNABLE_REQUEST_CODE = 9001;
     protected static final String TAG = MainActivity.class.getSimpleName();
-    private AlertDialog.Builder builder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +56,6 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
         setContentView(R.layout.activity_main);
 
         manageFragments("");
-
-        builder = new AlertDialog.Builder(this);
 
         Notificare.shared().addNotificareReadyListener(this);
 
@@ -95,7 +93,7 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
             } else {
                 Log.w(TAG, "error result: " + resultCode);
             }
-        } else if (!(Notificare.shared().getBillingManager() != null && Notificare.shared().getBillingManager().handleActivityResult(requestCode, resultCode, data))) {
+        } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
@@ -168,7 +166,7 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
             int badgeCount = Notificare.shared().getInboxManager().getUnreadCount();
             ShortcutBadger.applyCount(this.getApplicationContext(), badgeCount);
         }
-        //askBackgroundLocationPermission();
+        askForegroundLocationPermission();
     }
 
     @Override
@@ -190,7 +188,7 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
 
     @Override
     public void onBillingReady() {
-        Notificare.shared().getBillingManager().refresh(this);
+        Notificare.shared().getBillingManager().refresh(this, this);
     }
 
     @Override
@@ -204,50 +202,59 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
     }
 
     @Override
-    public void onPurchaseFinished(BillingResult billingResult, Purchase purchase) {
+    public void onPurchaseFinished(NotificareBillingResult billingResult, NotificarePurchase purchase) {
         Log.i(TAG, "purchase finished: " + billingResult.getMessage());
     }
 
     public void askForegroundLocationPermission() {
         if (!Notificare.shared().hasForegroundLocationPermissionGranted()) {
             Log.i(TAG, "permission not granted");
-            if (Notificare.shared().didRequestLocationPermission()) {
-                if (Notificare.shared().shouldShowForegroundRequestPermissionRationale(this)) {
-                    // Here we should show a dialog explaining location updates
-                    builder.setMessage(R.string.alert_location_permission_rationale)
-                            .setTitle(R.string.app_name)
-                            .setCancelable(true)
-                            .setPositiveButton(R.string.button_location_permission_rationale_ok, (dialog, id) -> Notificare.shared().requestLocationPermission(MainActivity.this, LOCATION_PERMISSION_REQUEST_CODE))
-                            .create()
-                            .show();
-                }
+            if (Notificare.shared().shouldShowForegroundRequestPermissionRationale(this)) {
+                // Here we should show a dialog explaining location updates
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(R.string.alert_location_permission_rationale)
+                        .setTitle(R.string.app_name)
+                        .setCancelable(true)
+                        .setNegativeButton(R.string.button_location_permission_rationale_cancel, (dialog, id) -> {
+                            Log.i(TAG, "foreground location not agreed");
+                        })
+                        .setPositiveButton(R.string.button_location_permission_rationale_ok, (dialog, id) -> Notificare.shared().requestForegroundLocationPermission(this, LOCATION_PERMISSION_REQUEST_CODE))
+                        .create()
+                        .show();
             } else {
-                Notificare.shared().requestLocationPermission(this, LOCATION_PERMISSION_REQUEST_CODE);
+                Notificare.shared().requestForegroundLocationPermission(this, LOCATION_PERMISSION_REQUEST_CODE);
             }
-        } else {
+        } else if (Notificare.shared().isLocationUpdatesEnabled()) {
             Log.i(TAG, "foreground location permission granted, we can update location");
             Notificare.shared().enableLocationUpdates();
             if (BuildConfig.ENABLE_BEACONS) {
                 Notificare.shared().enableBeacons(30000);
             }
+            askBackgroundLocationPermission();
         }
     }
 
     public void askBackgroundLocationPermission() {
-        if (!Notificare.shared().hasLocationPermissionGranted()) {
+        if (!Notificare.shared().hasBackgroundLocationPermissionGranted()) {
             Log.i(TAG, "permission not granted");
-            if (Notificare.shared().didRequestLocationPermission()) {
-                if (Notificare.shared().shouldShowRequestPermissionRationale(this)) {
-                    // Here we should show a dialog explaining location updates
-                    builder.setMessage(R.string.alert_location_permission_rationale)
-                            .setTitle(R.string.app_name)
-                            .setCancelable(true)
-                            .setPositiveButton(R.string.button_location_permission_rationale_ok, (dialog, id) -> Notificare.shared().requestLocationPermission(MainActivity.this, LOCATION_PERMISSION_REQUEST_CODE))
-                            .create()
-                            .show();
+            if (Notificare.shared().shouldShowBackgroundRequestPermissionRationale(this)) {
+                // Here we should show a dialog explaining location updates
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(R.string.alert_background_location_permission_rationale)
+                        .setTitle(R.string.app_name)
+                        .setCancelable(true)
+                        .setNegativeButton(R.string.button_location_permission_rationale_cancel, (dialog, id) -> {
+                            Log.i(TAG, "background location not agreed");
+                        });
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    builder.setPositiveButton(getPackageManager().getBackgroundPermissionOptionLabel(), (dialog, id) -> Notificare.shared().requestBackgroundLocationPermission(this, BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE));
+                } else {
+                    builder.setPositiveButton(R.string.button_location_permission_rationale_ok, (dialog, id) -> Notificare.shared().requestBackgroundLocationPermission(this, BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE));
                 }
+                builder.create();
+                builder.show();
             } else {
-                Notificare.shared().requestLocationPermission(this, LOCATION_PERMISSION_REQUEST_CODE);
+                Notificare.shared().requestBackgroundLocationPermission(this, BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE);
             }
         } else {
             Log.i(TAG, "background location permission granted, we can update location");
@@ -260,16 +267,21 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case LOCATION_PERMISSION_REQUEST_CODE:
-                if (Notificare.shared().checkRequestLocationPermissionResult(permissions, grantResults)) {
-                    Log.i(TAG, "background location permission granted");
+                if (Notificare.shared().checkRequestForegroundLocationPermissionResult(permissions, grantResults)) {
+                    Log.i(TAG, "foreground locations permission granted");
                     Notificare.shared().enableLocationUpdates();
                     if (BuildConfig.ENABLE_BEACONS) {
                         Notificare.shared().enableBeacons(30000);
                     }
-                } else if (Notificare.shared().checkRequestForegroundLocationPermissionResult(permissions, grantResults)) {
-                    Log.i(TAG, "foreground locations permission granted");
+                    askBackgroundLocationPermission();
+                }
+                break;
+            case BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE:
+                if (Notificare.shared().checkRequestBackgroundLocationPermissionResult(permissions, grantResults)) {
+                    Log.i(TAG, "background location permission granted");
                     Notificare.shared().enableLocationUpdates();
                     if (BuildConfig.ENABLE_BEACONS) {
                         Notificare.shared().enableBeacons(30000);
@@ -319,8 +331,7 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
 
                 break;
             case "/regions":
-
-                if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this) == com.google.android.gms.common.ConnectionResult.SUCCESS) {
+                if (Notificare.shared().getServiceManager().getServiceType() == ServiceManager.SERVICE_TYPE_GMS) {
                     getSupportFragmentManager().beginTransaction()
                             .setCustomAnimations(R.anim.fragment_enter,
                                     R.anim.fragment_exit,
@@ -329,7 +340,7 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
                             .replace(R.id.content_frame, new RegionsFragment())
                             .addToBackStack(tag)
                             .commit();
-                } else if (HuaweiApiAvailability.getInstance().isHuaweiMobileServicesAvailable(this) == ConnectionResult.SUCCESS) {
+                } else if (Notificare.shared().getServiceManager().getServiceType() == ServiceManager.SERVICE_TYPE_HMS) {
                     getSupportFragmentManager().beginTransaction()
                             .setCustomAnimations(R.anim.fragment_enter,
                                     R.anim.fragment_exit,
@@ -395,7 +406,8 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
                 final EditText input = new EditText(this);
                 input.setHint(R.string.hint_event_name);
 
-                builder.setMessage(R.string.analytics_text)
+                new AlertDialog.Builder(this)
+                        .setMessage(R.string.analytics_text)
                         .setTitle(R.string.app_name)
                         .setCancelable(false)
                         .setView(input)
@@ -412,11 +424,9 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
                             public void onError(NotificareError notificareError) {
                                 Log.e(TAG, "Error sending event");
                             }
-                        }));
-                builder.create();
-                builder.show();
-
-
+                        }))
+                        .create()
+                        .show();
                 break;
             case "/membercard":
 
@@ -484,18 +494,14 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
     }
 
     public void createMemberCard(String name, String email){
-
-        JSONObject payload = null;
-        JSONArray primaryFields = null;
-        JSONArray secondaryFields = null;
         try {
-            payload = new JSONObject(AppBaseApplication.getMemberCardTemplate());
+            JSONObject payload = new JSONObject(AppBaseApplication.getMemberCardTemplate());
             payload.put("passbook", payload.getString("_id"));
 
             String url = "https://gravatar.com/avatar/" + md5(email.trim().toLowerCase()) + "?s=512";
             payload.getJSONObject("data").put("thumbnail", url);
 
-            primaryFields = payload.getJSONObject("data").getJSONArray("primaryFields");
+            JSONArray primaryFields = payload.getJSONObject("data").getJSONArray("primaryFields");
 
             for (int i = 0; i < primaryFields.length(); i++) {
                 JSONObject field = (JSONObject) primaryFields.get(i);
@@ -504,66 +510,63 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
                 }
             }
 
-            secondaryFields = payload.getJSONObject("data").getJSONArray("secondaryFields");
+            JSONArray secondaryFields = payload.getJSONObject("data").getJSONArray("secondaryFields");
             for (int i = 0; i < secondaryFields.length(); i++) {
                 JSONObject field = (JSONObject) secondaryFields.get(i);
                 if (field.getString("key").equals("email")) {
                     field.put("value", email);
                 }
             }
+            Notificare.shared().doCloudRequest("POST", "/api/pass", null, payload, new NotificareCallback<JSONObject>() {
+                @Override
+                public void onSuccess(JSONObject jsonObject) {
 
+                    String serial = null;
+                    try {
+                        serial = jsonObject.getJSONObject("pass").getString("serial");
+                        AppBaseApplication.setMemberCardSerial(serial);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onError(NotificareError notificareError) {
+                    Log.i("PASS", notificareError.getMessage());
+                }
+            });
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.w(TAG, "error creating member card");
         }
 
-
-        Notificare.shared().doCloudRequest("POST", "/api/pass", null, payload, new NotificareCallback<JSONObject>() {
-            @Override
-            public void onSuccess(JSONObject jsonObject) {
-
-                String serial = null;
-                try {
-                    serial = jsonObject.getJSONObject("pass").getString("serial");
-                    AppBaseApplication.setMemberCardSerial(serial);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onError(NotificareError notificareError) {
-                Log.i("PASS", notificareError.getMessage());
-            }
-        });
     }
 
     public static String md5(final String s) {
         final String MD5 = "MD5";
         try {
             // Create MD5 Hash
-            MessageDigest digest = java.security.MessageDigest
-                    .getInstance(MD5);
+            MessageDigest digest = MessageDigest.getInstance(MD5);
             digest.update(s.getBytes());
-            byte messageDigest[] = digest.digest();
+            byte[] messageDigest = digest.digest();
 
             // Create Hex String
             StringBuilder hexString = new StringBuilder();
             for (byte aMessageDigest : messageDigest) {
-                String h = Integer.toHexString(0xFF & aMessageDigest);
+                StringBuilder h = new StringBuilder(Integer.toHexString(0xFF & aMessageDigest));
                 while (h.length() < 2)
-                    h = "0" + h;
+                    h.insert(0, "0");
                 hexString.append(h);
             }
             return hexString.toString();
 
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            Log.w(TAG, "could not compute md5 hash");
         }
         return "";
     }
 
     @Override
     public void onRangingBeacons(final List<NotificareBeacon> list) {
-        runOnUiThread(() -> Log.d("MAIN ACTIVITY", list.toString()));
+        runOnUiThread(() -> Log.d(TAG, list.toString()));
     }
 }

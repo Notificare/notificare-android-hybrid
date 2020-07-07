@@ -20,6 +20,7 @@ import java.io.InputStream;
 
 import re.notifica.Notificare;
 import re.notifica.support.NotificareSupport;
+import re.notifica.util.AssetLoader;
 
 
 public class OnboardingFragment extends Fragment {
@@ -58,7 +59,8 @@ public class OnboardingFragment extends Fragment {
 
         });
 
-        new DownloadImageTask(rootView.findViewById(R.id.assetImage)).execute(file);
+        ImageView bmImage = rootView.findViewById(R.id.assetImage);
+        AssetLoader.loadImage(file, bmImage);
 
         return rootView;
     }
