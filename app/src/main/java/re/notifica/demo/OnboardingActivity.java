@@ -2,7 +2,8 @@ package re.notifica.demo;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import android.content.DialogInterface;
+
+import android.app.NotificationChannel;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
@@ -11,7 +12,15 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-import android.util.Log;
+
+import android.os.RemoteException;
+
+import com.android.installreferrer.api.InstallReferrerClient;
+import com.android.installreferrer.api.InstallReferrerStateListener;
+import com.android.installreferrer.api.ReferrerDetails;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -20,6 +29,7 @@ import re.notifica.NotificareCallback;
 import re.notifica.NotificareError;
 import re.notifica.model.NotificareApplicationInfo;
 import re.notifica.model.NotificareAsset;
+import re.notifica.util.Log;
 
 /**
  * Created by joel on 04/01/2017.
@@ -47,6 +57,8 @@ public class OnboardingActivity extends FragmentActivity implements Notificare.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_onboarding);
+
+
 
         Notificare.shared().addNotificareReadyListener(this);
 
@@ -93,6 +105,7 @@ public class OnboardingActivity extends FragmentActivity implements Notificare.O
     @Override
     public void onNotificareReady(NotificareApplicationInfo notificareApplicationInfo) {
         isNotificareReady = true;
+        //checkInstallReferrer();
     }
 
     public void tryRequestLocationPermission() {
@@ -130,6 +143,64 @@ public class OnboardingActivity extends FragmentActivity implements Notificare.O
         }
     }
 
+    private void checkInstallReferrer() {
+        InstallReferrerClient referrerClient;
+
+        referrerClient = InstallReferrerClient.newBuilder(this).build();
+        referrerClient.startConnection(new InstallReferrerStateListener() {
+            @Override
+            public void onInstallReferrerSetupFinished(int responseCode) {
+                switch (responseCode) {
+                    case InstallReferrerClient.InstallReferrerResponse.OK:
+                        // Connection established.
+                        ReferrerDetails response = null;
+                        try {
+                            response = referrerClient.getInstallReferrer();
+                            JSONObject data = new JSONObject();
+                            data.put("installReferrer", response.getInstallReferrer());
+                            data.put("referrerClickTimestampSeconds", response.getReferrerClickTimestampSeconds());
+                            data.put("installBeginTimestampoSeconds", response.getReferrerClickTimestampSeconds());
+                            data.put("googlePlayInstantParam", response.getGooglePlayInstantParam());
+                            data.put("installVersion", response.getInstallVersion());
+                            Notificare.shared().getEventLogger().logCustomEvent("InstallReferrer", data, new NotificareCallback<Boolean>() {
+                                @Override
+                                public void onSuccess(Boolean aBoolean) {
+                                    Log.i(TAG, "logged install referrer event");
+                                    referrerClient.endConnection();
+                                }
+
+                                @Override
+                                public void onError(NotificareError notificareError) {
+                                    Log.w(TAG, "error logging install referrer event: " + notificareError.getMessage());
+                                    referrerClient.endConnection();
+                                }
+                            });
+                        } catch (RemoteException e) {
+                            Log.w(TAG, "error getting install referrer: " + e.getMessage());
+                            referrerClient.endConnection();
+                        } catch (JSONException e) {
+                            Log.w(TAG, "error logging install referrer: " + e.getMessage());
+                            referrerClient.endConnection();
+                        }
+                        break;
+                    case InstallReferrerClient.InstallReferrerResponse.FEATURE_NOT_SUPPORTED:
+                        // API not available on the current Play Store app.
+                        Log.w(TAG, "error getting install referrer: feature not supported");
+                        break;
+                    case InstallReferrerClient.InstallReferrerResponse.SERVICE_UNAVAILABLE:
+                        // Connection couldn't be established.
+                        Log.w(TAG, "error getting install referrer: service unavailable");
+                        break;
+                }
+            }
+
+            @Override
+            public void onInstallReferrerServiceDisconnected() {
+                // Try to restart the connection on the next request to
+                // Google Play by calling the startConnection() method.
+            }
+        });
+    }
 
     private void finishOnBoarding(Boolean status){
 

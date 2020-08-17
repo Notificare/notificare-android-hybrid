@@ -44,6 +44,13 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="@string/app_url_scheme" />
             </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:host="demo.ntc.re" android:scheme="http"/>
+                <data android:host="demo.ntc.re" android:scheme="https"/>
+            </intent-filter>
             <intent-filter>
                 <action android:name="re.notifica.intent.action.NotificationOpened" />
                 <category android:name="android.intent.category.DEFAULT" />

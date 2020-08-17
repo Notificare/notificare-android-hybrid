@@ -119,6 +119,8 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
                     Toast.makeText(MainActivity.this, "scannable not found", Toast.LENGTH_LONG).show();
                 }
             });
+        } else if (handleDynamicLinkIntent(intent)) {
+            Log.d(TAG, "dynamic link handled");
         } else if (data != null) {
             Log.d(TAG, "uri is " + data.toString() + ", path is " + data.getPath());
             String base = data.getPath();
