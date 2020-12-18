@@ -11,19 +11,12 @@ import android.webkit.WebView;
 
 import androidx.multidex.MultiDexApplication;
 
-import com.huawei.hms.analytics.HiAnalytics;
-import com.huawei.hms.analytics.HiAnalyticsInstance;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import re.notifica.Notificare;
 import re.notifica.model.NotificareTimeOfDayRange;
 import re.notifica.support.NotificareSupport;
-
-//import org.altbeacon.beacon.logging.LogManager;
-//import org.altbeacon.beacon.logging.Loggers;
-
 
 public class AppBaseApplication extends MultiDexApplication {
 
@@ -32,6 +25,7 @@ public class AppBaseApplication extends MultiDexApplication {
     private static final String PREF_KEY_ONBOARDING_STATUS = "onboarding_status";
     private static final String PREF_KEY_NOTIFICATIONS_ENABLED = "notifications_enabled";
     private static final String PREF_KEY_LOCATION_ENABLED = "location_enabled";
+    private static final String PREF_KEY_BEACONS_FOREGROUND = "beacons_foreground";
     private static final String PREF_KEY_DND_ENABLED = "dnd_enabled";
     private static final String PREF_KEY_DND_RANGE = "dnd_range";
     private static final String PREF_KEY_CONFIG = "config";
@@ -62,7 +56,6 @@ public class AppBaseApplication extends MultiDexApplication {
             //LogManager.setLogger(Loggers.verboseLogger());
         }
 
-        HiAnalyticsInstance instance = HiAnalytics.getInstance(this);
         // REQUIRED
         // Launch Notificare
         Notificare.shared().launch(this);
@@ -154,6 +147,19 @@ public class AppBaseApplication extends MultiDexApplication {
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.putBoolean(PREF_KEY_DND_ENABLED, enabled);
+        editor.apply();
+    }
+
+    public static boolean getBeaconsForeground() {
+        SharedPreferences sharedPreferences = getAppContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        return sharedPreferences.getBoolean(PREF_KEY_BEACONS_FOREGROUND, false);
+    }
+
+    public static void setBeaconsForeground(boolean enabled) {
+        SharedPreferences sharedPreferences = getAppContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putBoolean(PREF_KEY_BEACONS_FOREGROUND, enabled);
         editor.apply();
     }
 

@@ -1,6 +1,8 @@
 package re.notifica.demo;
 
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -12,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +28,8 @@ import android.view.ViewGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.google.firebase.messaging.RemoteMessage;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,6 +39,7 @@ import java.util.Locale;
 import re.notifica.Notificare;
 import re.notifica.NotificareCallback;
 import re.notifica.NotificareError;
+import re.notifica.action.App;
 import re.notifica.billing.BillingManager;
 import re.notifica.billing.NotificareBillingResult;
 import re.notifica.billing.NotificarePurchase;
@@ -42,6 +48,8 @@ import re.notifica.model.NotificareTimeOfDay;
 import re.notifica.model.NotificareTimeOfDayRange;
 import re.notifica.support.NotificareSupport;
 import re.notifica.support.recyclerview.decorators.ConditionalDividerItemDecoration;
+
+import static android.app.Notification.INTENT_CATEGORY_NOTIFICATION_PREFERENCES;
 
 
 /**
@@ -57,6 +65,9 @@ public class SettingsFragment extends Fragment {
     private Setting mSettingDnd;
     private Setting mSettingDndStart;
     private Setting mSettingDndEnd;
+    private Setting mSettingBeacons;
+
+    private Notification mBeaconNotification;
 
     public SettingsFragment() {
         // Required empty public constructor
@@ -85,11 +96,11 @@ public class SettingsFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         configListDecorations(recyclerView);
 
-
-
         mSettingDnd = new Setting(SettingsAdapter.TYPE_DND);
         mSettingDndStart = new Setting(SettingsAdapter.TYPE_DND_START);
         mSettingDndEnd = new Setting(SettingsAdapter.TYPE_DND_END);
+
+        mSettingBeacons = new Setting(SettingsAdapter.TYPE_BEACONS);
 
         if (AppBaseApplication.getDndEnabled()) {
             Notificare.shared().fetchDoNotDisturb(new NotificareCallback<NotificareTimeOfDayRange>() {
@@ -204,6 +215,9 @@ public class SettingsFragment extends Fragment {
         }
 
         items.add(new Setting(SettingsAdapter.TYPE_LOCATION));
+        if (Notificare.shared().isLocationUpdatesEnabled() && BuildConfig.ENABLE_BEACONS) {
+            items.add(mSettingBeacons);
+        }
 
         items.add(new Section(getString(R.string.settings_section_title_others)));
         items.add(new Setting(SettingsAdapter.TYPE_FEEDBACK));
@@ -264,6 +278,7 @@ public class SettingsFragment extends Fragment {
         static final int TYPE_DND = 6;
         static final int TYPE_DND_START = 7;
         static final int TYPE_DND_END = 8;
+        static final int TYPE_BEACONS = 9;
         Config config;
 
         private LayoutInflater mLayoutInflater;
@@ -322,6 +337,9 @@ public class SettingsFragment extends Fragment {
             } else if (viewType == TYPE_LOCATION) {
                 View view = mLayoutInflater.inflate(R.layout.row_material_three_lines_switch, parent, false);
                 return new NotificationsViewHolder(view);
+            } else if (viewType == TYPE_BEACONS) {
+                View view = mLayoutInflater.inflate(R.layout.row_material_three_lines_switch, parent, false);
+                return new NotificationsViewHolder(view);
             } else if (viewType == TYPE_FEEDBACK || viewType == TYPE_APP_VERSION) {
                 View view = mLayoutInflater.inflate(R.layout.row_material_two_lines, parent, false);
                 return new SettingViewHolder(view);
@@ -375,6 +393,10 @@ public class SettingsFragment extends Fragment {
                             Notificare.shared().enableLocationUpdates();
                             if (BuildConfig.ENABLE_BEACONS) {
                                 Notificare.shared().enableBeacons(30000);
+                                if (AppBaseApplication.getBeaconsForeground()) {
+                                    Notificare.shared().enableBeaconForegroundService(mBeaconNotification, 123);
+                                }
+                                add(position + 1, mSettingBeacons);
                             }
                             if (!Notificare.shared().hasBackgroundLocationPermissionGranted()) {
                                 requestBackgroundLocationPermission();
@@ -384,7 +406,23 @@ public class SettingsFragment extends Fragment {
                         Notificare.shared().disableLocationUpdates();
                         if (BuildConfig.ENABLE_BEACONS) {
                             Notificare.shared().disableBeacons();
+                            AppBaseApplication.setBeaconsForeground(false);
+                            remove(position + 1);
                         }
+                    }
+                });
+            } else if (viewType == TYPE_BEACONS) {
+                ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).label.setText(R.string.settings_general_beacons_label);
+                ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).description.setText(R.string.settings_general_beacons_description);
+                ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).switchEditor.setChecked(AppBaseApplication.getBeaconsForeground());
+                ((SettingsFragment.SettingsAdapter.NotificationsViewHolder) holder).switchEditor.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    if (isChecked) {
+                        // Check if we have any permissions
+                        Notificare.shared().enableBeaconForegroundService();
+                        AppBaseApplication.setBeaconsForeground(true);
+                    } else {
+                        Notificare.shared().disableBeaconForegroundService();
+                        AppBaseApplication.setBeaconsForeground(false);
                     }
                 });
             } else if (viewType == TYPE_FEEDBACK) {
@@ -402,7 +440,12 @@ public class SettingsFragment extends Fragment {
 //                    /*
 //                     * Test unlaunch
 //                     */
-//                    Notificare.shared().unlaunch();
+//                    if (Notificare.shared().isLaunched()) {
+//                        Notificare.shared().unlaunch();
+//                    } else {
+//                        Notificare.shared().launch(getContext().getApplicationContext());
+//                        Notificare.shared().setIntentReceiver(AppReceiver.class);
+//                    }
 
 //                    /*
 //                     * Test buying a consumable

@@ -23,6 +23,8 @@
     <string name="settings_general_notifications_description">Authorize this app to send you notifications.</string>
     <string name="settings_general_location_label">Location Services</string>
     <string name="settings_general_location_description">Authorize this app to collect your location in order to send you promotions when you visit our stores.</string>
+    <string name="settings_general_beacons_label">Beacon Scanning</string>
+    <string name="settings_general_beacons_description">Scan for beacons in the foreground for faster response.</string>
     <string name="settings_general_dnd_label">Do Not Disturb</string>
     <string name="settings_general_dnd_description">Configure a period of time in which this app will not disturb you with notifications.</string>
     <string name="settings_general_dnd_start_label">From</string>
@@ -109,6 +111,7 @@
     <string name="content_description_beacon_icon">beacon</string>
     <string name="title_empty_beacons">No beacons found</string>
     <string name="lorem_ipsum_dolor_sit_amet">Lorem ipsum dolor sit amet</string>
+    <string name="url_clicked">URL was clicked</string>
     <string name="header">header</string>
     <string name="delete">delete</string>
     <string name="image">image</string>

@@ -159,7 +159,7 @@ public class OnboardingActivity extends FragmentActivity implements Notificare.O
                             JSONObject data = new JSONObject();
                             data.put("installReferrer", response.getInstallReferrer());
                             data.put("referrerClickTimestampSeconds", response.getReferrerClickTimestampSeconds());
-                            data.put("installBeginTimestampoSeconds", response.getReferrerClickTimestampSeconds());
+                            data.put("installBeginTimestampSeconds", response.getInstallBeginTimestampSeconds());
                             data.put("googlePlayInstantParam", response.getGooglePlayInstantParam());
                             data.put("installVersion", response.getInstallVersion());
                             Notificare.shared().getEventLogger().logCustomEvent("InstallReferrer", data, new NotificareCallback<Boolean>() {

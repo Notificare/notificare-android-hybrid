@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -47,6 +48,7 @@ public class AppReceiver extends DefaultIntentReceiver {
         if (notification != null) {
             Log.i(TAG, "URL was clicked for \"" + notification.getMessage() + "\"");
         }
+        Toast.makeText(Notificare.shared().getApplicationContext(), urlClicked.toString(), Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -105,5 +107,11 @@ public class AppReceiver extends DefaultIntentReceiver {
                 Log.i(TAG, key + ": " + notification.getExtra().get(key));
             }
         }
+    }
+
+    @Override
+    public void onBeaconStopForegroundScan() {
+        super.onBeaconStopForegroundScan();
+        AppBaseApplication.setBeaconsForeground(false);
     }
 }
