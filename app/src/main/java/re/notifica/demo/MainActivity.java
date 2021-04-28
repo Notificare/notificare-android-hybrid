@@ -121,6 +121,8 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
             });
         } else if (handleDynamicLinkIntent(intent)) {
             Log.d(TAG, "dynamic link handled");
+        } else if (Notificare.shared().handleTestDeviceIntent(intent)) {
+            Log.d(TAG, "test device intent handled");
         } else if (data != null) {
             Log.d(TAG, "uri is " + data.toString() + ", path is " + data.getPath());
             String base = data.getPath();

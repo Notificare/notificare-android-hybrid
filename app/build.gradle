@@ -10,14 +10,14 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.2"
+    buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "re.notifica.demo"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 20500
-        versionName "2.5.0"
+        versionCode 20600
+        versionName "2.6.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [notificareAppId: "5489b42ff23e5815132b492a", notificareHost: "push.notifica.re", googleApiKey: "AIzaSyBZtwDbI4ns0GMQ9W4vFQTbWjt1xXMY3WY"]
         multiDexEnabled true
@@ -95,6 +95,11 @@ repositories {
 //        url "file:///Users/joris/Developer/Projects/notificare-mvn-repo/releases"
     }
     maven {
+        url "https://maven.notifica.re/releases"
+//        url "https://github.com/Notificare/notificare-mvn-repo/raw/master/releases"
+//        url "file:///Users/joris/Developer/Projects/notificare-mvn-repo/releases"
+    }
+    maven {
         url "https://maven.notifica.re/prereleases"
 //        url "file:///Users/joris/Developer/Projects/notificare-mvn-repo/prereleases"
     }
@@ -110,17 +115,17 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.3.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'com.android.installreferrer:installreferrer:2.1'
-    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'com.android.installreferrer:installreferrer:2.2'
+    implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 're.notifica:notificare-core:2.5.0'
-    implementation 're.notifica:notificare-core-hms:2.5.0'
-    implementation 're.notifica:notificare-location:2.5.0'
-    implementation 're.notifica:notificare-location-hms:2.5.0'
-    implementation 're.notifica:notificare-beacon:2.5.0'
-    implementation 're.notifica:notificare-scannable:2.5.0'
-    implementation 're.notifica:notificare-scannable-hms:2.5.0'
-    implementation 're.notifica:notificare-billing:2.5.0'
+    implementation 're.notifica:notificare-core:2.6.0'
+    implementation 're.notifica:notificare-core-hms:2.6.0'
+    implementation 're.notifica:notificare-location:2.6.0'
+    implementation 're.notifica:notificare-location-hms:2.6.0'
+    implementation 're.notifica:notificare-beacon:2.6.0'
+    implementation 're.notifica:notificare-scannable:2.6.0'
+    implementation 're.notifica:notificare-scannable-hms:2.6.0'
+    implementation 're.notifica:notificare-billing:2.6.0'
     implementation 're.notifica:notificare-support-lib-android:2.1.0'
     implementation 'com.huawei.hms:ads-installreferrer:3.4.34.301'
     implementation 'me.leolin:ShortcutBadger:1.1.22@aar'
