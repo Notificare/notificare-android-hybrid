@@ -2,6 +2,8 @@ package re.notifica.demo;
 
 
 import android.annotation.SuppressLint;
+
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
 import android.os.Bundle;
@@ -33,7 +35,7 @@ public class MainFragment extends Fragment {
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         String url = getArguments().getString("url");
@@ -53,9 +55,10 @@ public class MainFragment extends Fragment {
         webView = rootView.findViewById(R.id.webView);
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
+        webSettings.setDomStorageEnabled(true);
 
         if (url != null && !url.isEmpty()) {
-            URL mainURL = null;
+            URL mainURL;
             try {
                 mainURL = new URL(config.getProperty("url"));
                 Log.d("URL", mainURL.getProtocol().concat("://").concat(config.getProperty("host").concat(url)));
@@ -71,7 +74,7 @@ public class MainFragment extends Fragment {
 
 
         LiveData<Integer> unreadCount = Notificare.shared().getInboxManager().getObservableUnreadCount();
-        unreadCount.observe(this, count -> {
+        unreadCount.observe(getViewLifecycleOwner(), count -> {
             String scriptFile = AppBaseApplication.getCustomJSString();
             String badge = "";
             if (count > 0) {

@@ -46,6 +46,7 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private static final int BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE = 2;
+    private static final int BLUETOOTH_SCAN_PERMISSION_REQUEST_CODE = 3;
     private static final int SCANNABLE_REQUEST_CODE = 9001;
     protected static final String TAG = MainActivity.class.getSimpleName();
 
@@ -119,6 +120,8 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
                     Toast.makeText(MainActivity.this, "scannable not found", Toast.LENGTH_LONG).show();
                 }
             });
+        } else if (Notificare.shared().handleTrampolineIntent(intent)) {
+            Log.d(TAG, "trampoline intent handled");
         } else if (handleDynamicLinkIntent(intent)) {
             Log.d(TAG, "dynamic link handled");
         } else if (Notificare.shared().handleTestDeviceIntent(intent)) {
@@ -263,11 +266,36 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
         } else {
             Log.i(TAG, "background location permission granted, we can update location");
             Notificare.shared().enableLocationUpdates();
-            if (BuildConfig.ENABLE_BEACONS) {
+            askBluetoothScanPermission();
+        }
+    }
+
+    public void askBluetoothScanPermission() {
+        if (BuildConfig.ENABLE_BEACONS && Notificare.shared().hasBeaconSupport()) {
+            if (!Notificare.shared().hasBluetoothScanPermissionGranted()) {
+                Log.i(TAG, "permission not granted");
+                if (Notificare.shared().shouldShowBluetoothScanRequestPermissionRationale(this)) {
+                    // Here we should show a dialog explaining location updates
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage(R.string.alert_bluetooth_scan_permission_rationale)
+                            .setTitle(R.string.app_name)
+                            .setCancelable(true)
+                            .setNegativeButton(R.string.button_location_permission_rationale_cancel, (dialog, id) -> {
+                                Log.i(TAG, "bluetooth scan not agreed");
+                            });
+                    builder.setPositiveButton(R.string.button_location_permission_rationale_ok, (dialog, id) -> Notificare.shared().requestBluetoothScanPermission(this, BLUETOOTH_SCAN_PERMISSION_REQUEST_CODE));
+                    builder.create();
+                    builder.show();
+                } else {
+                    Notificare.shared().requestBluetoothScanPermission(this, BLUETOOTH_SCAN_PERMISSION_REQUEST_CODE);
+                }
+            } else {
+                Log.i(TAG, "bluetooth scan permission granted, we can scan beacons");
                 Notificare.shared().enableBeacons(30000);
             }
         }
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -277,9 +305,6 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
                 if (Notificare.shared().checkRequestForegroundLocationPermissionResult(permissions, grantResults)) {
                     Log.i(TAG, "foreground locations permission granted");
                     Notificare.shared().enableLocationUpdates();
-                    if (BuildConfig.ENABLE_BEACONS) {
-                        Notificare.shared().enableBeacons(30000);
-                    }
                     askBackgroundLocationPermission();
                 }
                 break;
@@ -287,9 +312,13 @@ public class MainActivity extends ActionBarBaseActivity implements Notificare.On
                 if (Notificare.shared().checkRequestBackgroundLocationPermissionResult(permissions, grantResults)) {
                     Log.i(TAG, "background location permission granted");
                     Notificare.shared().enableLocationUpdates();
-                    if (BuildConfig.ENABLE_BEACONS) {
-                        Notificare.shared().enableBeacons(30000);
-                    }
+                }
+                askBluetoothScanPermission();
+                break;
+            case BLUETOOTH_SCAN_PERMISSION_REQUEST_CODE:
+                if (Notificare.shared().checkRequestBluetoothScanPermissionResult(permissions, grantResults)) {
+                    Log.i(TAG, "bluetooth scan permission granted");
+                    Notificare.shared().enableBeacons(30000);
                 }
                 break;
         }

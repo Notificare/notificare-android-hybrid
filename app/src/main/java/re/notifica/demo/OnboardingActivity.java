@@ -3,15 +3,12 @@ package re.notifica.demo;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
-import android.app.NotificationChannel;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.RemoteException;
 
@@ -39,19 +36,18 @@ public class OnboardingActivity extends FragmentActivity implements Notificare.O
 
     protected static final String TAG = OnboardingActivity.class.getSimpleName();
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
-    private AlertDialog.Builder builder;
     public List<NotificareAsset> assets;
     private boolean isNotificareReady = false;
     /**
      * The pager widget, which handles animation and allows swiping horizontally to access previous
      * and next wizard steps.
      */
-    private ViewPager mPager;
+    private ViewPager2 mPager;
 
     /**
      * The pager adapter, which provides the pages to the view pager widget.
      */
-    private PagerAdapter mPagerAdapter;
+    private FragmentStateAdapter mPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +65,7 @@ public class OnboardingActivity extends FragmentActivity implements Notificare.O
                 assets = notificareAssets;
 
                 mPager = findViewById(R.id.pager);
-                mPagerAdapter = new OnboardingPagerAdapter(getSupportFragmentManager());
+                mPagerAdapter = new OnboardingPagerAdapter(OnboardingActivity.this);
                 mPager.setAdapter(mPagerAdapter);
             }
 
@@ -119,9 +115,7 @@ public class OnboardingActivity extends FragmentActivity implements Notificare.O
                             .setMessage(R.string.alert_location_permission_rationale)
 
                             .setCancelable(true)
-                            .setNegativeButton(R.string.button_location_permission_rationale_cancel, (dialog, id) -> {
-                                Log.i(TAG, "foreground location not agreed");
-                            })
+                            .setNegativeButton(R.string.button_location_permission_rationale_cancel, (dialog, id) -> Log.i(TAG, "foreground location not agreed"))
                             .setPositiveButton(R.string.button_location_permission_rationale_ok, (dialog, id) -> Notificare.shared().requestForegroundLocationPermission(this, LOCATION_PERMISSION_REQUEST_CODE))
                             .show();
                 } else {
@@ -136,13 +130,13 @@ public class OnboardingActivity extends FragmentActivity implements Notificare.O
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case LOCATION_PERMISSION_REQUEST_CODE:
-                finishOnBoarding(Notificare.shared().checkRequestForegroundLocationPermissionResult(permissions, grantResults));
-                break;
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            finishOnBoarding(Notificare.shared().checkRequestForegroundLocationPermissionResult(permissions, grantResults));
         }
     }
 
+    @SuppressWarnings("unused")
     private void checkInstallReferrer() {
         InstallReferrerClient referrerClient;
 
@@ -153,7 +147,7 @@ public class OnboardingActivity extends FragmentActivity implements Notificare.O
                 switch (responseCode) {
                     case InstallReferrerClient.InstallReferrerResponse.OK:
                         // Connection established.
-                        ReferrerDetails response = null;
+                        ReferrerDetails response;
                         try {
                             response = referrerClient.getInstallReferrer();
                             JSONObject data = new JSONObject();
@@ -220,13 +214,14 @@ public class OnboardingActivity extends FragmentActivity implements Notificare.O
     }
 
 
-    private class OnboardingPagerAdapter extends FragmentStatePagerAdapter {
-        OnboardingPagerAdapter(FragmentManager fm) {
-            super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+    private class OnboardingPagerAdapter extends FragmentStateAdapter {
+        public OnboardingPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
+            super(fragmentActivity);
         }
 
+        @NonNull
         @Override
-        public Fragment getItem(int position) {
+        public Fragment createFragment(int position) {
             OnboardingFragment frag = new OnboardingFragment();
             NotificareAsset asset = assets.get(position);
             Bundle bundle = new Bundle();
@@ -241,7 +236,7 @@ public class OnboardingActivity extends FragmentActivity implements Notificare.O
         }
 
         @Override
-        public int getCount() {
+        public int getItemCount() {
             return assets.size();
         }
     }
