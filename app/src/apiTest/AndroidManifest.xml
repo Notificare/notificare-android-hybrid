@@ -27,15 +27,6 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name="re.notifica.demo.InstallListener"
-        android:enabled="true"
-        android:exported="true"
-        android:permission="android.permission.INSTALL_PACKAGES">
-            <intent-filter>
-                <action android:name="com.android.vending.INSTALL_REFERRER" />
-            </intent-filter>
-        </receiver>
-
     </application>
 
 </manifest>
