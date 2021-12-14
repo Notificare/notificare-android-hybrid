@@ -138,10 +138,10 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-<!--                <data-->
-<!--                    android:host="${notificareAppId}.${notificareApplinksDomain}"-->
-<!--                    android:pathPrefix="/pass"-->
-<!--                    android:scheme="https" />-->
+                <data
+                    android:host="${notificareAppId}.${notificareApplinksDomain}"
+                    android:pathPrefix="/pass"
+                    android:scheme="https" />
                 <data
                     android:host="${notificareHost}"
                     android:pathPrefix="/pass/forapplication/${notificareAppId}"
@@ -159,16 +159,20 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="re.notifica.demo.MainActivity" />
 
-            <intent-filter>
+            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                    <data
-                        android:host="${notificareHost}"
-                        android:pathPrefix="/oauth/resetpassword/${notificareAppId}"
-                        android:scheme="https" />
+                <data
+                    android:host="${notificareAppId}.${notificareApplinksDomain}"
+                    android:pathPrefix="/oauth/resetpassword"
+                    android:scheme="https" />
+                <data
+                    android:host="${notificareHost}"
+                    android:pathPrefix="/oauth/resetpassword/${notificareAppId}"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
         <activity
@@ -182,12 +186,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="re.notifica.demo.MainActivity" />
 
-            <intent-filter>
+            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
+                <data
+                    android:host="${notificareAppId}.${notificareApplinksDomain}"
+                    android:pathPrefix="/oauth/validate"
+                    android:scheme="https" />
                 <data
                     android:host="${notificareHost}"
                     android:pathPrefix="/oauth/validate/${notificareAppId}"
