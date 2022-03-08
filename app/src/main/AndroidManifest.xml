@@ -90,6 +90,17 @@
                 <data android:host="links.notifica.re"/>
                 <data android:pathPrefix="/production"/>
             </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="${notificareAppId}.${notificareApplinksDomain}"
+                    android:pathPrefix="/testdevice"
+                    android:scheme="https" />
+            </intent-filter>
             <intent-filter>
                 <action android:name="re.notifica.intent.action.NotificationOpened" />
 
